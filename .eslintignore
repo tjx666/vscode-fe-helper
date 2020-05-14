@@ -1,0 +1,4 @@
+out/
+typings/
+test-fixture/
+.vscode-test/
