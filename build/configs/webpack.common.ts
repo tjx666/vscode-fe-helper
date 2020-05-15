@@ -15,7 +15,9 @@ const commonWebpackConfig: Configuration = {
         filename: 'extension.js',
         devtoolModuleFilenameTemplate: '../[resource-path]',
     },
-    resolve: { extensions: ['.ts', '.js'] },
+    resolve: {
+        extensions: ['.ts', '.js'],
+    },
     externals: {
         vscode: 'commonjs vscode',
     },

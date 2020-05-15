@@ -1,10 +1,13 @@
 import * as vscode from 'vscode';
-import commands from './commands';
+
+import removeComments from './removeComments';
 
 export function activate(context: vscode.ExtensionContext) {
-    commands.forEach(command =>
-        context.subscriptions.push(vscode.commands.registerCommand(command.identifier, command.handler))
+    const removeCommentsCmd = vscode.commands.registerCommand(
+        'VSCodeFEHelper.removeComments',
+        removeComments,
     );
+    context.subscriptions.push(removeCommentsCmd);
 }
 
 export function deactivate() {
