@@ -7,9 +7,9 @@ import { TextEditor, Range } from 'vscode';
  * @param value
  * @see https://stackoverflow.com/a/50875520/11027903
  */
-export function replaceAllTextOfEditor(editor: TextEditor, value: string) {
+export function replaceAllTextOfEditor(editor: TextEditor, value: string): Thenable<boolean> {
     const editorDocument = editor.document;
-    editor.edit((editBuilder) => {
+    return editor.edit((editBuilder) => {
         const oneLineMoreRange = new Range(0, 0, editorDocument.lineCount, 0);
         const wholeFileRange = editorDocument.validateRange(oneLineMoreRange);
         editBuilder.replace(wholeFileRange, value);

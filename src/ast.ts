@@ -1,12 +1,12 @@
 import * as recast from 'recast';
 import { parse as babelParse } from '@babel/parser';
 
-export function parseSourceToAst(source: string) {
+export function parseSourceToAst(source: string): any {
     return recast.parse(source, {
         parser: {
-            parse: (source: string) =>
-                // copy from https://github.com/nicoespeon/abracadabra/blob/master/src/ast/transformation.ts#L68
-                babelParse(source, {
+            // copy from https://github.com/nicoespeon/abracadabra/blob/master/src/ast/transformation.ts#L68
+            parse: (sourceCode: string) =>
+                babelParse(sourceCode, {
                     sourceType: 'module',
                     allowImportExportEverywhere: true,
                     allowReturnOutsideFunction: true,

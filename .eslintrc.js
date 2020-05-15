@@ -1,5 +1,6 @@
 const OFF = 0;
 const WARN = 1;
+const ERROR = 2;
 
 module.exports = {
     env: {
@@ -35,6 +36,7 @@ module.exports = {
     rules: {
         'import/extensions': OFF,
         'import/no-unresolved': [WARN, { ignore: ['vscode'] }],
+        'import/prefer-default-export': OFF,
 
         '@typescript-eslint/explicit-function-return-type': OFF,
         '@typescript-eslint/no-explicit-any': OFF,

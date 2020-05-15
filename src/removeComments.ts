@@ -6,7 +6,7 @@ import { parseSourceToAst } from './ast';
 import { replaceAllTextOfEditor } from './utils';
 
 /** remove the comments node in ast */
-function transform(ast: any) {
+function transform(ast: any): void {
     recast.visit(ast, {
         visitComment(path) {
             path.prune();
@@ -15,7 +15,7 @@ function transform(ast: any) {
     });
 }
 
-export default async function removeComments() {
+export default async function removeComments(): Promise<void> {
     const supportLanguages = new Set(['javascript', 'typescript']);
     const activeEditor = vscode.window.activeTextEditor;
 
