@@ -41,6 +41,7 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': OFF,
         '@typescript-eslint/no-explicit-any': OFF,
         '@typescript-eslint/no-non-null-assertion': OFF,
+        '@typescript-eslint/no-use-before-define': OFF,
 
         'unicorn/consistent-function-scoping': OFF,
         'unicorn/filename-case': [
@@ -55,13 +56,16 @@ module.exports = {
         'unicorn/no-abusive-eslint-disable': OFF,
         'unicorn/no-process-exit': OFF,
         'unicorn/prevent-abbreviations': OFF,
+        'unicorn/no-null': OFF,
 
         'func-names': OFF,
         'no-bitwise': OFF,
         'no-console': OFF,
         'no-param-reassign': OFF,
         'no-plusplus': OFF,
+        'no-underscore-dangle': OFF,
         'no-unused-expressions': OFF,
+        'no-useless-constructor': OFF,
     },
     overrides: [
         {

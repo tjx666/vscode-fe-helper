@@ -1,6 +1,6 @@
 export default function commentParser(input: string) {
     const tokens = [];
-    const length = input.length;
+    const { length } = input;
     let pos = 0;
     let next;
 

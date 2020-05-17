@@ -6,12 +6,12 @@ import commentParser from './commentParser';
 const { space } = list;
 
 // copy from https://github.com/ben-eb/postcss-discard-comments/tree/master/src
-export default plugin('postcss-discard-comments', (opts = {}) => {
+export default plugin('postcss-discard-comments', (opts: Record<string, any> = {}) => {
     const remover = new CommentRemover(opts);
-    const matcherCache: any = {};
-    const replacerCache: any = {};
+    const matcherCache: Record<string, any> = {};
+    const replacerCache: Record<string, any> = {};
 
-    function matchesComments(source: any) {
+    function matchesComments(source: string) {
         if (matcherCache[source]) {
             return matcherCache[source];
         }
@@ -23,13 +23,14 @@ export default plugin('postcss-discard-comments', (opts = {}) => {
         return result;
     }
 
-    function replaceComments(source: any, separator = ' ') {
-        const key = source + '@|@' + separator;
+    function replaceComments(source: string, separator = ' ') {
+        const key = `${source}@|@${separator}`;
 
         if (replacerCache[key]) {
             return replacerCache[key];
         }
 
+        // eslint-disable-next-line unicorn/no-reduce
         const parsed = commentParser(source).reduce((value, [type, start, end]) => {
             const contents = source.slice(start, end);
 
@@ -79,7 +80,7 @@ export default plugin('postcss-discard-comments', (opts = {}) => {
 
                     const b = matchesComments(node.raws.important);
 
-                    node.raws.important = b.length ? node.raws.important : '!important';
+                    node.raws.important = b.length !== 0 ? node.raws.important : '!important';
                 }
 
                 return;
@@ -95,10 +96,10 @@ export default plugin('postcss-discard-comments', (opts = {}) => {
                 if (node.raws.afterName) {
                     const commentsReplaced = replaceComments(node.raws.afterName);
 
-                    if (!commentsReplaced.length) {
-                        node.raws.afterName = commentsReplaced + ' ';
+                    if (commentsReplaced.length === 0) {
+                        node.raws.afterName = `${commentsReplaced} `;
                     } else {
-                        node.raws.afterName = ' ' + commentsReplaced + ' ';
+                        node.raws.afterName = ` ${commentsReplaced} `;
                     }
                 }
 

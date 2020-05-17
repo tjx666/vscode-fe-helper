@@ -91,6 +91,5 @@ async function removeStyleLanguageComments(editor: TextEditor, source: string) {
         vscode.window.showErrorMessage(`Your ${languageId} code exists syntax error!`);
         return;
     }
-
     await replaceAllTextOfEditor(editor, result.content);
 }

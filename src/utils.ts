@@ -10,7 +10,7 @@ import vscode, { TextEditor, Range } from 'vscode';
 export function replaceAllTextOfEditor(
     editor: TextEditor,
     value: string,
-    format: boolean = false,
+    format = false,
 ): Thenable<boolean> {
     const editorDocument = editor.document;
     return editor.edit((editBuilder) => {
