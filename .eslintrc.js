@@ -59,6 +59,7 @@ module.exports = {
         'unicorn/no-null': OFF,
 
         'func-names': OFF,
+        'lines-between-class-members': OFF,
         'no-bitwise': OFF,
         'no-console': OFF,
         'no-param-reassign': OFF,
