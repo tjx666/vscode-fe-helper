@@ -5,7 +5,7 @@ import commentParser from './commentParser';
 
 const { space } = list;
 
-// copy from https://github.com/ben-eb/postcss-discard-comments/tree/master/src
+// copied from https://github.com/cssnano/cssnano/blob/master/packages/postcss-discard-comments/src/index.js
 export default plugin('postcss-discard-comments', (opts: Record<string, any> = {}) => {
     const remover = new CommentRemover(opts);
     const matcherCache: Record<string, any> = {};

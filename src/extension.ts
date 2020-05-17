@@ -1,11 +1,14 @@
-import * as vscode from 'vscode';
+import vscode, { TextEditor, TextEditorEdit } from 'vscode';
 
-import removeComments from './removeComments';
+import RemoveComments from './removeComments';
 
 export function activate(context: vscode.ExtensionContext) {
-    const removeCommentsCmd = vscode.commands.registerCommand(
+    const removeCommentsCmd = vscode.commands.registerTextEditorCommand(
         'VSCodeFEHelper.removeComments',
-        removeComments,
+        (textEditor: TextEditor, editBuilder: TextEditorEdit) => {
+            const removeComments = new RemoveComments(textEditor, editBuilder);
+            removeComments.handler();
+        },
     );
     context.subscriptions.push(removeCommentsCmd);
 }
