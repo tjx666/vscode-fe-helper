@@ -6,3 +6,5 @@
 
 - [ ] remove comments
 - [ ] transform module
+- [ ] escaping/unescaping string
+- [ ] pluralize
