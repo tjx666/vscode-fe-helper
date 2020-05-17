@@ -62,7 +62,7 @@
         "commands": [
             {
                 "command": "VSCodeFEHelper.removeComments",
-                "title": "remove all comments in current focused file"
+                "title": "remove comments"
             }
         ]
     },
@@ -81,9 +81,10 @@
     },
     "dependencies": {
         "@babel/parser": "^7.9.6",
+        "jsonc-parser": "^2.2.1",
         "postcss": "^7.0.30",
         "postcss-less": "^3.1.4",
-        "postcss-scss": "^2.0.0",
+        "postcss-scss": "^2.1.0",
         "recast": "^0.19.1"
     },
     "devDependencies": {
