@@ -1,10 +1,10 @@
-import vscode, { TextEditor, Position, Range, TextEditorEdit, TextDocument } from 'vscode';
-// FIXME: can't use default import
+/* eslint-disable unicorn/better-regex, prefer-template */
+import vscode, { TextEditor, TextEditorEdit, TextDocument, Range, Position } from 'vscode';
 import * as recast from 'recast';
-import postcss, { Result as ProcessResult } from 'postcss';
+import postcss, { Result as PostcssProcessResult } from 'postcss';
 import scssSyntax from 'postcss-scss';
 import lessSyntax from 'postcss-less';
-import * as JSONC from 'jsonc-parser';
+import * as jsonc from 'jsonc-parser';
 
 import { parseSourceToAst } from '../ast';
 import postcssDiscardComments from './postcssDiscardComments';
@@ -40,16 +40,19 @@ export default class RemoveComments {
     public handler(): void {
         const { languageId } = this;
         if (RemoveComments.supportedScriptLangs.has(languageId)) {
-            this.removeScriptLanguageComments();
+            this.removeScriptLangComments();
         } else if (RemoveComments.supportedStyleLangs.has(languageId)) {
-            this.removeStyleLanguageComments();
+            this.removeStyleLangComments();
         } else if (languageId === 'jsonc') {
             this.removeJSONCComments();
+        } else if (languageId === 'vue') {
+            this.removeVueComments();
         }
     }
 
-    private removeScriptLanguageComments(): void {
+    private removeScriptLangComments(): void {
         const { editBuilder, source, languageId } = this;
+
         let ast: any;
         try {
             ast = parseSourceToAst(source);
@@ -60,26 +63,20 @@ export default class RemoveComments {
         }
         recast.visit(ast, {
             visitComment(path) {
-                const commentLocation = path.value.loc as typeof path.node.loc;
-                if (commentLocation) {
-                    const startPosition = new Position(
-                        commentLocation.start.line - 1,
-                        commentLocation.start.column,
-                    );
-                    const endPosition = new Position(
-                        commentLocation.end.line - 1,
-                        commentLocation.end.column,
-                    );
-                    editBuilder.delete(new Range(startPosition, endPosition));
-                }
+                // !: path.node can't access right location
+                const { start, end } = path.value.loc as any;
+                const startPosition = new Position(start.line - 1, start.column);
+                const endPosition = new Position(end.line - 1, end.column);
+                editBuilder.delete(new Range(startPosition, endPosition));
                 return false;
             },
         });
     }
 
-    private async removeStyleLanguageComments() {
+    private async removeStyleLangComments(): Promise<void> {
         const { editor, source, languageId } = this;
-        let result: ProcessResult;
+
+        let result: PostcssProcessResult;
         try {
             result = await postcss([postcssDiscardComments]).process(source, {
                 syntax: RemoveComments.supportedStyleLangs.get(languageId),
@@ -95,8 +92,9 @@ export default class RemoveComments {
 
     private async removeJSONCComments() {
         const { editBuilder, document, source } = this;
+
         try {
-            JSONC.visit(source, {
+            jsonc.visit(source, {
                 onComment(offset: number, length: number) {
                     const startPosition = document.positionAt(offset);
                     const endPosition = document.positionAt(offset + length);
@@ -105,7 +103,73 @@ export default class RemoveComments {
             });
         } catch (error) {
             console.error(error);
-            vscode.window.showErrorMessage(`Your JSONC code exists syntax error!`);
+            vscode.window.showErrorMessage(`Your jsonc code exists syntax error!`);
         }
+    }
+
+    private async removeVueComments() {
+        const { editor, document } = this;
+
+        let source = document.getText();
+        const templateRE = /<template>(\n|\r|.)*<\/template>/m;
+        const templateMatch = source.match(templateRE);
+        if (templateMatch && templateMatch.index != null) {
+            const templateString = templateMatch[0];
+            const templateCommentRE = /<!--(\n|\r|.)*?-->/gm;
+            source =
+                source.slice(0, templateMatch.index) +
+                templateString.replace(templateCommentRE, '') +
+                source.slice(templateMatch.index + templateString.length);
+        }
+
+        const scriptRE = /<script>((\n|\r|.)*)<\/script>/m;
+        const scriptMatch = source.match(scriptRE);
+        if (scriptMatch && scriptMatch.index != null) {
+            const scriptString = scriptMatch[1];
+            let ast: any;
+            try {
+                ast = parseSourceToAst(scriptString);
+            } catch (error) {
+                console.error(error);
+                vscode.window.showErrorMessage(`Your script code exists syntax error!`);
+                return;
+            }
+            recast.visit(ast, {
+                visitComment(path) {
+                    path.prune();
+                    return false;
+                },
+            });
+            source =
+                source.slice(0, scriptMatch.index) +
+                `<script>${recast.print(ast).code}</script>` +
+                source.slice(scriptMatch.index + scriptMatch[0].length);
+        }
+
+        const styleRE = /<style([^>]*)>((\n|\r|.)*)<\/style>/m;
+        const styleMatch = source.match(styleRE);
+        if (styleMatch && styleMatch.index != null) {
+            const styleString = styleMatch[2];
+            const langMatch = styleMatch[1].match(/lang=['"](\w+)['"]/m);
+            const lang = langMatch ? langMatch[1].trim() : 'css';
+            let result: PostcssProcessResult;
+            try {
+                // eslint-disable-next-line no-await-in-loop
+                result = await postcss([postcssDiscardComments]).process(styleString, {
+                    syntax: RemoveComments.supportedStyleLangs.get(lang),
+                    from: undefined,
+                });
+            } catch (error) {
+                console.error(error);
+                vscode.window.showErrorMessage(`Your ${lang} code exists syntax error!`);
+                return;
+            }
+            source =
+                source.slice(0, styleMatch.index) +
+                `<style${styleMatch[1]}>${result.content}</style>` +
+                source.slice(styleMatch.index + styleMatch[0].length);
+        }
+
+        await replaceAllTextOfEditor(editor, source);
     }
 }
