@@ -52,7 +52,7 @@ export default plugin('postcss-discard-comments', (opts: Record<string, any> = {
         return result;
     }
 
-    return (css) => {
+    return (css: Record<string, any>): any => {
         css.walk((node: any) => {
             if (node.type === 'comment' && remover.canRemove(node.text)) {
                 node.remove();

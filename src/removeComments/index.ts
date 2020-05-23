@@ -10,6 +10,8 @@ import { parseSourceToAst } from '../ast';
 import postcssDiscardComments from './postcssDiscardComments';
 import { replaceAllTextOfEditor } from '../utils';
 
+type ASTNode = recast.types.ASTNode;
+
 export default class RemoveComments {
     private static readonly supportedScriptLangs = new Set([
         'javascript',
@@ -37,7 +39,7 @@ export default class RemoveComments {
         this.source = editor.document.getText();
     }
 
-    public handler(): void {
+    public handle(): void {
         const { languageId } = this;
         if (RemoveComments.supportedScriptLangs.has(languageId)) {
             this.removeScriptLangComments();
@@ -53,7 +55,7 @@ export default class RemoveComments {
     private removeScriptLangComments(): void {
         const { editBuilder, source, languageId } = this;
 
-        let ast: any;
+        let ast: ASTNode;
         try {
             ast = parseSourceToAst(source);
         } catch (error) {
@@ -126,7 +128,7 @@ export default class RemoveComments {
         const scriptMatch = source.match(scriptRE);
         if (scriptMatch && scriptMatch.index != null) {
             const scriptString = scriptMatch[1];
-            let ast: any;
+            let ast: ASTNode;
             try {
                 ast = parseSourceToAst(scriptString);
             } catch (error) {
@@ -154,7 +156,6 @@ export default class RemoveComments {
             const lang = langMatch ? langMatch[1].trim() : 'css';
             let result: PostcssProcessResult;
             try {
-                // eslint-disable-next-line no-await-in-loop
                 result = await postcss([postcssDiscardComments]).process(styleString, {
                     syntax: RemoveComments.supportedStyleLangs.get(lang),
                     from: undefined,

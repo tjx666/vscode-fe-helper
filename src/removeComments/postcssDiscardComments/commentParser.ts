@@ -1,4 +1,4 @@
-export default function commentParser(input: string) {
+export default function commentParser(input: string): any[] {
     const tokens = [];
     const { length } = input;
     let pos = 0;

@@ -4,7 +4,7 @@
 
 ## :dart: TODOS
 
-- [ ] remove comments
+- [x] remove comments
 - [ ] transform module
 - [ ] escaping/unescaping string
 - [ ] pluralize
