@@ -11,8 +11,11 @@ export default class TransformModule {
     }
 
     async handle(): Promise<void> {
-        const transformWays = ['ES6 module -> CommonJS', 'CommonJS -> ES6 module'];
-        const transformWay = await vscode.window.showQuickPick(transformWays, {
+        const transformWays = {
+            esm2cjs: 'ES6 module -> CommonJS',
+            cjs2esm: 'CommonJS -> ES6 module',
+        };
+        const transformWay = await vscode.window.showQuickPick([...Object.values(transformWays)], {
             placeHolder: 'please select one transform way...',
         });
         if (transformWay === undefined) return;
@@ -20,7 +23,7 @@ export default class TransformModule {
         const { editor } = this;
         const { document } = editor;
         const ast = parseSourceToAst(document.getText());
-        if (transformWay === 'ES6 module -> CommonJS') {
+        if (transformWay === transformWays.esm2cjs) {
             new EsmToCjsTransformer(editor, document, ast).transform();
         }
     }

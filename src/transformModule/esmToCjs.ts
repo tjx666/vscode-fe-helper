@@ -20,18 +20,31 @@ export default class EsmToCjsTransformer {
             recast.visit(ast, {
                 visitImportDeclaration(importDclPath) {
                     const node = importDclPath.node as any;
-                    const startPosition = document.positionAt(node.start);
-                    const endPosition = document.positionAt(node.end);
-                    const moduleName = node.source.extra.raw;
-                    const { tokens } = ast as any;
-                    const semicolon = tokens[node.loc.end.token - 1].value === ';' ? ';' : '';
+                    const importDclRange = new Range(
+                        document.positionAt(node.start),
+                        document.positionAt(node.end),
+                    );
+                    const pkgName = node.source.extra.raw;
+                    const semicolon =
+                        (ast as any).tokens[node.loc.end.token - 1].value === ';' ? ';' : '';
 
+                    // import x from 'packageX' -> const x = require('packageX);
+                    if (node.specifiers.length === 1) {
+                        const defaultImportNode = node.specifiers[0];
+                        if (defaultImportNode.type === 'ImportDefaultSpecifier') {
+                            editBuilder.replace(
+                                importDclRange,
+                                `const ${defaultImportNode.local.name} = require(${pkgName})${semicolon}`,
+                            );
+                        }
+                    }
+
+                    // import * as namespaceX from 'packageX' -> const namespaceX = require('packageX')
                     this.visit(importDclPath, {
-                        // deal with import * as namespace from 'modName'
                         visitImportNamespaceSpecifier(importNamespacePath) {
                             editBuilder.replace(
-                                new Range(startPosition, endPosition),
-                                `const ${importNamespacePath.node.local.name} = require(${moduleName})${semicolon}`,
+                                importDclRange,
+                                `const ${importNamespacePath.node.local.name} = require(${pkgName})${semicolon}`,
                             );
                             return false;
                         },

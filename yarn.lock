@@ -140,7 +140,7 @@
 
 "@types/webpack-bundle-analyzer@^3.8.0":
   version "3.8.0"
-  resolved "https://registry.npm.taobao.org/@types/webpack-bundle-analyzer/download/@types/webpack-bundle-analyzer-3.8.0.tgz#d1f196f95159254f76a3c2283c4677585bdf354d"
+  resolved "https://registry.npm.taobao.org/@types/webpack-bundle-analyzer/download/@types/webpack-bundle-analyzer-3.8.0.tgz?cache=0&sync_timestamp=1590133772527&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fwebpack-bundle-analyzer%2Fdownload%2F%40types%2Fwebpack-bundle-analyzer-3.8.0.tgz#d1f196f95159254f76a3c2283c4677585bdf354d"
   integrity sha1-0fGW+VFZJU92o8IoPEZ3WFvfNU0=
   dependencies:
     "@types/webpack" "*"
