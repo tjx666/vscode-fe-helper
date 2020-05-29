@@ -39,10 +39,10 @@
         "Other"
     ],
     "keywords": [
-        "vscode",
-        "vscode-extension",
-        "vscode-fe-helper",
-        "boilerplate"
+        "fe",
+        "front end",
+        "helper",
+        "comments"
     ],
     "main": "out/extension.js",
     "scripts": {

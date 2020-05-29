@@ -27,6 +27,7 @@ export default class RemoveComments {
         ['scss', scssSyntax],
         ['less', lessSyntax],
     ]);
+    private static readonly supportedYamlCommentsLikeLangs = new Set(['yaml', 'editorconfig']);
 
     private readonly editor: TextEditor;
     private readonly editBuilder: TextEditorEdit;
@@ -54,9 +55,9 @@ export default class RemoveComments {
             this.removeJSONCComments();
         } else if (languageId === 'vue') {
             this.removeVueComments();
-        } else if (languageId === 'gitignore') {
+        } else if (languageId === 'ignore') {
             this.removeGitignoreComments();
-        } else if (languageId === 'yaml') {
+        } else if (RemoveComments.supportedYamlCommentsLikeLangs.has(languageId)) {
             this.removeYamlComments();
         }
     }
@@ -207,12 +208,12 @@ export default class RemoveComments {
     }
 
     private removeGitignoreComments(): void {
-        const commentRE = /^#.*/g;
+        const commentRE = /^#.*/gm;
         this.removeCommentsMatchRegexp(commentRE);
     }
 
     private removeYamlComments(): void {
-        const commentRE = /\s*#.*/g;
+        const commentRE = /\s*#.*/gm;
         this.removeCommentsMatchRegexp(commentRE);
     }
 }
