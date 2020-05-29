@@ -1,7 +1,6 @@
 /* multiple line comments */
 {
     "compilerOptions": {/* Basic Options */"forceConsistentCasingInFileNames": true,
-        // single line comment
-        "skipLibCheck": true
+        "skipLibCheck": true// single line comment
     },
 }

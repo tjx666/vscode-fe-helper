@@ -1,5 +1,6 @@
 /* eslint-disable unicorn/better-regex, prefer-template */
-import vscode, { TextEditor, TextEditorEdit, TextDocument, Range, Position } from 'vscode';
+import vscode, { TextEditor, TextEditorEdit, TextDocument, Range } from 'vscode';
+// FIXME: can't use default import
 import * as recast from 'recast';
 import postcss, { Result as PostcssProcessResult } from 'postcss';
 import scssSyntax from 'postcss-scss';
@@ -8,7 +9,8 @@ import * as jsonc from 'jsonc-parser';
 
 import { parseSourceToAst } from '../ast';
 import postcssDiscardComments from './postcssDiscardComments';
-import { replaceAllTextOfEditor } from '../utils';
+import { replaceAllTextOfEditor } from '../utils/editor';
+import { ID_LANG_MAPPER } from '../utils/constants';
 
 type ASTNode = recast.types.ASTNode;
 
@@ -42,40 +44,41 @@ export default class RemoveComments {
     public handle(): void {
         const { languageId } = this;
         if (RemoveComments.supportedScriptLangs.has(languageId)) {
-            this.removeScriptLangComments();
+            this.removeScriptComments();
         } else if (RemoveComments.supportedStyleLangs.has(languageId)) {
-            this.removeStyleLangComments();
+            this.removeStyleComments();
         } else if (languageId === 'jsonc') {
             this.removeJSONCComments();
+        } else if (languageId === 'html') {
+            this.removeHtmlComments();
         } else if (languageId === 'vue') {
             this.removeVueComments();
         }
     }
 
-    private removeScriptLangComments(): void {
-        const { editBuilder, source, languageId } = this;
+    private removeScriptComments(): void {
+        const { editBuilder, document, source, languageId } = this;
 
         let ast: ASTNode;
         try {
             ast = parseSourceToAst(source);
         } catch (error) {
             console.error(error);
-            vscode.window.showErrorMessage(`Your ${languageId} code exists syntax error!`);
+            vscode.window.showErrorMessage(
+                `Your ${ID_LANG_MAPPER.get(languageId)} code exists syntax error!`,
+            );
             return;
         }
         recast.visit(ast, {
             visitComment(path) {
-                // !: path.node can't access right location
-                const { start, end } = path.value.loc as any;
-                const startPosition = new Position(start.line - 1, start.column);
-                const endPosition = new Position(end.line - 1, end.column);
-                editBuilder.delete(new Range(startPosition, endPosition));
+                const { start, end } = path.value;
+                editBuilder.delete(new Range(document.positionAt(start), document.positionAt(end)));
                 return false;
             },
         });
     }
 
-    private async removeStyleLangComments(): Promise<void> {
+    private async removeStyleComments(): Promise<void> {
         const { editor, source, languageId } = this;
 
         let result: PostcssProcessResult;
@@ -86,13 +89,15 @@ export default class RemoveComments {
             });
         } catch (error) {
             console.error(error);
-            vscode.window.showErrorMessage(`Your ${languageId} code exists syntax error!`);
+            vscode.window.showErrorMessage(
+                `Your ${ID_LANG_MAPPER.get(languageId)} code exists syntax error!`,
+            );
             return;
         }
         await replaceAllTextOfEditor(editor, result.content);
     }
 
-    private async removeJSONCComments() {
+    private async removeJSONCComments(): Promise<void> {
         const { editBuilder, document, source } = this;
 
         try {
@@ -109,7 +114,23 @@ export default class RemoveComments {
         }
     }
 
-    private async removeVueComments() {
+    private removeHtmlComments(): void {
+        const { editBuilder, document, source } = this;
+        const templateCommentRE = /<!--(\n|\r|.)*?-->/gm;
+
+        let searchResult: RegExpExecArray | null;
+        while ((searchResult = templateCommentRE.exec(source))) {
+            editBuilder.replace(
+                new Range(
+                    document.positionAt(searchResult.index),
+                    document.positionAt(searchResult.index + searchResult[0].length),
+                ),
+                '',
+            );
+        }
+    }
+
+    private async removeVueComments(): Promise<void> {
         const { editor, document } = this;
 
         let source = document.getText();

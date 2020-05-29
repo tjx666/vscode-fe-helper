@@ -30,7 +30,6 @@ export default plugin('postcss-discard-comments', (opts: Record<string, any> = {
             return replacerCache[key];
         }
 
-        // eslint-disable-next-line unicorn/no-reduce
         const parsed = commentParser(source).reduce((value, [type, start, end]) => {
             const contents = source.slice(start, end);
 

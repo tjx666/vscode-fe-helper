@@ -54,9 +54,10 @@ module.exports = {
             },
         ],
         'unicorn/no-abusive-eslint-disable': OFF,
-        'unicorn/no-process-exit': OFF,
-        'unicorn/prevent-abbreviations': OFF,
         'unicorn/no-null': OFF,
+        'unicorn/no-process-exit': OFF,
+        'unicorn/no-reduce': OFF,
+        'unicorn/prevent-abbreviations': OFF,
 
         'func-names': OFF,
         'lines-between-class-members': OFF,
@@ -67,6 +68,7 @@ module.exports = {
         'no-underscore-dangle': OFF,
         'no-unused-expressions': OFF,
         'no-useless-constructor': OFF,
+        'no-cond-assign': OFF
     },
     overrides: [
         {
