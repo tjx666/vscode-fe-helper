@@ -15,6 +15,7 @@ import { ID_LANG_MAPPER } from '../utils/constants';
 type ASTNode = recast.types.ASTNode;
 
 export default class RemoveComments {
+    private static readonly supportedMarkLangs = new Set(['html', 'xml', 'markdown']);
     private static readonly supportedScriptLangs = new Set([
         'javascript',
         'typescript',
@@ -43,17 +44,69 @@ export default class RemoveComments {
 
     public handle(): void {
         const { languageId } = this;
-        if (RemoveComments.supportedScriptLangs.has(languageId)) {
-            this.removeScriptComments();
+        if (RemoveComments.supportedMarkLangs.has(languageId)) {
+            this.removeMarkLanguageComments();
         } else if (RemoveComments.supportedStyleLangs.has(languageId)) {
             this.removeStyleComments();
+        } else if (RemoveComments.supportedScriptLangs.has(languageId)) {
+            this.removeScriptComments();
         } else if (languageId === 'jsonc') {
             this.removeJSONCComments();
-        } else if (languageId === 'html') {
-            this.removeHtmlComments();
         } else if (languageId === 'vue') {
             this.removeVueComments();
+        } else if (languageId === 'gitignore') {
+            this.removeGitignoreComments();
+        } else if (languageId === 'yaml') {
+            this.removeYamlComments();
         }
+    }
+
+    private removeCommentsMatchRegexp(commentRegexp: RegExp): void {
+        const { editBuilder, document, source } = this;
+
+        let execResult: RegExpExecArray | null;
+        while ((execResult = commentRegexp.exec(source))) {
+            editBuilder.replace(
+                new Range(
+                    document.positionAt(execResult.index),
+                    document.positionAt(execResult.index + execResult[0].length),
+                ),
+                '',
+            );
+        }
+    }
+
+    private removeMarkLanguageComments(): void {
+        const templateCommentRE = /<!--(\n|\r|.)*?-->/gm;
+        this.removeCommentsMatchRegexp(templateCommentRE);
+    }
+
+    private static async getCommentsRemovedStyleCode(
+        source: string,
+        languageId: string,
+    ): Promise<string> {
+        let result: PostcssProcessResult;
+        try {
+            result = await postcss([postcssDiscardComments]).process(source, {
+                syntax: RemoveComments.supportedStyleLangs.get(languageId),
+                from: undefined,
+            });
+        } catch (error) {
+            console.error(error);
+            vscode.window.showErrorMessage(
+                `Your ${ID_LANG_MAPPER.get(languageId)} code exists syntax error!`,
+            );
+            return '';
+        }
+        return result.content;
+    }
+
+    private async removeStyleComments(): Promise<void> {
+        const { editor, source, languageId } = this;
+        await replaceAllTextOfEditor(
+            editor,
+            await RemoveComments.getCommentsRemovedStyleCode(source, languageId),
+        );
     }
 
     private removeScriptComments(): void {
@@ -78,25 +131,6 @@ export default class RemoveComments {
         });
     }
 
-    private async removeStyleComments(): Promise<void> {
-        const { editor, source, languageId } = this;
-
-        let result: PostcssProcessResult;
-        try {
-            result = await postcss([postcssDiscardComments]).process(source, {
-                syntax: RemoveComments.supportedStyleLangs.get(languageId),
-                from: undefined,
-            });
-        } catch (error) {
-            console.error(error);
-            vscode.window.showErrorMessage(
-                `Your ${ID_LANG_MAPPER.get(languageId)} code exists syntax error!`,
-            );
-            return;
-        }
-        await replaceAllTextOfEditor(editor, result.content);
-    }
-
     private async removeJSONCComments(): Promise<void> {
         const { editBuilder, document, source } = this;
 
@@ -111,22 +145,6 @@ export default class RemoveComments {
         } catch (error) {
             console.error(error);
             vscode.window.showErrorMessage(`Your jsonc code exists syntax error!`);
-        }
-    }
-
-    private removeHtmlComments(): void {
-        const { editBuilder, document, source } = this;
-        const templateCommentRE = /<!--(\n|\r|.)*?-->/gm;
-
-        let searchResult: RegExpExecArray | null;
-        while ((searchResult = templateCommentRE.exec(source))) {
-            editBuilder.replace(
-                new Range(
-                    document.positionAt(searchResult.index),
-                    document.positionAt(searchResult.index + searchResult[0].length),
-                ),
-                '',
-            );
         }
     }
 
@@ -175,23 +193,26 @@ export default class RemoveComments {
             const styleString = styleMatch[2];
             const langMatch = styleMatch[1].match(/lang=['"](\w+)['"]/m);
             const lang = langMatch ? langMatch[1].trim() : 'css';
-            let result: PostcssProcessResult;
-            try {
-                result = await postcss([postcssDiscardComments]).process(styleString, {
-                    syntax: RemoveComments.supportedStyleLangs.get(lang),
-                    from: undefined,
-                });
-            } catch (error) {
-                console.error(error);
-                vscode.window.showErrorMessage(`Your ${lang} code exists syntax error!`);
-                return;
-            }
+            const commentsRemovedStyleCode = await RemoveComments.getCommentsRemovedStyleCode(
+                styleString,
+                lang,
+            );
             source =
                 source.slice(0, styleMatch.index) +
-                `<style${styleMatch[1]}>${result.content}</style>` +
+                `<style${styleMatch[1]}>${commentsRemovedStyleCode}</style>` +
                 source.slice(styleMatch.index + styleMatch[0].length);
         }
 
         await replaceAllTextOfEditor(editor, source);
+    }
+
+    private removeGitignoreComments(): void {
+        const commentRE = /^#.*/g;
+        this.removeCommentsMatchRegexp(commentRE);
+    }
+
+    private removeYamlComments(): void {
+        const commentRE = /\s*#.*/g;
+        this.removeCommentsMatchRegexp(commentRE);
     }
 }
