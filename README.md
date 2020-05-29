@@ -4,7 +4,7 @@
 
 ## ::sparkles: Features
 
-- :no_entry_sign: remove comments, supported languages: html/css/less/scss/js/jsx/ts/tsx/jsonc/vue
+- :no_entry_sign: remove comments, supported languages: html/xml/css/less/scss/js/jsx/ts/tsx/jsonc/vue/md/editorconfig/yaml/ignore
 
 ## :dart: TODOS
 
