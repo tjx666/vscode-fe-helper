@@ -18,37 +18,70 @@ export default class EsmToCjsTransformer {
         const { editor, document, ast } = this;
         editor.edit((editBuilder) => {
             recast.visit(ast, {
-                visitImportDeclaration(importDclPath) {
-                    const node = importDclPath.node as any;
-                    const importDclRange = new Range(
-                        document.positionAt(node.start),
-                        document.positionAt(node.end),
+                visitImportDeclaration(importDeclPath) {
+                    const importDeclNode = importDeclPath.node as any;
+                    const importDeclRange = new Range(
+                        document.positionAt(importDeclNode.start),
+                        document.positionAt(importDeclNode.end),
                     );
-                    const pkgName = node.source.extra.raw;
+                    const pkgName = importDeclNode.source.extra.raw;
                     const semicolon =
-                        (ast as any).tokens[node.loc.end.token - 1].value === ';' ? ';' : '';
-
-                    // import x from 'packageX' -> const x = require('packageX);
-                    if (node.specifiers.length === 1) {
-                        const defaultImportNode = node.specifiers[0];
-                        if (defaultImportNode.type === 'ImportDefaultSpecifier') {
+                        (ast as any).tokens[importDeclNode.loc.end.token - 1].value === ';'
+                            ? ';'
+                            : '';
+                    const requireStatement = ` = require(${pkgName})${semicolon}`;
+                    const { specifiers } = importDeclNode;
+                    if (specifiers.length === 1) {
+                        const onlySpecifier = importDeclNode.specifiers[0];
+                        const localName = onlySpecifier.local.name;
+                        const { type } = onlySpecifier;
+                        // import x from 'packageX' -> const x = require('packageX);
+                        // import * as namespaceX from 'packageX' -> const namespaceX = require('packageX')
+                        if (
+                            type === 'ImportDefaultSpecifier' ||
+                            type === 'ImportNamespaceSpecifier'
+                        ) {
                             editBuilder.replace(
-                                importDclRange,
-                                `const ${defaultImportNode.local.name} = require(${pkgName})${semicolon}`,
+                                importDeclRange,
+                                `const ${localName}${requireStatement}`,
+                            );
+                        } else if (type === 'ImportSpecifier') {
+                            editBuilder.replace(
+                                importDeclRange,
+                                `const { ${localName} }${requireStatement}`,
                             );
                         }
-                    }
+                    } else if (specifiers.length > 1) {
+                        // import { a as namespaceA, b as namespaceB } from 'modA';
+                        // import mod1, { modPart1 } from 'moduleName1'
+                        // import { modPart2, modPart3 } from 'moduleName2'
+                        let cjsString = '';
+                        const importDefaultSpecifier = specifiers.find(
+                            (specifier: any) => specifier.type === 'ImportDefaultSpecifier',
+                        );
+                        if (importDefaultSpecifier) {
+                            cjsString = `const ${
+                                importDefaultSpecifier.local.name
+                            }${requireStatement}${document.eol === 1 ? '\n' : '\r\n'}`;
+                        }
 
-                    // import * as namespaceX from 'packageX' -> const namespaceX = require('packageX')
-                    this.visit(importDclPath, {
-                        visitImportNamespaceSpecifier(importNamespacePath) {
-                            editBuilder.replace(
-                                importDclRange,
-                                `const ${importNamespacePath.node.local.name} = require(${pkgName})${semicolon}`,
-                            );
-                            return false;
-                        },
-                    });
+                        const partImportSpecifiers = specifiers.filter(
+                            (specifier: any) => specifier.type === 'ImportSpecifier',
+                        );
+                        cjsString += 'const { ';
+                        cjsString += partImportSpecifiers
+                            .map((specifier: any) => {
+                                const importedName = specifier.imported.name;
+                                const localName = specifier.local.name;
+                                return importedName === localName
+                                    ? importedName
+                                    : `${importedName}: ${localName}`;
+                            })
+                            .join(', ');
+                        cjsString += ` } = require(${pkgName})${semicolon}`;
+                        editBuilder.replace(importDeclRange, cjsString);
+                    }
+                    return false;
                 },
             });
         });
