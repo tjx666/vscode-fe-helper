@@ -2,6 +2,7 @@ import vscode, { TextEditor } from 'vscode';
 
 import { parseSourceToAst } from '../ast';
 import EsmToCjsTransformer from './esmToCjs';
+import CjsToESMTransformer from './cjsToEsm';
 
 export default class TransformModule {
     private readonly editor: TextEditor;
@@ -25,6 +26,8 @@ export default class TransformModule {
         const ast = parseSourceToAst(document.getText());
         if (transformWay === transformWays.esm2cjs) {
             new EsmToCjsTransformer(editor, document, ast).transform();
+        } else if (transformWay === transformWays.cjs2esm) {
+            new CjsToESMTransformer(editor, document, ast).transform();
         }
     }
 }

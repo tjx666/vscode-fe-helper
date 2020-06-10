@@ -59,10 +59,11 @@ export default class EsmToCjsTransformer {
                         const importDefaultSpecifier = specifiers.find(
                             (specifier: any) => specifier.type === 'ImportDefaultSpecifier',
                         );
+                        const defaultImportLocalName = importDefaultSpecifier.local.name;
                         if (importDefaultSpecifier) {
-                            cjsString = `const ${
-                                importDefaultSpecifier.local.name
-                            }${requireStatement}${document.eol === 1 ? '\n' : '\r\n'}`;
+                            cjsString = `const ${defaultImportLocalName}${requireStatement}${
+                                document.eol === 1 ? '\n' : '\r\n'
+                            }`;
                         }
 
                         const partImportSpecifiers = specifiers.filter(
@@ -78,7 +79,7 @@ export default class EsmToCjsTransformer {
                                     : `${importedName}: ${localName}`;
                             })
                             .join(', ');
-                        cjsString += ` } = require(${pkgName})${semicolon}`;
+                        cjsString += ` } = ${defaultImportLocalName}`;
                         editBuilder.replace(importDeclRange, cjsString);
                     }
                     return false;
