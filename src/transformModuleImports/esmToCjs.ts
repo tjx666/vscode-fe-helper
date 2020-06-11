@@ -1,7 +1,6 @@
 import { Range, TextEditor, TextDocument } from 'vscode';
 import * as recast from 'recast';
-
-type ASTNode = recast.types.ASTNode;
+import { ASTNode } from 'ast-types';
 
 export default class EsmToCjsTransformer {
     private readonly editor: TextEditor;
@@ -25,13 +24,18 @@ export default class EsmToCjsTransformer {
                         document.positionAt(importDeclNode.end),
                     );
                     const pkgName = importDeclNode.source.extra.raw;
-                    const semicolon =
-                        (ast as any).tokens[importDeclNode.loc.end.token - 1].value === ';'
-                            ? ';'
-                            : '';
+                    const endToken = importDeclNode.loc.end.token;
+                    const semicolon = (ast as any).tokens
+                        .slice(endToken - 2, endToken)
+                        .some((token: any) => token.value === ';')
+                        ? ';'
+                        : '';
                     const requireStatement = ` = require(${pkgName})${semicolon}`;
                     const { specifiers } = importDeclNode;
-                    if (specifiers.length === 1) {
+                    if (specifiers.length === 0) {
+                        // import 'packageX' -> require('packageX')
+                        editBuilder.replace(importDeclRange, `require(${pkgName})${semicolon}`);
+                    } else if (specifiers.length === 1) {
                         const onlySpecifier = importDeclNode.specifiers[0];
                         const localName = onlySpecifier.local.name;
                         const { type } = onlySpecifier;
@@ -59,8 +63,8 @@ export default class EsmToCjsTransformer {
                         const importDefaultSpecifier = specifiers.find(
                             (specifier: any) => specifier.type === 'ImportDefaultSpecifier',
                         );
-                        const defaultImportLocalName = importDefaultSpecifier.local.name;
                         if (importDefaultSpecifier) {
+                            const defaultImportLocalName = importDefaultSpecifier.local.name;
                             cjsString = `const ${defaultImportLocalName}${requireStatement}${
                                 document.eol === 1 ? '\n' : '\r\n'
                             }`;
@@ -79,7 +83,7 @@ export default class EsmToCjsTransformer {
                                     : `${importedName}: ${localName}`;
                             })
                             .join(', ');
-                        cjsString += ` } = ${defaultImportLocalName}`;
+                        cjsString += ` }${requireStatement}`;
                         editBuilder.replace(importDeclRange, cjsString);
                     }
                     return false;

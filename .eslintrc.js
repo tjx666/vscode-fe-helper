@@ -35,6 +35,7 @@ module.exports = {
     },
     rules: {
         'import/extensions': OFF,
+        'import/no-extraneous-dependencies': OFF,
         'import/no-unresolved': [WARN, { ignore: ['vscode'] }],
         'import/prefer-default-export': OFF,
 
@@ -62,13 +63,13 @@ module.exports = {
         'func-names': OFF,
         'lines-between-class-members': OFF,
         'no-bitwise': OFF,
+        'no-cond-assign': OFF,
         'no-console': OFF,
         'no-param-reassign': OFF,
         'no-plusplus': OFF,
         'no-underscore-dangle': OFF,
         'no-unused-expressions': OFF,
         'no-useless-constructor': OFF,
-        'no-cond-assign': OFF
     },
     overrides: [
         {

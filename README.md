@@ -8,8 +8,8 @@
 
 ## :dart: TODOS
 
-- [ ] transform module import
+- [x] transform module imports
 - [ ] escaping/unescaping string
 - [ ] pluralize
 - [ ] more module info
-- [ ] search node_modules
+- [ ] search in node_modules

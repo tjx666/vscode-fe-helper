@@ -1,7 +1,7 @@
 import vscode, { TextEditor, TextEditorEdit } from 'vscode';
 
 import RemoveComments from './removeComments';
-import TransformModule from './transformModule';
+import TransformModule from './transformModuleImports';
 import { log } from './utils/log';
 import { EXTENSION_ID } from './utils/constants';
 
