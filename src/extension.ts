@@ -2,6 +2,8 @@ import vscode, { TextEditor, TextEditorEdit } from 'vscode';
 
 import RemoveComments from './removeComments';
 import TransformModule from './transformModuleImports';
+import pluralize from './pluralize';
+
 import { log } from './utils/log';
 import { EXTENSION_ID } from './utils/constants';
 
@@ -15,12 +17,18 @@ export function activate(context: vscode.ExtensionContext): void {
         (textEditor: TextEditor, editBuilder: TextEditorEdit) =>
             new RemoveComments(textEditor, editBuilder).handle(),
     );
+
     const transformModuleCmd = vscode.commands.registerTextEditorCommand(
         'VSCodeFEHelper.transformModule',
         (textEditor: TextEditor) => new TransformModule(textEditor).handle(),
     );
 
-    context.subscriptions.push(removeCommentsCmd, transformModuleCmd);
+    const pluralizeCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.pluralize',
+        pluralize,
+    );
+
+    context.subscriptions.push(removeCommentsCmd, transformModuleCmd, pluralizeCmd);
 }
 
 export function deactivate(): void {

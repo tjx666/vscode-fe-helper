@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/better-regex, prefer-template */
 import vscode, { TextEditor, TextEditorEdit, TextDocument, Range } from 'vscode';
-// FIXME: can't use default import
 import * as recast from 'recast';
+import { ASTNode } from 'ast-types';
 import postcss, { Result as PostcssProcessResult } from 'postcss';
 import scssSyntax from 'postcss-scss';
 import lessSyntax from 'postcss-less';
@@ -11,8 +11,6 @@ import { parseSourceToAst } from '../ast';
 import postcssDiscardComments from './postcssDiscardComments';
 import { replaceAllTextOfEditor } from '../utils/editor';
 import { ID_LANG_MAPPER } from '../utils/constants';
-
-type ASTNode = recast.types.ASTNode;
 
 export default class RemoveComments {
     private static readonly supportedMarkLangs = new Set(['html', 'xml', 'markdown']);
@@ -56,7 +54,7 @@ export default class RemoveComments {
         } else if (languageId === 'vue') {
             this.removeVueComments();
         } else if (languageId === 'ignore') {
-            this.removeGitignoreComments();
+            this.removeIgnoreComments();
         } else if (RemoveComments.supportedYamlCommentsLikeLangs.has(languageId)) {
             this.removeYamlComments();
         }
@@ -64,7 +62,6 @@ export default class RemoveComments {
 
     private removeCommentsMatchRegexp(commentRegexp: RegExp): void {
         const { editBuilder, document, source } = this;
-
         let execResult: RegExpExecArray | null;
         while ((execResult = commentRegexp.exec(source))) {
             editBuilder.replace(
@@ -138,9 +135,12 @@ export default class RemoveComments {
         try {
             jsonc.visit(source, {
                 onComment(offset: number, length: number) {
-                    const startPosition = document.positionAt(offset);
-                    const endPosition = document.positionAt(offset + length);
-                    editBuilder.delete(new Range(startPosition, endPosition));
+                    editBuilder.delete(
+                        new Range(
+                            document.positionAt(offset),
+                            document.positionAt(offset + length),
+                        ),
+                    );
                 },
             });
         } catch (error) {
@@ -207,7 +207,7 @@ export default class RemoveComments {
         await replaceAllTextOfEditor(editor, source);
     }
 
-    private removeGitignoreComments(): void {
+    private removeIgnoreComments(): void {
         const commentRE = /^#.*/gm;
         this.removeCommentsMatchRegexp(commentRE);
     }

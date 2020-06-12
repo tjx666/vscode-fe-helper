@@ -9,7 +9,6 @@
 ## :dart: TODOS
 
 - [x] transform module imports
-- [ ] escaping/unescaping string
-- [ ] pluralize
+- [x] pluralize
 - [ ] more module info
 - [ ] search in node_modules
