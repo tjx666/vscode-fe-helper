@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext): void {
     );
 
     const transformModuleCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.transformModule',
+        'VSCodeFEHelper.transformModuleImports',
         (textEditor: TextEditor) => new TransformModule(textEditor).handle(),
     );
 
