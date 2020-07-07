@@ -3,6 +3,7 @@ import vscode, { TextEditor, TextEditorEdit } from 'vscode';
 import RemoveComments from './removeComments';
 import TransformModule from './transformModuleImports';
 import pluralize from './pluralize';
+import removeIrregularWhitespace from './removeIrregularWhitespace';
 
 import { log } from './utils/log';
 import { EXTENSION_ID } from './utils/constants';
@@ -28,7 +29,17 @@ export function activate(context: vscode.ExtensionContext): void {
         pluralize,
     );
 
-    context.subscriptions.push(removeCommentsCmd, transformModuleCmd, pluralizeCmd);
+    const removeIrregularWhitespaceCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.removeIrregularWhitespace',
+        removeIrregularWhitespace,
+    );
+
+    context.subscriptions.push(
+        removeCommentsCmd,
+        transformModuleCmd,
+        pluralizeCmd,
+        removeIrregularWhitespaceCmd,
+    );
 }
 
 export function deactivate(): void {

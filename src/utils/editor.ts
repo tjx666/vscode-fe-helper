@@ -1,4 +1,9 @@
-import vscode, { TextEditor, Range } from 'vscode';
+import vscode, { TextEditor, TextDocument, Range } from 'vscode';
+
+export function getWholeDocumentRange(document: TextDocument): Range {
+    const oneLineMoreRange = new Range(0, 0, document.lineCount, 0);
+    return document.validateRange(oneLineMoreRange);
+}
 
 /**
  * an utility to replace all text of an editor
