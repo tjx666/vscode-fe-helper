@@ -16,5 +16,3 @@
 supported languages: html/xml/css/less/scss/js/jsx/ts/tsx/jsonc/vue/md/editorconfig/yaml/ignore. Run it by execute command `remove comments`.
 
 ![remove comments](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove-comments.gif?raw=true)
-
-## TODO
