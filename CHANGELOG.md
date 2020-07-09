@@ -1,5 +1,11 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.0.4] - 2020-07-10
+
+### Added
+
+-support transform color format
+
 ## [0.0.3] - 2020-07-8
 
 ### Added

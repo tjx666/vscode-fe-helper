@@ -7,7 +7,8 @@
 - remove comments
 - transform module imports
 - pluralize word
-- fix irregular whitespace
+- remove irregular whitespace
+- transform color format
 
 ## Details
 

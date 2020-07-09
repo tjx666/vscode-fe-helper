@@ -1,6 +1,6 @@
 import vscode, { TextEditor } from 'vscode';
 
-import { parseSourceToAst } from '../ast';
+import { parseSourceToAst } from '../utils/ast';
 import EsmToCjsTransformer from './esmToCjs';
 import CjsToESMTransformer from './cjsToEsm';
 

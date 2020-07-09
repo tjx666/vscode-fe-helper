@@ -1,7 +1,7 @@
 {
     "name": "vscode-fe-helper",
     "displayName": "VSCode FE Helper",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "preview": true,
     "description": "Provide some useful tools for front end development",
     "publisher": "YuTengjing",
@@ -33,7 +33,7 @@
         "url": "https://github.com/tjx666/vscode-fe-helper"
     },
     "engines": {
-        "vscode": "^1.45.1"
+        "vscode": "^1.46.0"
     },
     "categories": [
         "Other"
@@ -42,7 +42,11 @@
         "fe",
         "front end",
         "helper",
-        "comments"
+        "comment",
+        "import",
+        "pluralize",
+        "color",
+        "whitespace"
     ],
     "main": "out/extension.js",
     "scripts": {
@@ -58,25 +62,30 @@
         "onCommand:VSCodeFEHelper.removeComments",
         "onCommand:VSCodeFEHelper.transformModuleImports",
         "onCommand:VSCodeFEHelper.pluralize",
-        "onCommand:VSCodeFEHelper.removeIrregularWhitespace"
+        "onCommand:VSCodeFEHelper.removeIrregularWhitespace",
+        "onCommand:VSCodeFEHelper.transformColorFormat"
     ],
     "contributes": {
         "commands": [
             {
                 "command": "VSCodeFEHelper.removeComments",
-                "title": "remove comments"
+                "title": "fe helper: remove comments"
             },
             {
                 "command": "VSCodeFEHelper.transformModuleImports",
-                "title": "transform module imports"
+                "title": "fe helper: transform module imports"
             },
             {
                 "command": "VSCodeFEHelper.pluralize",
-                "title": "pluralize"
+                "title": "fe helper: pluralize"
             },
             {
                 "command": "VSCodeFEHelper.removeIrregularWhitespace",
-                "title": "remove irregular whitespace"
+                "title": "fe helper:remove irregular whitespace"
+            },
+            {
+                "command": "VSCodeFEHelper.transformColorFormat",
+                "title": "fe helper: transform color format"
             }
         ]
     },
@@ -95,6 +104,7 @@
     },
     "dependencies": {
         "@babel/parser": "^7.10.4",
+        "color": "^3.1.2",
         "jsonc-parser": "^2.3.0",
         "pluralize": "^8.0.0",
         "postcss": "^7.0.32",
@@ -103,15 +113,16 @@
         "recast": "^0.19.1"
     },
     "devDependencies": {
+        "@types/color": "^3.0.1",
         "@types/friendly-errors-webpack-plugin": "^0.1.2",
         "@types/glob": "^7.1.3",
         "@types/hard-source-webpack-plugin": "^1.0.1",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^14.0.18",
+        "@types/node": "^14.0.20",
         "@types/pluralize": "^0.0.29",
         "@types/terser-webpack-plugin": "^3.0.0",
-        "@types/vscode": "1.45.1",
-        "@types/webpack": "^4.41.20",
+        "@types/vscode": "1.46.0",
+        "@types/webpack": "^4.41.21",
         "@types/webpack-bundle-analyzer": "^3.8.0",
         "@types/webpack-merge": "^4.1.5",
         "@types/webpackbar": "^4.0.0",
@@ -134,13 +145,13 @@
         "prettier": "^2.0.5",
         "speed-measure-webpack-plugin": "^1.3.3",
         "terser-webpack-plugin": "^3.0.6",
-        "ts-loader": "^7.0.5",
+        "ts-loader": "^8.0.0",
         "ts-node": "^8.10.2",
         "typescript": "^3.9.6",
         "vscode-test": "^1.4.0",
         "webpack": "^4.43.0",
         "webpack-bundle-analyzer": "^3.8.0",
-        "webpack-merge": "^5.0.8",
+        "webpack-merge": "^5.0.9",
         "webpackbar": "^4.0.0",
         "yargs": "^15.4.0"
     }

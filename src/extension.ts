@@ -4,6 +4,7 @@ import RemoveComments from './removeComments';
 import TransformModule from './transformModuleImports';
 import pluralize from './pluralize';
 import removeIrregularWhitespace from './removeIrregularWhitespace';
+import transformColorFormat from './transformColorFormat';
 
 import { log } from './utils/log';
 import { EXTENSION_ID } from './utils/constants';
@@ -11,7 +12,7 @@ import { EXTENSION_ID } from './utils/constants';
 export function activate(context: vscode.ExtensionContext): void {
     const extension = vscode.extensions.getExtension(EXTENSION_ID);
     const version = extension?.packageJSON?.version ?? '-';
-    log(`${EXTENSION_ID} ver.${version} now active! : ${context.extensionPath}`);
+    log(`${EXTENSION_ID}(V.${version}) now active! : ${context.extensionPath}`);
 
     const removeCommentsCmd = vscode.commands.registerTextEditorCommand(
         'VSCodeFEHelper.removeComments',
@@ -19,7 +20,7 @@ export function activate(context: vscode.ExtensionContext): void {
             new RemoveComments(textEditor, editBuilder).handle(),
     );
 
-    const transformModuleCmd = vscode.commands.registerTextEditorCommand(
+    const transformModuleImportsCmd = vscode.commands.registerTextEditorCommand(
         'VSCodeFEHelper.transformModuleImports',
         (textEditor: TextEditor) => new TransformModule(textEditor).handle(),
     );
@@ -34,11 +35,17 @@ export function activate(context: vscode.ExtensionContext): void {
         removeIrregularWhitespace,
     );
 
+    const transformColorFormatCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.transformColorFormat',
+        transformColorFormat,
+    );
+
     context.subscriptions.push(
         removeCommentsCmd,
-        transformModuleCmd,
+        transformModuleImportsCmd,
         pluralizeCmd,
         removeIrregularWhitespaceCmd,
+        transformColorFormatCmd,
     );
 }
 

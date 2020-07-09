@@ -7,7 +7,7 @@ import scssSyntax from 'postcss-scss';
 import lessSyntax from 'postcss-less';
 import * as jsonc from 'jsonc-parser';
 
-import { parseSourceToAst } from '../ast';
+import { parseSourceToAst } from '../utils/ast';
 import postcssDiscardComments from './postcssDiscardComments';
 import { replaceAllTextOfEditor } from '../utils/editor';
 import { ID_LANG_MAPPER } from '../utils/constants';
