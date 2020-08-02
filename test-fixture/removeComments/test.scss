@@ -1,12 +1,17 @@
-.app{
-    content:'/* 123*/';
-    color:#eab;
+.app {
+    content: '/* 123*/';
+    // single line comment
+    color: #eab;
 
-    .box{
-        color:red;
+    .box {
+        // single line comment
+        color: /** multiple line comments */ red;
     }
 }
+// single line comment
 
-.test{
-    color:red;
+.test {
+    color: /** multiple line comments */ red;
 }
+
+/** multiple line comments */

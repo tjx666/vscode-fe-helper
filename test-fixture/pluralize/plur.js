@@ -1,6 +1,0 @@
-lives
-
-apples
-
-movies
-

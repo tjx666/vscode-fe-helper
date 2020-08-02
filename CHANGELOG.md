@@ -1,10 +1,20 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.0.5] - 2020-08-02
+
+### Added
+
+- add more document
+
+### Changed
+
+- update all dependencies to latest
+
 ## [0.0.4] - 2020-07-10
 
 ### Added
 
--support transform color format
+- support transform color format
 
 ## [0.0.3] - 2020-07-8
 

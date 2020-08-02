@@ -10,10 +10,66 @@
 - remove irregular whitespace
 - transform color format
 
+## Usage
+
+All the features using by run it's command. You can show command panel by keyboard shortcut <kbd>ctrl</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **Windows** or <kbd>⌘</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **MacOS**.
+
 ## Details
 
-### Remove comments
+### remove comments
 
-supported languages: html/xml/css/less/scss/js/jsx/ts/tsx/jsonc/vue/md/editorconfig/yaml/ignore. Run it by execute command `remove comments`.
+command: `remove comments`
 
-![remove comments](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove-comments.gif?raw=true)
+supported languages:
+
+- html/xml
+- css/sass/scss/less
+- javascript/javascriptreact/typescript/typescriptreact
+- jsonc
+- vue
+- markdown
+- editorconfig
+- yaml
+- ignore (eg: .gitignore, .eslintignore)
+
+![remove comments](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_comments.gif?raw=true)
+
+### transform module imports
+
+command: `transform module imports`
+
+This feature allow you to convert between `commonjs` and `esm`.
+
+![transform module imports](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_module_imports.gif?raw=true)
+
+### pluralize word
+
+command: `pluralize`
+
+Pluralize all the words selected in current active editor.
+
+![pluralize word](https://github.com/tjx666/vscode-fe-helper/raw/master/images/pluralize.gif?raw=true)
+
+### remove irregular whitespace
+
+command: `remove irregular whitespace`
+
+Sometime I copy description from LeetCode problem and paste into VSCode, but there are some irregular whitespace in the text. For that time, this feature is very useful and convenient.
+
+![remove irregular whitespace](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_irregular_whitespace.gif?raw=true)
+
+### transform color format
+
+command: `transform color format`
+
+supported formats:
+
+- hex
+- rgb/rgba
+- cmyk
+- hsv
+- hsl
+- ansi16
+- ansi256
+
+![transform color format](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_color_format.gif?raw=true)
