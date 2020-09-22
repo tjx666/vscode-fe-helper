@@ -64,33 +64,33 @@
         "onCommand:VSCodeFEHelper.pluralize",
         "onCommand:VSCodeFEHelper.removeIrregularWhitespace",
         "onCommand:VSCodeFEHelper.transformColorFormat",
-        "onCommand:VSCodeFEHelper.closeGitUnmodified"
+        "onCommand:VSCodeFEHelper.jsonToCode"
     ],
     "contributes": {
         "commands": [
             {
                 "command": "VSCodeFEHelper.removeComments",
-                "title": "fe helper: remove comments"
+                "title": "FE Helper: remove comments"
             },
             {
                 "command": "VSCodeFEHelper.transformModuleImports",
-                "title": "fe helper: transform module imports"
+                "title": "FE Helper: transform module imports"
             },
             {
                 "command": "VSCodeFEHelper.pluralize",
-                "title": "fe helper: pluralize"
+                "title": "FE Helper: pluralize"
             },
             {
                 "command": "VSCodeFEHelper.removeIrregularWhitespace",
-                "title": "fe helper:remove irregular whitespace"
+                "title": "FE Helper:remove irregular whitespace"
             },
             {
                 "command": "VSCodeFEHelper.transformColorFormat",
-                "title": "fe helper: transform color format"
+                "title": "FE Helper: transform color format"
             },
             {
-                "command": "VSCodeFEHelper.closeGitUnmodified",
-                "title": "Close Git Unmodified"
+                "command": "VSCodeFEHelper.jsonToCode",
+                "title": "FE Helper: Paste JSON as Code"
             }
         ]
     },
@@ -110,11 +110,11 @@
     "dependencies": {
         "@babel/parser": "^7.11.5",
         "color": "^3.1.2",
-        "jsonc-parser": "^2.3.0",
+        "jsonc-parser": "^2.3.1",
         "pluralize": "^8.0.0",
-        "postcss": "^7.0.32",
+        "postcss": "^8.0.7",
         "postcss-less": "^3.1.4",
-        "postcss-scss": "^2.1.1",
+        "postcss-scss": "^3.0.0",
         "recast": "^0.20.3"
     },
     "devDependencies": {
@@ -123,39 +123,39 @@
         "@types/glob": "^7.1.3",
         "@types/hard-source-webpack-plugin": "^1.0.1",
         "@types/mocha": "^8.0.3",
-        "@types/node": "^14.10.1",
+        "@types/node": "^14.11.2",
         "@types/pluralize": "^0.0.29",
-        "@types/terser-webpack-plugin": "^4.1.0",
+        "@types/terser-webpack-plugin": "^4.2.0",
         "@types/vscode": "1.49.0",
         "@types/webpack": "^4.41.22",
         "@types/webpack-bundle-analyzer": "^3.8.0",
         "@types/webpack-merge": "^4.1.5",
         "@types/webpackbar": "^4.0.0",
         "@types/yargs": "^15.0.4",
-        "@typescript-eslint/eslint-plugin": "^4.1.0",
-        "@typescript-eslint/parser": "^4.1.0",
+        "@typescript-eslint/eslint-plugin": "^4.2.0",
+        "@typescript-eslint/parser": "^4.2.0",
         "clean-webpack-plugin": "^3.0.0",
         "cross-env": "^7.0.2",
-        "eslint": "^7.8.1",
+        "eslint": "^7.9.0",
         "eslint-config-airbnb-base": "^14.2.0",
         "eslint-config-prettier": "^6.11.0",
         "eslint-plugin-import": "2.22.0",
-        "eslint-plugin-unicorn": "^21.0.0",
+        "eslint-plugin-unicorn": "^22.0.0",
         "friendly-errors-webpack-plugin": "^1.7.0",
         "glob": "^7.1.5",
         "hard-source-webpack-plugin": "^0.13.1",
         "husky": "^4.3.0",
-        "lint-staged": "^10.3.0",
+        "lint-staged": "^10.4.0",
         "mocha": "^8.1.3",
-        "prettier": "^2.1.1",
+        "prettier": "^2.1.2",
         "speed-measure-webpack-plugin": "^1.3.3",
-        "terser-webpack-plugin": "^4.2.0",
-        "ts-loader": "^8.0.3",
+        "terser-webpack-plugin": "^4.2.2",
+        "ts-loader": "^8.0.4",
         "ts-node": "^9.0.0",
-        "typescript": "^4.0.2",
+        "typescript": "^4.0.3",
         "vscode-test": "^1.4.0",
-        "webpack": "^4.44.1",
-        "webpack-bundle-analyzer": "^3.8.0",
+        "webpack": "^4.44.2",
+        "webpack-bundle-analyzer": "^3.9.0",
         "webpack-merge": "^5.1.4",
         "webpackbar": "^4.0.0",
         "yargs": "^16.0.3"

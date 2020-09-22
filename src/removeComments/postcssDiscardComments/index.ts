@@ -1,4 +1,4 @@
-import { plugin, list } from 'postcss';
+import { list, PluginCreator, Plugin, Root } from 'postcss';
 
 import CommentRemover from './commentRemover';
 import commentParser from './commentParser';
@@ -6,7 +6,7 @@ import commentParser from './commentParser';
 const { space } = list;
 
 // copied from https://github.com/cssnano/cssnano/blob/master/packages/postcss-discard-comments/src/index.js
-export default plugin('postcss-discard-comments', (opts: Record<string, any> = {}) => {
+const discardCommentsPlugin: PluginCreator<Record<string, any>> = (opts = {}): Plugin => {
     const remover = new CommentRemover(opts);
     const matcherCache: Record<string, any> = {};
     const replacerCache: Record<string, any> = {};
@@ -51,61 +51,67 @@ export default plugin('postcss-discard-comments', (opts: Record<string, any> = {
         return result;
     }
 
-    return (css: Record<string, any>): any => {
-        css.walk((node: any) => {
-            if (node.type === 'comment' && remover.canRemove(node.text)) {
-                node.remove();
+    return {
+        postcssPlugin: 'postcss-discard-comments',
+        Root: (root: Root): any => {
+            root.walk((node: any) => {
+                if (node.type === 'comment' && remover.canRemove(node.text)) {
+                    node.remove();
 
-                return;
-            }
+                    return;
+                }
 
-            if (node.raws.between) {
-                node.raws.between = replaceComments(node.raws.between);
-            }
+                if (node.raws.between) {
+                    node.raws.between = replaceComments(node.raws.between);
+                }
 
-            if (node.type === 'decl') {
-                if (node.raws.value && node.raws.value.raw) {
-                    if (node.raws.value.value === node.value) {
-                        node.value = replaceComments(node.raws.value.raw);
-                    } else {
-                        node.value = replaceComments(node.value);
+                if (node.type === 'decl') {
+                    if (node.raws.value && node.raws.value.raw) {
+                        if (node.raws.value.value === node.value) {
+                            node.value = replaceComments(node.raws.value.raw);
+                        } else {
+                            node.value = replaceComments(node.value);
+                        }
+
+                        node.raws.value = null;
                     }
 
-                    node.raws.value = null;
+                    if (node.raws.important) {
+                        node.raws.important = replaceComments(node.raws.important);
+
+                        const b = matchesComments(node.raws.important);
+
+                        node.raws.important = b.length !== 0 ? node.raws.important : '!important';
+                    }
+
+                    return;
                 }
 
-                if (node.raws.important) {
-                    node.raws.important = replaceComments(node.raws.important);
+                if (node.type === 'rule' && node.raws.selector && node.raws.selector.raw) {
+                    node.raws.selector.raw = replaceComments(node.raws.selector.raw, '');
 
-                    const b = matchesComments(node.raws.important);
-
-                    node.raws.important = b.length !== 0 ? node.raws.important : '!important';
+                    return;
                 }
 
-                return;
-            }
+                if (node.type === 'atrule') {
+                    if (node.raws.afterName) {
+                        const commentsReplaced = replaceComments(node.raws.afterName);
 
-            if (node.type === 'rule' && node.raws.selector && node.raws.selector.raw) {
-                node.raws.selector.raw = replaceComments(node.raws.selector.raw, '');
+                        if (commentsReplaced.length === 0) {
+                            node.raws.afterName = `${commentsReplaced} `;
+                        } else {
+                            node.raws.afterName = ` ${commentsReplaced} `;
+                        }
+                    }
 
-                return;
-            }
-
-            if (node.type === 'atrule') {
-                if (node.raws.afterName) {
-                    const commentsReplaced = replaceComments(node.raws.afterName);
-
-                    if (commentsReplaced.length === 0) {
-                        node.raws.afterName = `${commentsReplaced} `;
-                    } else {
-                        node.raws.afterName = ` ${commentsReplaced} `;
+                    if (node.raws.params && node.raws.params.raw) {
+                        node.raws.params.raw = replaceComments(node.raws.params.raw);
                     }
                 }
-
-                if (node.raws.params && node.raws.params.raw) {
-                    node.raws.params.raw = replaceComments(node.raws.params.raw);
-                }
-            }
-        });
+            });
+        },
     };
-});
+};
+
+discardCommentsPlugin.postcss = true;
+export default discardCommentsPlugin;
