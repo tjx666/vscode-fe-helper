@@ -1,7 +1,7 @@
 {
     "name": "vscode-fe-helper",
     "displayName": "VSCode FE Helper",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "preview": true,
     "description": "Provide some useful tools for front end development",
     "publisher": "YuTengjing",
@@ -33,7 +33,7 @@
         "url": "https://github.com/tjx666/vscode-fe-helper"
     },
     "engines": {
-        "vscode": "^1.47.0"
+        "vscode": "^1.49.0"
     },
     "categories": [
         "Other"
