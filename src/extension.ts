@@ -5,6 +5,7 @@ import TransformModule from './transformModuleImports';
 import pluralize from './pluralize';
 import removeIrregularWhitespace from './removeIrregularWhitespace';
 import transformColorFormat from './transformColorFormat';
+import jsonToCode from './jsonToCode';
 
 import { log } from './utils/log';
 import { EXTENSION_ID } from './utils/constants';
@@ -40,12 +41,18 @@ export function activate(context: vscode.ExtensionContext): void {
         transformColorFormat,
     );
 
+    const jsonToCodeCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.jsonToCode',
+        jsonToCode,
+    );
+
     context.subscriptions.push(
         removeCommentsCmd,
         transformModuleImportsCmd,
         pluralizeCmd,
         removeIrregularWhitespaceCmd,
         transformColorFormatCmd,
+        jsonToCodeCmd,
     );
 }
 

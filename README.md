@@ -9,6 +9,7 @@
 - pluralize word
 - remove irregular whitespace
 - transform color format
+- paste JSON as code
 
 ## Usage
 
@@ -73,3 +74,13 @@ supported formats:
 - ansi256
 
 ![transform color format](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_color_format.gif?raw=true)
+
+### paste JSON as code
+
+You can copy JSON content, and paste as JavaScript code. The principle behind this functionality is very simple:
+
+```javascript
+const jsCode = jsonFromClipboard.replace(/"([^"]*)"\s*:/gm, '$1:');
+```
+
+![Paste JSON as Code](https://github.com/tjx666/vscode-fe-helper/raw/master/images/jsonToCode.gif?raw=true)

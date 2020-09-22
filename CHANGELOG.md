@@ -1,5 +1,15 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.0.6] - 2020-09-23
+
+### Added
+
+- support paste JSON as code
+
+### Changed
+
+- update all dependencies to latest
+
 ## [0.0.5] - 2020-08-02
 
 ### Added
