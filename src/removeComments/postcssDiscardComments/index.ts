@@ -81,6 +81,7 @@ const discardCommentsPlugin: PluginCreator<Record<string, any>> = (opts = {}): P
 
                         const b = matchesComments(node.raws.important);
 
+                        // eslint-disable-next-line unicorn/explicit-length-check
                         node.raws.important = b.length !== 0 ? node.raws.important : '!important';
                     }
 

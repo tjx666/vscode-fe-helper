@@ -1,7 +1,7 @@
 {
     "name": "vscode-fe-helper",
     "displayName": "VSCode FE Helper",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "preview": true,
     "description": "Provide some useful tools for front end development",
     "publisher": "YuTengjing",
@@ -33,7 +33,7 @@
         "url": "https://github.com/tjx666/vscode-fe-helper"
     },
     "engines": {
-        "vscode": "^1.49.0"
+        "vscode": "^1.51.0"
     },
     "categories": [
         "Other"
@@ -55,7 +55,7 @@
         "test-compile": "tsc -p ./tsconfig.test.json",
         "build": "cross-env NODE_ENV=production ts-node --files -P ./build/tsconfig.json ./build",
         "build-analyze": "yarn build --analyze",
-        "lint": "eslint -c .eslintrc --ext .ts ./{build,src,test}/**/*.ts",
+        "lint": "eslint -c .eslintrc.js --ext .ts ./{build,src,test}/**/*.ts",
         "test": "yarn run test-compile && node ./out/test/runTests.js"
     },
     "activationEvents": [
@@ -82,7 +82,7 @@
             },
             {
                 "command": "VSCodeFEHelper.removeIrregularWhitespace",
-                "title": "FE Helper:remove irregular whitespace"
+                "title": "FE Helper: remove irregular whitespace"
             },
             {
                 "command": "VSCodeFEHelper.transformColorFormat",
@@ -90,7 +90,7 @@
             },
             {
                 "command": "VSCodeFEHelper.jsonToCode",
-                "title": "FE Helper: Paste JSON as Code"
+                "title": "FE Helper: paste JSON as code"
             }
         ]
     },
@@ -108,56 +108,54 @@
         ]
     },
     "dependencies": {
-        "@babel/parser": "^7.11.5",
-        "color": "^3.1.2",
-        "jsonc-parser": "^2.3.1",
+        "@babel/parser": "^7.12.7",
+        "color": "^3.1.3",
+        "jsonc-parser": "^3.0.0",
         "pluralize": "^8.0.0",
-        "postcss": "^8.0.7",
-        "postcss-less": "^3.1.4",
-        "postcss-scss": "^3.0.0",
-        "recast": "^0.20.3"
+        "postcss": "^8.1.9",
+        "postcss-less": "^4.0.0",
+        "postcss-scss": "^3.0.4",
+        "recast": "^0.20.4"
     },
     "devDependencies": {
         "@types/color": "^3.0.1",
         "@types/friendly-errors-webpack-plugin": "^0.1.2",
         "@types/glob": "^7.1.3",
-        "@types/hard-source-webpack-plugin": "^1.0.1",
-        "@types/mocha": "^8.0.3",
-        "@types/node": "^14.11.2",
+        "@types/mocha": "^8.0.4",
+        "@types/node": "^14.14.9",
         "@types/pluralize": "^0.0.29",
-        "@types/terser-webpack-plugin": "^4.2.0",
-        "@types/vscode": "1.49.0",
-        "@types/webpack": "^4.41.22",
-        "@types/webpack-bundle-analyzer": "^3.8.0",
+        "@types/terser-webpack-plugin": "^5.0.2",
+        "@types/vscode": "1.51.0",
+        "@types/webpack": "^4.41.25",
+        "@types/webpack-bundle-analyzer": "^3.9.0",
         "@types/webpack-merge": "^4.1.5",
         "@types/webpackbar": "^4.0.0",
-        "@types/yargs": "^15.0.4",
-        "@typescript-eslint/eslint-plugin": "^4.2.0",
-        "@typescript-eslint/parser": "^4.2.0",
+        "@types/yargs": "^15.0.10",
+        "@typescript-eslint/eslint-plugin": "^4.8.1",
+        "@typescript-eslint/parser": "^4.8.1",
         "clean-webpack-plugin": "^3.0.0",
         "cross-env": "^7.0.2",
-        "eslint": "^7.9.0",
-        "eslint-config-airbnb-base": "^14.2.0",
-        "eslint-config-prettier": "^6.11.0",
-        "eslint-plugin-import": "2.22.0",
-        "eslint-plugin-unicorn": "^22.0.0",
+        "eslint": "^7.14.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-config-prettier": "^6.15.0",
+        "eslint-plugin-import": "2.22.1",
+        "eslint-plugin-unicorn": "^23.0.0",
         "friendly-errors-webpack-plugin": "^1.7.0",
         "glob": "^7.1.5",
-        "hard-source-webpack-plugin": "^0.13.1",
         "husky": "^4.3.0",
-        "lint-staged": "^10.4.0",
-        "mocha": "^8.1.3",
-        "prettier": "^2.1.2",
+        "lint-staged": "^10.5.1",
+        "mocha": "^8.2.1",
+        "prettier": "^2.2.0",
         "speed-measure-webpack-plugin": "^1.3.3",
-        "terser-webpack-plugin": "^4.2.2",
-        "ts-loader": "^8.0.4",
+        "terser-webpack-plugin": "^5.0.3",
+        "ts-loader": "^8.0.11",
         "ts-node": "^9.0.0",
-        "typescript": "^4.0.3",
-        "vscode-test": "^1.4.0",
-        "webpack": "^4.44.2",
-        "webpack-bundle-analyzer": "^3.9.0",
-        "webpack-merge": "^5.1.4",
-        "webpackbar": "^4.0.0",
-        "yargs": "^16.0.3"
+        "typescript": "^4.1.2",
+        "vscode-test": "^1.4.1",
+        "webpack": "^5.6.0",
+        "webpack-bundle-analyzer": "^4.1.0",
+        "webpack-merge": "^5.4.0",
+        "webpackbar": "^5.0.0-3",
+        "yargs": "^16.1.1"
     }
 }

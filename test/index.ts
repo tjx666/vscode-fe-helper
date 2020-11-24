@@ -23,6 +23,7 @@ export function run(): Promise<void> {
                         resolve();
                     }
                 });
+                // eslint-disable-next-line unicorn/catch-error-name
             } catch (testErr) {
                 return reject(testErr);
             }

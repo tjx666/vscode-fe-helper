@@ -54,6 +54,7 @@ module.exports = {
                 },
             },
         ],
+        'unicorn/import-style': OFF,
         'unicorn/no-abusive-eslint-disable': OFF,
         'unicorn/no-null': OFF,
         'unicorn/no-process-exit': OFF,

@@ -83,4 +83,4 @@ You can copy JSON content, and paste as JavaScript code. The principle behind th
 const jsCode = jsonFromClipboard.replace(/"([^"]*)"\s*:/gm, '$1:');
 ```
 
-![Paste JSON as Code](https://github.com/tjx666/vscode-fe-helper/raw/master/images/jsonToCode.gif?raw=true)
+![paste JSON as code](https://github.com/tjx666/vscode-fe-helper/raw/master/images/jsonToCode.gif?raw=true)

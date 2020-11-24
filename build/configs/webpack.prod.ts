@@ -20,7 +20,6 @@ const mergedConfiguration: Configuration = merge(commonWebpackConfig, {
         minimize: true,
         minimizer: [
             new TerserPlugin({
-                cache: true,
                 parallel: true,
                 extractComments: false,
             }),

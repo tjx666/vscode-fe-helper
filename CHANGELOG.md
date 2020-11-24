@@ -1,5 +1,12 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.0.7] - 2020-11-25
+
+### Changed
+
+- update all dependencies to latest
+- upgrade webpack5
+
 ## [0.0.6] - 2020-09-23
 
 ### Added

@@ -1,6 +1,6 @@
 const mod1 = require('mod1');
 
-require('mod3');;;;
+require('mod3');;;;;
 
 const mod4 = require('mod4')
 
