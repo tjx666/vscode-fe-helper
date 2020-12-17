@@ -65,7 +65,8 @@
         "onCommand:VSCodeFEHelper.removeIrregularWhitespace",
         "onCommand:VSCodeFEHelper.transformColorFormat",
         "onCommand:VSCodeFEHelper.jsonToCode",
-        "onCommand:VSCodeFEHelper.spaceGod"
+        "onCommand:VSCodeFEHelper.spaceGod",
+        "onCommand:VSCodeFEHelper.copyWithLineNumber"
     ],
     "contributes": {
         "commands": [
@@ -95,7 +96,11 @@
             },
             {
                 "command": "VSCodeFEHelper.spaceGod",
-                "title": "FE Helper: add space between Chinese, number, punctuation"
+                "title": "FE Helper: spaceGod"
+            },
+            {
+                "command": "VSCodeFEHelper.copyWithLineNumber",
+                "title": "FE Helper: copy with line number"
             }
         ]
     },

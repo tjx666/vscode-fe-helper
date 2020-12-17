@@ -10,6 +10,7 @@ import jsonToCode from './jsonToCode';
 import { log } from './utils/log';
 import { EXTENSION_ID } from './utils/constants';
 import spaceGod from './spaceGod';
+import copyWithLineNumber from './copyWIthLineNumber';
 
 export function activate(context: vscode.ExtensionContext): void {
     const extension = vscode.extensions.getExtension(EXTENSION_ID);
@@ -52,6 +53,11 @@ export function activate(context: vscode.ExtensionContext): void {
         spaceGod,
     );
 
+    const copyWithLineNumberCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.copyWithLineNumber',
+        copyWithLineNumber,
+    );
+
     context.subscriptions.push(
         removeCommentsCmd,
         transformModuleImportsCmd,
@@ -60,6 +66,7 @@ export function activate(context: vscode.ExtensionContext): void {
         transformColorFormatCmd,
         jsonToCodeCmd,
         spaceGodCmd,
+        copyWithLineNumberCmd,
     );
 }
 
