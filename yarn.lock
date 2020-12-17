@@ -225,6 +225,11 @@
   resolved "https://registry.npm.taobao.org/@types/normalize-package-data/download/@types/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha1-5IbQ2XOW15vu3QpuM/RTT/a0lz4=
 
+"@types/pangu@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.npm.taobao.org/@types/pangu/download/@types/pangu-3.3.0.tgz#dceeaabd0ba64e1721b3ccd6b950ef6b7ecff3ef"
+  integrity sha1-3O6qvQumThchs8zWuVDva37P8+8=
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.npm.taobao.org/@types/parse-json/download/@types/parse-json-4.0.0.tgz?cache=0&sync_timestamp=1605054896578&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fparse-json%2Fdownload%2F%40types%2Fparse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
@@ -2541,6 +2546,11 @@ p-try@^2.0.0:
   version "2.2.0"
   resolved "https://registry.npm.taobao.org/p-try/download/p-try-2.2.0.tgz#cb2868540e313d61de58fafbe35ce9004d5540e6"
   integrity sha1-yyhoVA4xPWHeWPr741zpAE1VQOY=
+
+pangu@^4.0.7:
+  version "4.0.7"
+  resolved "https://registry.npm.taobao.org/pangu/download/pangu-4.0.7.tgz#2a40347733b004a040d011de460cc313c10391c9"
+  integrity sha1-KkA0dzOwBKBA0BHeRgzDE8EDkck=
 
 parent-module@^1.0.0:
   version "1.0.1"

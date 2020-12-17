@@ -9,6 +9,7 @@ import jsonToCode from './jsonToCode';
 
 import { log } from './utils/log';
 import { EXTENSION_ID } from './utils/constants';
+import spaceGod from './spaceGod';
 
 export function activate(context: vscode.ExtensionContext): void {
     const extension = vscode.extensions.getExtension(EXTENSION_ID);
@@ -46,6 +47,11 @@ export function activate(context: vscode.ExtensionContext): void {
         jsonToCode,
     );
 
+    const spaceGodCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.spaceGod',
+        spaceGod,
+    );
+
     context.subscriptions.push(
         removeCommentsCmd,
         transformModuleImportsCmd,
@@ -53,6 +59,7 @@ export function activate(context: vscode.ExtensionContext): void {
         removeIrregularWhitespaceCmd,
         transformColorFormatCmd,
         jsonToCodeCmd,
+        spaceGodCmd,
     );
 }
 
