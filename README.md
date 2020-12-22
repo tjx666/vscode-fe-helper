@@ -84,3 +84,7 @@ const jsCode = jsonFromClipboard.replace(/"([^"]*)"\s*:/gm, '$1:');
 ```
 
 ![paste JSON as code](https://github.com/tjx666/vscode-fe-helper/raw/master/images/jsonToCode.gif?raw=true)
+
+### space god
+
+For Chinese users, there should be space between English word, number, and punctuation. It's very convenient space between them by command `FE Helper: spaceGod`。

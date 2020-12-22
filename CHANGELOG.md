@@ -1,5 +1,12 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.0.8] - 2020-12-22
+
+### Added
+
+- space god
+- copy with line number
+
 ## [0.0.7] - 2020-11-25
 
 ### Changed

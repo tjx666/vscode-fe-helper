@@ -1,2 +1,2 @@
-spaceGod空格之神使用https://github.com/vinta/pangu.js提供的npm包给中文字符、数字和标点符号之间添加空格。
-中文,number,符号
+spaceGod 空格之神使用 https://github.com/vinta/pangu.js 提供的 npm 包给中文字符、数字和标点符号之间添加空格。
+中文，number, 符号
