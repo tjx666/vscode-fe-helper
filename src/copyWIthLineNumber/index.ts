@@ -1,6 +1,6 @@
-import vscode, { TextEditor, TextEditorEdit } from 'vscode';
+import vscode, { TextEditor } from 'vscode';
 
-export default function copyWithLineNumber(editor: TextEditor, editBuilder: TextEditorEdit): void {
+export default function copyWithLineNumber(editor: TextEditor): void {
     const { document, selection } = editor;
     const selectionText = document.getText(selection);
     const startLineNumber = selection.start.line + 1;
