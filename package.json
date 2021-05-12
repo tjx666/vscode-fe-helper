@@ -123,7 +123,7 @@
         "jsonc-parser": "^3.0.0",
         "pangu": "^4.0.7",
         "pluralize": "^8.0.0",
-        "postcss": "^8.2.1",
+        "postcss": "^8.2.10",
         "postcss-less": "^4.0.0",
         "postcss-scss": "^3.0.4",
         "recast": "^0.20.4"
