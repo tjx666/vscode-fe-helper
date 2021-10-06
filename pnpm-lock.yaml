@@ -1,12 +1,12 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@babel/parser': ^7.12.11
+  '@babel/parser': ^7.15.7
   '@nuxtjs/friendly-errors-webpack-plugin': ^2.1.0
   '@types/color': ^3.0.2
   '@types/glob': ^7.1.4
   '@types/mocha': ^9.0.0
-  '@types/node': ^16.9.1
+  '@types/node': ^16.10.3
   '@types/pangu': ^3.3.0
   '@types/pluralize': ^0.0.29
   '@types/terser-webpack-plugin': ^5.2.0
@@ -15,11 +15,11 @@ specifiers:
   '@types/webpack-bundle-analyzer': ^4.4.1
   '@types/webpack-merge': ^5.0.0
   '@types/webpackbar': ^4.0.2
-  '@types/yargs': ^17.0.2
-  '@typescript-eslint/eslint-plugin': ^4.31.1
-  '@typescript-eslint/parser': ^4.31.1
+  '@types/yargs': ^17.0.3
+  '@typescript-eslint/eslint-plugin': ^4.33.0
+  '@typescript-eslint/parser': ^4.33.0
   clean-webpack-plugin: ^4.0.0
-  color: ^3.1.3
+  color: ^4.0.1
   cross-env: ^7.0.3
   eslint: ^7.32.0
   eslint-config-airbnb-base: ^14.2.1
@@ -29,39 +29,39 @@ specifiers:
   eslint-plugin-prettier: ^4.0.0
   eslint-plugin-unicorn: ^36.0.0
   format-imports: ^2.4.1
-  glob: ^7.1.7
+  glob: ^7.2.0
   husky: 7.0.2
   jsonc-parser: ^3.0.0
-  lint-staged: ^11.1.2
-  mocha: ^9.1.1
+  lint-staged: ^11.2.0
+  mocha: ^9.1.2
   pangu: ^4.0.7
   pluralize: ^8.0.0
-  postcss: ^8.2.1
-  postcss-less: ^4.0.0
-  postcss-scss: ^3.0.4
-  prettier: ^2.4.0
-  recast: ^0.20.4
+  postcss: ^8.3.9
+  postcss-less: ^5.0.0
+  postcss-scss: ^4.0.1
+  prettier: ^2.4.1
+  recast: ^0.20.5
   speed-measure-webpack-plugin: ^1.5.0
   terser-webpack-plugin: ^5.2.4
-  ts-loader: ^9.2.5
+  ts-loader: ^9.2.6
   ts-node: ^10.2.1
   typescript: ^4.4.3
   vscode-test: ^1.6.1
-  webpack: ^5.52.1
+  webpack: ^5.57.1
   webpack-bundle-analyzer: ^4.4.2
   webpack-merge: ^5.8.0
   webpackbar: ^5.0.0-3
-  yargs: ^17.1.1
+  yargs: ^17.2.1
 
 dependencies:
   '@babel/parser': registry.nlark.com/@babel/parser/7.15.7
-  color: registry.nlark.com/color/3.2.1
+  color: registry.nlark.com/color/4.0.1
   jsonc-parser: registry.nlark.com/jsonc-parser/3.0.0
   pangu: registry.npmmirror.com/pangu/4.0.7
   pluralize: registry.nlark.com/pluralize/8.0.0
   postcss: registry.npmmirror.com/postcss/8.3.9
-  postcss-less: registry.nlark.com/postcss-less/4.0.1
-  postcss-scss: registry.npmmirror.com/postcss-scss/3.0.5
+  postcss-less: registry.nlark.com/postcss-less/5.0.0
+  postcss-scss: registry.npmmirror.com/postcss-scss/4.0.1_postcss@8.3.9
   recast: registry.nlark.com/recast/0.20.5
 
 devDependencies:
@@ -73,7 +73,7 @@ devDependencies:
   '@types/pangu': registry.npmmirror.com/@types/pangu/3.3.0
   '@types/pluralize': registry.npmmirror.com/@types/pluralize/0.0.29
   '@types/terser-webpack-plugin': registry.npmmirror.com/@types/terser-webpack-plugin/5.2.0_webpack@5.57.1
-  '@types/vscode': registry.nlark.com/@types/vscode/1.60.0
+  '@types/vscode': registry.npmmirror.com/@types/vscode/1.60.0
   '@types/webpack': registry.nlark.com/@types/webpack/5.28.0
   '@types/webpack-bundle-analyzer': registry.nlark.com/@types/webpack-bundle-analyzer/4.4.1
   '@types/webpack-merge': registry.npmmirror.com/@types/webpack-merge/5.0.0
@@ -88,7 +88,7 @@ devDependencies:
   eslint-config-prettier: registry.nlark.com/eslint-config-prettier/8.3.0_eslint@7.32.0
   eslint-import-resolver-typescript: registry.npmmirror.com/eslint-import-resolver-typescript/2.5.0_b7a4de75e7d0094cbe979e30a9a325ab
   eslint-plugin-import: registry.nlark.com/eslint-plugin-import/2.24.2_eslint@7.32.0
-  eslint-plugin-prettier: registry.nlark.com/eslint-plugin-prettier/4.0.0_6e975bd57c7acf028c1a9ddbbf60c898
+  eslint-plugin-prettier: registry.nlark.com/eslint-plugin-prettier/4.0.0_eslint@7.32.0+prettier@2.4.1
   eslint-plugin-unicorn: registry.nlark.com/eslint-plugin-unicorn/36.0.0_eslint@7.32.0
   format-imports: registry.npmmirror.com/format-imports/2.4.1
   glob: registry.npmmirror.com/glob/7.2.0
@@ -173,8 +173,6 @@ packages:
       json5: registry.nlark.com/json5/2.2.0
       semver: registry.nlark.com/semver/6.3.0
       source-map: registry.nlark.com/source-map/0.5.7
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.nlark.com/@babel/eslint-parser/7.15.7_@babel+core@7.15.5+eslint@7.32.0:
@@ -392,8 +390,6 @@ packages:
       '@babel/types': registry.nlark.com/@babel/types/7.15.6
       debug: registry.nlark.com/debug/4.3.2
       globals: registry.nlark.com/globals/11.12.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.nlark.com/@babel/types/7.15.6:
@@ -437,8 +433,6 @@ packages:
       js-yaml: registry.nlark.com/js-yaml/3.14.1
       minimatch: registry.nlark.com/minimatch/3.0.4
       strip-json-comments: registry.nlark.com/strip-json-comments/3.1.1
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.nlark.com/@humanwhocodes/object-schema/1.2.0:
@@ -609,12 +603,6 @@ packages:
       source-map: registry.nlark.com/source-map/0.6.1
     dev: true
 
-  registry.nlark.com/@types/vscode/1.60.0:
-    resolution: {integrity: sha1-kzDDF2kbT1NEGhi1mHaPrutxYYo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@types/vscode/download/@types/vscode-1.60.0.tgz}
-    name: '@types/vscode'
-    version: 1.60.0
-    dev: true
-
   registry.nlark.com/@types/webpack-bundle-analyzer/4.4.1:
     resolution: {integrity: sha1-vMJQG+EMjN0dFwvGt4R7MyHyBEA=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@types/webpack-bundle-analyzer/download/@types/webpack-bundle-analyzer-4.4.1.tgz}
     name: '@types/webpack-bundle-analyzer'
@@ -624,9 +612,6 @@ packages:
       tapable: registry.nlark.com/tapable/2.2.1
       webpack: registry.npmmirror.com/webpack/5.57.1
     transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
       - webpack-cli
     dev: true
 
@@ -662,9 +647,6 @@ packages:
       tapable: registry.nlark.com/tapable/2.2.1
       webpack: registry.npmmirror.com/webpack/5.57.1
     transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
       - webpack-cli
     dev: true
 
@@ -1277,6 +1259,7 @@ packages:
     version: 1.9.3
     dependencies:
       color-name: registry.nlark.com/color-name/1.1.3
+    dev: true
 
   registry.nlark.com/color-convert/2.0.1:
     resolution: {integrity: sha1-ctOmjVmMm9s68q0ehPIdiWq9TeM=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/color-convert/download/color-convert-2.0.1.tgz}
@@ -1285,12 +1268,12 @@ packages:
     engines: {node: '>=7.0.0'}
     dependencies:
       color-name: registry.nlark.com/color-name/1.1.4
-    dev: true
 
   registry.nlark.com/color-name/1.1.3:
     resolution: {integrity: sha1-p9BVi9icQveV3UIyj3QIMcpTvCU=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/color-name/download/color-name-1.1.3.tgz}
     name: color-name
     version: 1.1.3
+    dev: true
 
   registry.nlark.com/color-name/1.1.4:
     resolution: {integrity: sha1-wqCah6y95pVD3m9j+jmVyCbFNqI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/color-name/download/color-name-1.1.4.tgz}
@@ -1306,12 +1289,12 @@ packages:
       simple-swizzle: registry.nlark.com/simple-swizzle/0.2.2
     dev: false
 
-  registry.nlark.com/color/3.2.1:
-    resolution: {integrity: sha1-NUTcGYyvRJDD7MmnkLVP6f9F4WQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/color/download/color-3.2.1.tgz}
+  registry.nlark.com/color/4.0.1:
+    resolution: {integrity: sha1-Id9EzRAkWpGxzPW6AxYJsOEOfWc=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/color/download/color-4.0.1.tgz}
     name: color
-    version: 3.2.1
+    version: 4.0.1
     dependencies:
-      color-convert: registry.nlark.com/color-convert/1.9.3
+      color-convert: registry.nlark.com/color-convert/2.0.1
       color-string: registry.nlark.com/color-string/1.6.0
     dev: false
 
@@ -1430,29 +1413,8 @@ packages:
     name: debug
     version: 4.3.2
     engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
     dependencies:
       ms: registry.npmmirror.com/ms/2.1.2
-    dev: true
-
-  registry.nlark.com/debug/4.3.2_supports-color@8.1.1:
-    resolution: {integrity: sha1-8KScGKyHeeMdSgxgKd+3aHPHQos=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/debug/download/debug-4.3.2.tgz}
-    id: registry.nlark.com/debug/4.3.2
-    name: debug
-    version: 4.3.2
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-    dependencies:
-      ms: registry.npmmirror.com/ms/2.1.2
-      supports-color: registry.nlark.com/supports-color/8.1.1
     dev: true
 
   registry.nlark.com/deep-is/0.1.4:
@@ -1656,7 +1618,7 @@ packages:
     dev: true
 
   registry.nlark.com/eslint-plugin-import/2.24.2_eslint@7.32.0:
-    resolution: {integrity: sha1-LIzS40HziFkY7ifRhHmRCt57tNo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/eslint-plugin-import/download/eslint-plugin-import-2.24.2.tgz?cache=0&sync_timestamp=1631635811245&other_urls=https%3A%2F%2Fregistry.nlark.com%2Feslint-plugin-import%2Fdownload%2Feslint-plugin-import-2.24.2.tgz}
+    resolution: {integrity: sha1-LIzS40HziFkY7ifRhHmRCt57tNo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/eslint-plugin-import/download/eslint-plugin-import-2.24.2.tgz}
     id: registry.nlark.com/eslint-plugin-import/2.24.2
     name: eslint-plugin-import
     version: 2.24.2
@@ -1682,7 +1644,7 @@ packages:
       tsconfig-paths: registry.nlark.com/tsconfig-paths/3.11.0
     dev: true
 
-  registry.nlark.com/eslint-plugin-prettier/4.0.0_6e975bd57c7acf028c1a9ddbbf60c898:
+  registry.nlark.com/eslint-plugin-prettier/4.0.0_eslint@7.32.0+prettier@2.4.1:
     resolution: {integrity: sha1-i5nR5LiySnYkcrRWeZICNhnLmOA=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/eslint-plugin-prettier/download/eslint-plugin-prettier-4.0.0.tgz}
     id: registry.nlark.com/eslint-plugin-prettier/4.0.0
     name: eslint-plugin-prettier
@@ -1690,14 +1652,9 @@ packages:
     engines: {node: '>=6.0.0'}
     peerDependencies:
       eslint: '>=7.28.0'
-      eslint-config-prettier: '*'
       prettier: '>=2.0.0'
-    peerDependenciesMeta:
-      eslint-config-prettier:
-        optional: true
     dependencies:
       eslint: registry.npmmirror.com/eslint/7.32.0
-      eslint-config-prettier: registry.nlark.com/eslint-config-prettier/8.3.0_eslint@7.32.0
       prettier: registry.nlark.com/prettier/2.4.1
       prettier-linter-helpers: registry.nlark.com/prettier-linter-helpers/1.0.0
     dev: true
@@ -1724,8 +1681,6 @@ packages:
       regexp-tree: registry.npmmirror.com/regexp-tree/0.1.24
       safe-regex: registry.nlark.com/safe-regex/2.1.1
       semver: registry.nlark.com/semver/7.3.5
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.nlark.com/eslint-scope/5.1.1:
@@ -1752,8 +1707,6 @@ packages:
       eslint-visitor-keys: registry.nlark.com/eslint-visitor-keys/2.1.0
       esquery: registry.nlark.com/esquery/1.4.0
       multimap: registry.nlark.com/multimap/1.1.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.nlark.com/eslint-utils/2.1.0:
@@ -3154,13 +3107,11 @@ packages:
     version: 8.0.0
     engines: {node: '>=4'}
 
-  registry.nlark.com/postcss-less/4.0.1:
-    resolution: {integrity: sha1-c8r12sBW1LcG9MwTbO/q9OeQZ6Q=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/postcss-less/download/postcss-less-4.0.1.tgz}
+  registry.nlark.com/postcss-less/5.0.0:
+    resolution: {integrity: sha1-P6Nh7Y5SqcPm5P25u5X9kDLzxis=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/postcss-less/download/postcss-less-5.0.0.tgz}
     name: postcss-less
-    version: 4.0.1
-    engines: {node: '>=10'}
-    dependencies:
-      postcss: registry.npmmirror.com/postcss/8.3.9
+    version: 5.0.0
+    engines: {node: '>=12'}
     dev: false
 
   registry.nlark.com/prelude-ls/1.2.1:
@@ -3752,17 +3703,7 @@ packages:
     version: 5.2.4
     engines: {node: '>= 10.13.0'}
     peerDependencies:
-      '@swc/core': '*'
-      esbuild: '*'
-      uglify-js: '*'
       webpack: ^5.1.0
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      esbuild:
-        optional: true
-      uglify-js:
-        optional: true
     dependencies:
       jest-worker: registry.npmmirror.com/jest-worker/27.2.4
       p-limit: registry.nlark.com/p-limit/3.1.0
@@ -3865,11 +3806,6 @@ packages:
       '@swc/wasm': '>=1.2.50'
       '@types/node': '*'
       typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
     dependencies:
       '@cspotcode/source-map-support': registry.nlark.com/@cspotcode/source-map-support/0.6.1
       '@tsconfig/node10': registry.nlark.com/@tsconfig/node10/1.0.8
@@ -4236,8 +4172,6 @@ packages:
       '@humanwhocodes/object-schema': registry.nlark.com/@humanwhocodes/object-schema/1.2.0
       debug: registry.nlark.com/debug/4.3.2
       minimatch: registry.nlark.com/minimatch/3.0.4
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.npmmirror.com/@nuxtjs/friendly-errors-webpack-plugin/2.1.0_webpack@5.57.1:
@@ -4296,10 +4230,13 @@ packages:
     dependencies:
       terser-webpack-plugin: registry.nlark.com/terser-webpack-plugin/5.2.4_webpack@5.57.1
     transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
       - webpack
+    dev: true
+
+  registry.npmmirror.com/@types/vscode/1.60.0:
+    resolution: {integrity: sha1-kzDDF2kbT1NEGhi1mHaPrutxYYo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/vscode/download/@types/vscode-1.60.0.tgz}
+    name: '@types/vscode'
+    version: 1.60.0
     dev: true
 
   registry.npmmirror.com/@types/webpack-merge/5.0.0:
@@ -4345,8 +4282,6 @@ packages:
       semver: registry.nlark.com/semver/7.3.5
       tsutils: registry.nlark.com/tsutils/3.21.0_typescript@4.4.3
       typescript: registry.npmmirror.com/typescript/4.4.3
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.npmmirror.com/@typescript-eslint/experimental-utils/4.33.0_eslint@7.32.0+typescript@4.4.3:
@@ -4366,7 +4301,6 @@ packages:
       eslint-scope: registry.nlark.com/eslint-scope/5.1.1
       eslint-utils: registry.nlark.com/eslint-utils/3.0.0_eslint@7.32.0
     transitivePeerDependencies:
-      - supports-color
       - typescript
     dev: true
 
@@ -4389,8 +4323,6 @@ packages:
       debug: registry.nlark.com/debug/4.3.2
       eslint: registry.npmmirror.com/eslint/7.32.0
       typescript: registry.npmmirror.com/typescript/4.4.3
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.npmmirror.com/@typescript-eslint/scope-manager/4.33.0:
@@ -4430,8 +4362,6 @@ packages:
       semver: registry.nlark.com/semver/7.3.5
       tsutils: registry.nlark.com/tsutils/3.21.0_typescript@4.4.3
       typescript: registry.npmmirror.com/typescript/4.4.3
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.npmmirror.com/@typescript-eslint/visitor-keys/4.33.0:
@@ -4594,8 +4524,6 @@ packages:
       is-glob: registry.npmmirror.com/is-glob/4.0.3
       resolve: registry.nlark.com/resolve/1.20.0
       tsconfig-paths: registry.nlark.com/tsconfig-paths/3.11.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.npmmirror.com/eslint/7.32.0:
@@ -4645,8 +4573,6 @@ packages:
       table: registry.npmmirror.com/table/6.7.2
       text-table: registry.nlark.com/text-table/0.2.0
       v8-compile-cache: registry.nlark.com/v8-compile-cache/2.3.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.npmmirror.com/find-up/2.1.0:
@@ -4811,7 +4737,7 @@ packages:
       colorette: registry.npmmirror.com/colorette/1.4.0
       commander: registry.nlark.com/commander/8.2.0
       cosmiconfig: registry.nlark.com/cosmiconfig/7.0.1
-      debug: registry.nlark.com/debug/4.3.2_supports-color@8.1.1
+      debug: registry.nlark.com/debug/4.3.2
       enquirer: registry.nlark.com/enquirer/2.3.6
       execa: registry.nlark.com/execa/5.1.1
       listr2: registry.npmmirror.com/listr2/3.12.2_enquirer@2.3.6
@@ -4862,7 +4788,7 @@ packages:
       ansi-colors: registry.nlark.com/ansi-colors/4.1.1
       browser-stdout: registry.nlark.com/browser-stdout/1.3.1
       chokidar: registry.nlark.com/chokidar/3.5.2
-      debug: registry.nlark.com/debug/4.3.2_supports-color@8.1.1
+      debug: registry.nlark.com/debug/4.3.2
       diff: registry.nlark.com/diff/5.0.0
       escape-string-regexp: registry.nlark.com/escape-string-regexp/4.0.0
       find-up: registry.npmmirror.com/find-up/5.0.0
@@ -4903,7 +4829,7 @@ packages:
     dev: true
 
   registry.npmmirror.com/nanoid/3.1.25:
-    resolution: {integrity: sha1-CcoydHwOVD8OGBS303k0d/nI4VI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/nanoid/download/nanoid-3.1.25.tgz?cache=0&sync_timestamp=1632645877124&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fnanoid%2Fdownload%2Fnanoid-3.1.25.tgz}
+    resolution: {integrity: sha1-CcoydHwOVD8OGBS303k0d/nI4VI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/nanoid/download/nanoid-3.1.25.tgz?cache=0&sync_timestamp=1633542097960&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fnanoid%2Fdownload%2Fnanoid-3.1.25.tgz}
     name: nanoid
     version: 3.1.25
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -5008,11 +4934,14 @@ packages:
       find-up: registry.npmmirror.com/find-up/2.1.0
     dev: true
 
-  registry.npmmirror.com/postcss-scss/3.0.5:
-    resolution: {integrity: sha1-vUhPrwWJDkim9eCXrLPRBMx7msc=, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/postcss-scss/download/postcss-scss-3.0.5.tgz}
+  registry.npmmirror.com/postcss-scss/4.0.1_postcss@8.3.9:
+    resolution: {integrity: sha1-b1gn9EV9rDX8xaCz3lZs+zd9sec=, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/postcss-scss/download/postcss-scss-4.0.1.tgz}
+    id: registry.npmmirror.com/postcss-scss/4.0.1
     name: postcss-scss
-    version: 3.0.5
-    engines: {node: '>=10.0'}
+    version: 4.0.1
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      postcss: ^8.3.3
     dependencies:
       postcss: registry.npmmirror.com/postcss/8.3.9
     dev: false
@@ -5174,10 +5103,6 @@ packages:
       terser-webpack-plugin: registry.nlark.com/terser-webpack-plugin/5.2.4_webpack@5.57.1
       watchpack: registry.nlark.com/watchpack/2.2.0
       webpack-sources: registry.nlark.com/webpack-sources/3.2.1
-    transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
     dev: true
 
   registry.npmmirror.com/ws/7.5.5:
