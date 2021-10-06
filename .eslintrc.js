@@ -14,7 +14,6 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:unicorn/recommended',
         'prettier',
-        'prettier/@typescript-eslint',
     ],
     globals: {
         Atomics: 'readonly',
@@ -59,6 +58,8 @@ module.exports = {
         'unicorn/no-null': OFF,
         'unicorn/no-process-exit': OFF,
         'unicorn/no-reduce': OFF,
+        'unicorn/prefer-module': OFF,
+        'unicorn/prefer-node-protocol': OFF,
         'unicorn/prevent-abbreviations': OFF,
 
         'func-names': OFF,
@@ -84,6 +85,6 @@ module.exports = {
             rules: {
                 'import/no-extraneous-dependencies': OFF,
             },
-        },
+        }
     ],
 };

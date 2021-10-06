@@ -1,15 +1,17 @@
+import FriendlyErrorsPlugin from '@nuxtjs/friendly-errors-webpack-plugin';
 import { resolve } from 'path';
 import { Configuration } from 'webpack';
 import WebpackBar from 'webpackbar';
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import FriendlyErrorsPlugin from '@soda/friendly-errors-webpack-plugin';
 
 const projectRoot = resolve(__dirname, '../../');
 const commonWebpackConfig: Configuration = {
     target: 'node',
     entry: resolve(projectRoot, 'src/extension.ts'),
     output: {
-        libraryTarget: 'commonjs2',
+        clean: true,
+        library: {
+            type: 'commonjs2',
+        },
         path: resolve(projectRoot, 'out'),
         filename: 'extension.js',
         devtoolModuleFilenameTemplate: '../[resource-path]',
@@ -36,7 +38,6 @@ const commonWebpackConfig: Configuration = {
             color: '#0066B8',
         }),
         new FriendlyErrorsPlugin(),
-        new CleanWebpackPlugin(),
     ],
 };
 
