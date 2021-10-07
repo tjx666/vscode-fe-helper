@@ -10,6 +10,8 @@
 - remove irregular whitespace
 - transform color format
 - paste JSON as code
+- space god
+- copy with line number
 - copy text without syntax
 
 ## Usage

@@ -6,6 +6,7 @@ typings/
 configs/
 scripts/
 src/
+.husky
 
 # test and output
 .vscode-test/
