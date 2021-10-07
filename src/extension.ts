@@ -1,16 +1,16 @@
 import vscode, { TextEditor, TextEditorEdit } from 'vscode';
 
-import RemoveComments from './removeComments';
-import TransformModule from './transformModuleImports';
-import pluralize from './pluralize';
-import removeIrregularWhitespace from './removeIrregularWhitespace';
-import transformColorFormat from './transformColorFormat';
-import jsonToCode from './jsonToCode';
-
-import { log } from './utils/log';
-import { EXTENSION_ID } from './utils/constants';
-import spaceGod from './spaceGod';
+import copyTextWithoutSyntax from './copyTextWithoutSyntax';
 import copyWithLineNumber from './copyWIthLineNumber';
+import jsonToCode from './jsonToCode';
+import pluralize from './pluralize';
+import RemoveComments from './removeComments';
+import removeIrregularWhitespace from './removeIrregularWhitespace';
+import spaceGod from './spaceGod';
+import transformColorFormat from './transformColorFormat';
+import TransformModule from './transformModuleImports';
+import { EXTENSION_ID } from './utils/constants';
+import { log } from './utils/log';
 
 export function activate(context: vscode.ExtensionContext): void {
     const extension = vscode.extensions.getExtension(EXTENSION_ID);
@@ -58,6 +58,11 @@ export function activate(context: vscode.ExtensionContext): void {
         copyWithLineNumber,
     );
 
+    const copyTextWithoutSyntaxCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.copyTextWithoutSyntax',
+        copyTextWithoutSyntax,
+    );
+
     context.subscriptions.push(
         removeCommentsCmd,
         transformModuleImportsCmd,
@@ -67,6 +72,7 @@ export function activate(context: vscode.ExtensionContext): void {
         jsonToCodeCmd,
         spaceGodCmd,
         copyWithLineNumberCmd,
+        copyTextWithoutSyntaxCmd,
     );
 }
 

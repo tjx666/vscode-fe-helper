@@ -10,6 +10,7 @@
 - remove irregular whitespace
 - transform color format
 - paste JSON as code
+- copy text without syntax
 
 ## Usage
 
@@ -96,3 +97,7 @@ For Chinese users, there should be space between English word, number, and punct
 You can use command: `FE Helper: copy with line number` to copy some content with line number.
 
 ![paste JSON as code](https://github.com/tjx666/vscode-fe-helper/raw/master/images/copy_with_line_number.gif?raw=true)
+
+### copy text without syntax
+
+You can use command: `FE Helper: copy text without syntax` to copy selected text without syntax.

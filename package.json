@@ -67,7 +67,8 @@
         "onCommand:VSCodeFEHelper.transformColorFormat",
         "onCommand:VSCodeFEHelper.jsonToCode",
         "onCommand:VSCodeFEHelper.spaceGod",
-        "onCommand:VSCodeFEHelper.copyWithLineNumber"
+        "onCommand:VSCodeFEHelper.copyWithLineNumber",
+        "onCommand:VSCodeFEHelper.copyTextWithoutSyntax"
     ],
     "contributes": {
         "commands": [
@@ -102,6 +103,10 @@
             {
                 "command": "VSCodeFEHelper.copyWithLineNumber",
                 "title": "FE Helper: copy with line number"
+            },
+            {
+                "command": "VSCodeFEHelper.copyTextWithoutSyntax",
+                "title": "FE Helper: copy text without syntax"
             }
         ]
     },
