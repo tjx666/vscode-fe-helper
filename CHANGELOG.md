@@ -1,5 +1,11 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.0.11] - 2021-10-07
+
+### Added
+
+- copy text without syntax
+
 ## [0.0.10] - 2021-05-01
 
 ### Changed
