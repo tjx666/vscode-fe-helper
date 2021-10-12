@@ -51,6 +51,7 @@ module.exports = {
                     camelCase: true,
                     pascalCase: true,
                 },
+                ignore: ['^ES'],
             },
         ],
         'unicorn/import-style': OFF,
@@ -85,6 +86,6 @@ module.exports = {
             rules: {
                 'import/no-extraneous-dependencies': OFF,
             },
-        }
+        },
     ],
 };

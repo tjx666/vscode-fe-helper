@@ -19,6 +19,7 @@ const commonWebpackConfig: Configuration = {
     resolve: { extensions: ['.ts', '.js'] },
     externals: {
         vscode: 'commonjs vscode',
+        typescript: 'commonjs typescript',
     },
     module: {
         rules: [

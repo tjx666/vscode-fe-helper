@@ -68,7 +68,8 @@
         "onCommand:VSCodeFEHelper.jsonToCode",
         "onCommand:VSCodeFEHelper.spaceGod",
         "onCommand:VSCodeFEHelper.copyWithLineNumber",
-        "onCommand:VSCodeFEHelper.copyTextWithoutSyntax"
+        "onCommand:VSCodeFEHelper.copyTextWithoutSyntax",
+        "onCommand:VSCodeFEHelper.transformESSyntax"
     ],
     "contributes": {
         "commands": [
@@ -107,6 +108,10 @@
             {
                 "command": "VSCodeFEHelper.copyTextWithoutSyntax",
                 "title": "FE Helper: copy text without syntax"
+            },
+            {
+                "command": "VSCodeFEHelper.transformESSyntax",
+                "title": "FE Helper: transform ECMAScript syntax"
             }
         ]
     },
@@ -164,6 +169,7 @@
         "format-imports": "^2.4.1",
         "glob": "^7.2.0",
         "husky": "7.0.2",
+        "lebab": "^3.1.1",
         "lint-staged": "^11.2.0",
         "mocha": "^9.1.2",
         "prettier": "^2.4.1",

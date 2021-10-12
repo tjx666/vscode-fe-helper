@@ -8,9 +8,10 @@ import RemoveComments from './removeComments';
 import removeIrregularWhitespace from './removeIrregularWhitespace';
 import spaceGod from './spaceGod';
 import transformColorFormat from './transformColorFormat';
+import transformESSyntax from './transformESSyntax';
 import TransformModule from './transformModuleImports';
 import { EXTENSION_ID } from './utils/constants';
-import { log } from './utils/log';
+import { log, outputPanelLogger } from './utils/log';
 
 export function activate(context: vscode.ExtensionContext): void {
     const extension = vscode.extensions.getExtension(EXTENSION_ID);
@@ -63,6 +64,11 @@ export function activate(context: vscode.ExtensionContext): void {
         copyTextWithoutSyntax,
     );
 
+    const transformESSyntaxCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.transformESSyntax',
+        transformESSyntax,
+    );
+
     context.subscriptions.push(
         removeCommentsCmd,
         transformModuleImportsCmd,
@@ -73,9 +79,10 @@ export function activate(context: vscode.ExtensionContext): void {
         spaceGodCmd,
         copyWithLineNumberCmd,
         copyTextWithoutSyntaxCmd,
+        transformESSyntaxCmd,
     );
 }
 
 export function deactivate(): void {
-    // recycle resource...
+    outputPanelLogger.dispose();
 }
