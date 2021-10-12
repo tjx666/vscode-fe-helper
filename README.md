@@ -13,6 +13,7 @@
 - space god
 - copy with line number
 - copy text without syntax
+- transform ECMAScript syntax
 
 ## Usage
 
@@ -103,3 +104,13 @@ You can use command: `FE Helper: copy with line number` to copy some content wit
 ### copy text without syntax
 
 You can use command: `FE Helper: copy text without syntax` to copy selected text without syntax.
+
+### transform ECMAScript syntax
+
+You can use command: `FE Helper: transform ECMAScript syntax` to transform ECMAScript syntax.
+
+For now, supports:
+
+- ES5 to ES6/ES7
+- Using tsc compile code to ES5
+- Using tsc compile code to ES3

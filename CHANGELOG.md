@@ -1,5 +1,11 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.1.2] - 2021-10-13
+
+### Added
+
+- transform ECMAScript syntax
+
 ## [0.1.1] - 2021-10-07
 
 ### Added
