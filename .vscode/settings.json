@@ -33,5 +33,5 @@
     "[yaml]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "cSpell.words": ["lebab"]
+    "cSpell.words": ["lebab", "pangu"]
 }

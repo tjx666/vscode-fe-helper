@@ -25,7 +25,7 @@ export default function ES5ToES6(source: string): TransformResult {
         'let',
         'class',
         'commonjs',
-        'templet',
+        'template',
         'default-param',
         'destruct-param',
         'includes',
