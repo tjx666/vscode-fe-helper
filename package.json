@@ -146,7 +146,7 @@
         "recast": "^0.20.5"
     },
     "devDependencies": {
-        "@nuxtjs/friendly-errors-webpack-plugin": "^2.1.0",
+        "@nuxt/friendly-errors-webpack-plugin": "^2.5.1",
         "@types/color": "^3.0.2",
         "@types/glob": "^7.1.4",
         "@types/mocha": "^9.0.0",

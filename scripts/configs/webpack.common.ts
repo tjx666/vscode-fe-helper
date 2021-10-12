@@ -1,4 +1,4 @@
-import FriendlyErrorsPlugin from '@nuxtjs/friendly-errors-webpack-plugin';
+import FriendlyErrorsPlugin from '@nuxt/friendly-errors-webpack-plugin';
 import { resolve } from 'path';
 import { Configuration } from 'webpack';
 import WebpackBar from 'webpackbar';
