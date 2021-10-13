@@ -1,5 +1,11 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.1.4] - 2021-10-15
+
+### Fixed
+
+- can not require typescript error
+
 ## [0.1.3] - 2021-10-14
 
 ### Fixed
