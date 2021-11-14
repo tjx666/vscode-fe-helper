@@ -114,3 +114,10 @@ For now, supports:
 - ES5 to ES6/ES7
 - Using tsc compile code to ES5
 - Using tsc compile code to ES3
+
+## TODO
+
+- convert between codePoint and str
+- translate
+- git notify
+- Open Folder Context Menus

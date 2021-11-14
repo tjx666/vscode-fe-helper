@@ -1,10 +1,10 @@
+import { runTests } from '@vscode/test-electron';
 import { resolve } from 'path';
-import { runTests } from 'vscode-test';
 
 (async function go() {
     const projectPath = resolve(__dirname, '../../');
     const extensionDevelopmentPath = projectPath;
-    const extensionTestsPath = resolve(projectPath, './out/test/index.js');
+    const extensionTestsPath = resolve(projectPath, './dist/test/index.js');
     const testWorkspace = resolve(projectPath, './test-fixture');
 
     try {
@@ -14,7 +14,8 @@ import { runTests } from 'vscode-test';
             extensionTestsPath,
             launchArgs: [testWorkspace],
         });
-    } catch {
+    } catch (error) {
+        console.error(error);
         console.error('Failed to run tests');
         process.exit(1);
     }

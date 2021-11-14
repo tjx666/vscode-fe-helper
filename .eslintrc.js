@@ -70,6 +70,7 @@ module.exports = {
         'no-console': OFF,
         'no-param-reassign': OFF,
         'no-plusplus': OFF,
+        'no-restricted-syntax': OFF,
         'no-underscore-dangle': OFF,
         'no-unused-expressions': OFF,
         'no-useless-constructor': OFF,

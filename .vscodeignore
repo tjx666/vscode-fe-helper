@@ -19,6 +19,7 @@ coverage/
 .vscodeignore
 tsconfig.json
 tsconfig.test.json
+tsconfig.base.json
 .nvmrc
 .editorconfig
 .eslintrc.js

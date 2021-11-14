@@ -3,8 +3,8 @@ import TerserPlugin from 'terser-webpack-plugin';
 import { BannerPlugin, Configuration } from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
-import yargs from 'yargs';
 
+import args from './args';
 import commonWebpackConfig from './webpack.common';
 
 const mergedConfiguration: Configuration = merge(commonWebpackConfig, {
@@ -28,14 +28,8 @@ const mergedConfiguration: Configuration = merge(commonWebpackConfig, {
 
 // eslint-disable-next-line import/no-mutable-exports
 let prodWebpackConfiguration = mergedConfiguration;
-const argv = yargs(process.argv.slice(2))
-    .options({
-        analyze: { type: 'boolean', default: false },
-    })
-    .parseSync();
-
-if (argv.analyze) {
-    mergedConfiguration.plugins!.push(new BundleAnalyzerPlugin());
+if (args.analyze) {
+    mergedConfiguration.plugins!.push(new BundleAnalyzerPlugin() as any);
     const smp = new SpeedMeasurePlugin();
     prodWebpackConfiguration = smp.wrap(mergedConfiguration);
 }
