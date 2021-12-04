@@ -1,5 +1,11 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.1.5] - 2021-12-4
+
+### Changed
+
+- upgrade dependencies
+
 ## [0.1.4] - 2021-10-15
 
 ### Fixed
