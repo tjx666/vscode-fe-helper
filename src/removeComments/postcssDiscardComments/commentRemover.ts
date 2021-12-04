@@ -4,7 +4,7 @@ class CommentRemover {
     constructor(private options: Record<string, any>) {}
 
     canRemove(comment: string): boolean {
-        const { remove } = this.options;
+        const { remove, removeAll, removeAllButFirst } = this.options;
 
         if (remove) {
             return remove(comment);
@@ -16,11 +16,11 @@ class CommentRemover {
             return true;
         }
 
-        if (this.options.removeAll || this._hasFirst) {
+        if (removeAll || this._hasFirst) {
             return true;
         }
 
-        if (this.options.removeAllButFirst && !this._hasFirst) {
+        if (removeAllButFirst && !this._hasFirst) {
             this._hasFirst = true;
             return false;
         }

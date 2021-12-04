@@ -1,4 +1,3 @@
-import SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import { BannerPlugin, Configuration } from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
@@ -7,7 +6,7 @@ import { merge } from 'webpack-merge';
 import args from './args';
 import commonWebpackConfig from './webpack.common';
 
-const mergedConfiguration: Configuration = merge(commonWebpackConfig, {
+const prodWebpackConfiguration: Configuration = merge(commonWebpackConfig, {
     mode: 'production',
     plugins: [
         new BannerPlugin({
@@ -26,12 +25,8 @@ const mergedConfiguration: Configuration = merge(commonWebpackConfig, {
     },
 });
 
-// eslint-disable-next-line import/no-mutable-exports
-let prodWebpackConfiguration = mergedConfiguration;
 if (args.analyze) {
-    mergedConfiguration.plugins!.push(new BundleAnalyzerPlugin() as any);
-    const smp = new SpeedMeasurePlugin();
-    prodWebpackConfiguration = smp.wrap(mergedConfiguration);
+    prodWebpackConfiguration.plugins!.push(new BundleAnalyzerPlugin() as any);
 }
 
 export default prodWebpackConfiguration;

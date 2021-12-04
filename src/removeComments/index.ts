@@ -1,16 +1,16 @@
-/* eslint-disable unicorn/better-regex, prefer-template */
-import vscode, { TextEditor, TextEditorEdit, TextDocument, Range } from 'vscode';
-import * as recast from 'recast';
 import { ASTNode } from 'ast-types';
-import postcss, { Result as PostcssProcessResult } from 'postcss';
-import scssSyntax from 'postcss-scss';
-import lessSyntax from 'postcss-less';
 import * as jsonc from 'jsonc-parser';
+import postcss, { Result as PostcssProcessResult } from 'postcss';
+import lessSyntax from 'postcss-less';
+import scssSyntax from 'postcss-scss';
+import * as recast from 'recast';
+/* eslint-disable unicorn/better-regex, prefer-template */
+import vscode, { Range, TextDocument, TextEditor, TextEditorEdit } from 'vscode';
 
 import { parseSourceToAst } from '../utils/ast';
-import postcssDiscardComments from './postcssDiscardComments';
-import { replaceAllTextOfEditor } from '../utils/editor';
 import { ID_LANG_MAPPER } from '../utils/constants';
+import { replaceAllTextOfEditor } from '../utils/editor';
+import postcssDiscardComments from './postcssDiscardComments';
 
 export default class RemoveComments {
     private static readonly supportedMarkLangs = new Set(['html', 'xml', 'markdown']);
@@ -49,6 +49,7 @@ export default class RemoveComments {
             this.removeStyleComments();
         } else if (RemoveComments.supportedScriptLangs.has(languageId)) {
             this.removeScriptComments();
+            // eslint-disable-next-line unicorn/prefer-switch
         } else if (languageId === 'jsonc') {
             this.removeJSONCComments();
         } else if (languageId === 'vue') {

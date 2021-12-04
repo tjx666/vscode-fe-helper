@@ -1,7 +1,7 @@
-import { list, PluginCreator, Plugin, Root } from 'postcss';
+import { list, Plugin, PluginCreator, Root } from 'postcss';
 
-import CommentRemover from './commentRemover';
 import commentParser from './commentParser';
+import CommentRemover from './commentRemover';
 
 const { space } = list;
 
@@ -30,6 +30,7 @@ const discardCommentsPlugin: PluginCreator<Record<string, any>> = (opts = {}): P
             return replacerCache[key];
         }
 
+        // eslint-disable-next-line unicorn/no-array-reduce
         const parsed = commentParser(source).reduce((value, [type, start, end]) => {
             const contents = source.slice(start, end);
 
@@ -67,11 +68,10 @@ const discardCommentsPlugin: PluginCreator<Record<string, any>> = (opts = {}): P
 
                 if (node.type === 'decl') {
                     if (node.raws.value && node.raws.value.raw) {
-                        if (node.raws.value.value === node.value) {
-                            node.value = replaceComments(node.raws.value.raw);
-                        } else {
-                            node.value = replaceComments(node.value);
-                        }
+                        node.value =
+                            node.raws.value.value === node.value
+                                ? replaceComments(node.raws.value.raw)
+                                : replaceComments(node.value);
 
                         node.raws.value = null;
                     }
@@ -98,11 +98,10 @@ const discardCommentsPlugin: PluginCreator<Record<string, any>> = (opts = {}): P
                     if (node.raws.afterName) {
                         const commentsReplaced = replaceComments(node.raws.afterName);
 
-                        if (commentsReplaced.length === 0) {
-                            node.raws.afterName = `${commentsReplaced} `;
-                        } else {
-                            node.raws.afterName = ` ${commentsReplaced} `;
-                        }
+                        node.raws.afterName =
+                            commentsReplaced.length === 0
+                                ? `${commentsReplaced} `
+                                : ` ${commentsReplaced} `;
                     }
 
                     if (node.raws.params && node.raws.params.raw) {

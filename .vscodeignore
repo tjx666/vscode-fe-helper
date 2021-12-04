@@ -28,6 +28,3 @@ tsconfig.base.json
 yarn.lock
 pnpm-lock.yaml
 
-node_modules/
-!node_modules/typescript
-node_modules/typescript/**/*.d.ts

@@ -1,6 +1,6 @@
-import { Range, TextEditor, TextDocument } from 'vscode';
-import * as recast from 'recast';
 import { ASTNode } from 'ast-types';
+import * as recast from 'recast';
+import { Range, TextDocument, TextEditor } from 'vscode';
 
 export default class CjsToESMTransformer {
     private readonly editor: TextEditor;
@@ -19,7 +19,7 @@ export default class CjsToESMTransformer {
             recast.visit(ast, {
                 visitCallExpression(callExpPath) {
                     const callExpNode = callExpPath.node as any;
-                    const { arguments: args } = callExpNode;
+                    const { arguments: args, start, end } = callExpNode;
                     // require('packageX') or template string without variable: require(`packageX`)
                     const isImportCallExp =
                         args.length === 1 &&
@@ -39,8 +39,8 @@ export default class CjsToESMTransformer {
                         callExpPath.parentPath.parentPath.node.type === 'Program';
                     if (isPureRequireInGlobal) {
                         const range = new Range(
-                            document.positionAt(callExpNode.start),
-                            document.positionAt(callExpNode.end),
+                            document.positionAt(start),
+                            document.positionAt(end),
                         );
                         const semicolon =
                             (ast as any).tokens[parentNode.loc.end.token - 1].value === ';'

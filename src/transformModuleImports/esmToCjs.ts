@@ -1,6 +1,6 @@
-import { Range, TextEditor, TextDocument } from 'vscode';
-import * as recast from 'recast';
 import { ASTNode } from 'ast-types';
+import * as recast from 'recast';
+import { Range, TextDocument, TextEditor } from 'vscode';
 
 export default class EsmToCjsTransformer {
     private readonly editor: TextEditor;
@@ -36,6 +36,7 @@ export default class EsmToCjsTransformer {
                         // import 'packageX' -> require('packageX')
                         editBuilder.replace(importDeclRange, `require(${pkgName})${semicolon}`);
                     } else if (specifiers.length === 1) {
+                        // eslint-disable-next-line unicorn/consistent-destructuring
                         const onlySpecifier = importDeclNode.specifiers[0];
                         const localName = onlySpecifier.local.name;
                         const { type } = onlySpecifier;

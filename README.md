@@ -79,7 +79,7 @@ supported formats:
 
 ![transform color format](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_color_format.gif?raw=true)
 
-### paste JSON as code
+### paste JSON as Object
 
 You can copy JSON content, and paste as JavaScript code. The principle behind this functionality is very simple:
 
@@ -93,13 +93,13 @@ const jsCode = jsonFromClipboard.replace(/"([^"]*)"\s*:/gm, '$1:');
 
 For Chinese users, there should be space between English word, number, and punctuation. It's very convenient to add space between them by command `FE Helper: spaceGod`。
 
-![paste JSON as code](https://github.com/tjx666/vscode-fe-helper/raw/master/images/space_god.gif?raw=true)
+![space god](https://github.com/tjx666/vscode-fe-helper/raw/master/images/space_god.gif?raw=true)
 
 ### copy with line number
 
 You can use command: `FE Helper: copy with line number` to copy some content with line number.
 
-![paste JSON as code](https://github.com/tjx666/vscode-fe-helper/raw/master/images/copy_with_line_number.gif?raw=true)
+![copy with line number](https://github.com/tjx666/vscode-fe-helper/raw/master/images/copy_with_line_number.gif?raw=true)
 
 ### copy text without syntax
 

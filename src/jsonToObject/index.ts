@@ -1,6 +1,6 @@
 import vscode, { TextEditor } from 'vscode';
 
-export default async function plur(editor: TextEditor): Promise<void> {
+export default async function jsonToObject(editor: TextEditor): Promise<void> {
     const json = await vscode.env.clipboard.readText();
     const jsCode = json.replace(/"([^"]*)"\s*:/gm, '$1:');
     editor.edit((builder) => {

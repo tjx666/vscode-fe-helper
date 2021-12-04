@@ -2,7 +2,7 @@ import vscode, { TextEditor, TextEditorEdit } from 'vscode';
 
 import copyTextWithoutSyntax from './copyTextWithoutSyntax';
 import copyWithLineNumber from './copyWIthLineNumber';
-import jsonToCode from './jsonToCode';
+import jsonToObject from './jsonToObject';
 import pluralize from './pluralize';
 import RemoveComments from './removeComments';
 import removeIrregularWhitespace from './removeIrregularWhitespace';
@@ -44,9 +44,9 @@ export function activate(context: vscode.ExtensionContext): void {
         transformColorFormat,
     );
 
-    const jsonToCodeCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.jsonToCode',
-        jsonToCode,
+    const jsonToObjectCmd = vscode.commands.registerTextEditorCommand(
+        'VSCodeFEHelper.jsonToObject',
+        jsonToObject,
     );
 
     const spaceGodCmd = vscode.commands.registerTextEditorCommand(
@@ -75,7 +75,7 @@ export function activate(context: vscode.ExtensionContext): void {
         pluralizeCmd,
         removeIrregularWhitespaceCmd,
         transformColorFormatCmd,
-        jsonToCodeCmd,
+        jsonToObjectCmd,
         spaceGodCmd,
         copyWithLineNumberCmd,
         copyTextWithoutSyntaxCmd,
