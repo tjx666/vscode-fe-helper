@@ -119,22 +119,15 @@ For now, supports:
 
 Some of them may be implemented as a standalone extension.
 
-- convert between codePoint and str
-- translate
-- git pr notify
-- Open Folder Context Menus
-- regexp preview
-- JSON to types
-- color highlight
-- file info, mp3, mp4 etc
-- highlight text
-- regexp preview
-- path-autocomplete support ignore file
-- comment auto complete
-- command plate: toggle bracket color guide line
-- zip/unzip, vsix
-- directory tree
-- apng preview like gif preview
-- font preview supports checking font info like assent/descent
-- command plate: open extension folder
-- command plate: open node_modules folder
+- [ ] convert between codePoint and str
+- [ ] translate
+- [ ] regexp preview
+- [ ] JSON to types
+- [ ] color highlight
+- [ ] file info, mp3, mp4 etc
+- [ ] highlight text
+- [ ] regexp preview
+- [ ] directory tree
+- [ ] apng preview like gif preview
+- [ ] font preview supports checking font info like assent/descent
+- [ ] command plate: open extension folder

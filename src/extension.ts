@@ -1,15 +1,12 @@
 import vscode, { TextEditor, TextEditorEdit } from 'vscode';
 
 import copyTextWithoutSyntax from './copyTextWithoutSyntax';
-import copyWithLineNumber from './copyWIthLineNumber';
+import copyWithLineNumber from './copyWithLineNumber';
 import jsonToObject from './jsonToObject';
 import pluralize from './pluralize';
-import RemoveComments from './removeComments';
 import removeIrregularWhitespace from './removeIrregularWhitespace';
 import spaceGod from './spaceGod';
 import transformColorFormat from './transformColorFormat';
-import transformESSyntax from './transformESSyntax';
-import TransformModule from './transformModuleImports';
 import { EXTENSION_ID } from './utils/constants';
 import { log, outputPanelLogger } from './utils/log';
 
@@ -18,16 +15,33 @@ export function activate(context: vscode.ExtensionContext): void {
     const version = extension?.packageJSON?.version ?? '-';
     log(`${EXTENSION_ID}(V.${version}) now active! : ${context.extensionPath}`);
 
-    const removeCommentsCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.removeComments',
-        (textEditor: TextEditor, editBuilder: TextEditorEdit) =>
-            new RemoveComments(textEditor, editBuilder).handle(),
-    );
+    import('./removeComments').then(({ default: RemoveComments }) => {
+        context.subscriptions.push(
+            vscode.commands.registerTextEditorCommand(
+                'VSCodeFEHelper.removeComments',
+                (textEditor: TextEditor, editBuilder: TextEditorEdit) =>
+                    new RemoveComments(textEditor, editBuilder).handle(),
+            ),
+        );
+    });
 
-    const transformModuleImportsCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.transformModuleImports',
-        (textEditor: TextEditor) => new TransformModule(textEditor).handle(),
-    );
+    import('./transformESSyntax').then(({ default: transformESSyntax }) => {
+        context.subscriptions.push(
+            vscode.commands.registerTextEditorCommand(
+                'VSCodeFEHelper.transformESSyntax',
+                transformESSyntax,
+            ),
+        );
+    });
+
+    import('./transformModuleImports').then(({ default: TransformModule }) => {
+        context.subscriptions.push(
+            vscode.commands.registerTextEditorCommand(
+                'VSCodeFEHelper.transformModuleImports',
+                (textEditor: TextEditor) => new TransformModule(textEditor).handle(),
+            ),
+        );
+    });
 
     const pluralizeCmd = vscode.commands.registerTextEditorCommand(
         'VSCodeFEHelper.pluralize',
@@ -64,14 +78,7 @@ export function activate(context: vscode.ExtensionContext): void {
         copyTextWithoutSyntax,
     );
 
-    const transformESSyntaxCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.transformESSyntax',
-        transformESSyntax,
-    );
-
     context.subscriptions.push(
-        removeCommentsCmd,
-        transformModuleImportsCmd,
         pluralizeCmd,
         removeIrregularWhitespaceCmd,
         transformColorFormatCmd,
@@ -79,7 +86,6 @@ export function activate(context: vscode.ExtensionContext): void {
         spaceGodCmd,
         copyWithLineNumberCmd,
         copyTextWithoutSyntaxCmd,
-        transformESSyntaxCmd,
     );
 }
 

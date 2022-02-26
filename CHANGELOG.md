@@ -1,5 +1,12 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.2.0] - 2022-02-27
+
+### Changed
+
+- upgrade dependencies
+- optimize startup speed
+
 ## [0.1.5] - 2021-12-4
 
 ### Changed
