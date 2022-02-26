@@ -2,11 +2,10 @@
  * reference: {@link https://github.com/mrmlnc/vscode-lebab/blob/master/src/extension.ts}
  */
 
-import { transform } from 'lebab';
-
 import { TransformResult } from './type';
 
-export default function ES5ToES6(source: string): TransformResult {
+export default async function ES5ToES6(source: string): Promise<TransformResult> {
+    const { transform } = await import('lebab');
     const transformers = [
         // safe
         'arrow',

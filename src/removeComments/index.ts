@@ -108,12 +108,12 @@ export default class RemoveComments {
         );
     }
 
-    private removeScriptComments(): void {
+    private async removeScriptComments(): Promise<void> {
         const { editBuilder, document, source, languageId } = this;
 
         let ast: ASTNode;
         try {
-            ast = parseSourceToAst(source);
+            ast = await parseSourceToAst(source);
         } catch (error) {
             console.error(error);
             vscode.window.showErrorMessage(
@@ -171,7 +171,7 @@ export default class RemoveComments {
             const scriptString = scriptMatch[1];
             let ast: ASTNode;
             try {
-                ast = parseSourceToAst(scriptString);
+                ast = await parseSourceToAst(scriptString);
             } catch (error) {
                 console.error(error);
                 vscode.window.showErrorMessage(`Your script code exists syntax error!`);

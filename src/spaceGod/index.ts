@@ -1,11 +1,13 @@
-import pangu from 'pangu';
-import { TextEditor, TextEditorEdit } from 'vscode';
+import { TextEditor } from 'vscode';
 
-export default function spaceGod(editor: TextEditor, editBuilder: TextEditorEdit): void {
-    const { document, selections } = editor;
-    for (const selection of selections) {
-        const word = document.getText(selection);
-        const spaced = pangu.spacing(word);
-        editBuilder.replace(selection, spaced);
-    }
+export default async function spaceGod(editor: TextEditor): Promise<void> {
+    const { default: pangu } = await import('pangu');
+    editor.edit((editBuilder) => {
+        const { document, selections } = editor;
+        for (const selection of selections) {
+            const word = document.getText(selection);
+            const spaced = pangu.spacing(word);
+            editBuilder.replace(selection, spaced);
+        }
+    });
 }

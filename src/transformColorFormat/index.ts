@@ -1,7 +1,7 @@
 import vscode, { TextEditor } from 'vscode';
-import Color from 'color';
 
 export default async function transformColorFormat(editor: TextEditor): Promise<void> {
+    const { default: Color } = await import('color');
     const { document, selection } = editor;
     const transformers = {
         'transform to hex': (colorStr: string) => Color(colorStr).hex(),
