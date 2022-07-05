@@ -1,5 +1,12 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.2.1] - 2022-07-06
+
+## Fixed
+
+- remove comments doesn't work
+- upgrade dependencies
+
 ## [0.2.0] - 2022-02-27
 
 ### Changed
