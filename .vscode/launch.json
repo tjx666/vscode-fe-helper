@@ -11,6 +11,14 @@
             "request": "launch",
             "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
             "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+            "skipFiles": [
+                "<node_internals>/**",
+                "**/node_modules/**",
+                "**/resources/app/out/vs/**",
+                "**/Contents/Resources/app/out/vs/**",
+                "**/.vscode-insiders/extensions/**",
+                "**/.vscode/extensions/**"
+            ],
             "preLaunchTask": "${defaultBuildTask}"
         },
         {

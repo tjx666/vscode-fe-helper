@@ -1,5 +1,5 @@
 export async function parseSourceToAst(source: string): Promise<any> {
-    const { default: recast } = await import('recast');
+    const recast = await import('recast');
     const { parse: babelParse } = await import('@babel/parser');
 
     return recast.parse(source, {

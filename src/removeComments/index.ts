@@ -5,7 +5,12 @@ import lessSyntax from 'postcss-less';
 import scssSyntax from 'postcss-scss';
 import * as recast from 'recast';
 /* eslint-disable unicorn/better-regex, prefer-template */
-import vscode, { Range, TextDocument, TextEditor, TextEditorEdit } from 'vscode';
+import vscode, {
+    Range,
+    TextDocument,
+    TextEditor,
+    TextEditorEdit,
+} from 'vscode';
 
 import { parseSourceToAst } from '../utils/ast';
 import { ID_LANG_MAPPER } from '../utils/constants';
@@ -100,6 +105,25 @@ export default class RemoveComments {
         return result.content;
     }
 
+    private static async getCommentsRemovedScriptCode(source: string) {
+        let ast: ASTNode;
+        try {
+            ast = await parseSourceToAst(source);
+        } catch (error) {
+            console.error(error);
+            vscode.window.showErrorMessage(`Your script code exists syntax error!`);
+            return '';
+        }
+        recast.visit(ast, {
+            visitComment(path) {
+                path.prune();
+                return false;
+            },
+        });
+
+        return recast.print(ast).code;
+    }
+
     private async removeStyleComments(): Promise<void> {
         const { editor, source, languageId } = this;
         await replaceAllTextOfEditor(
@@ -109,25 +133,11 @@ export default class RemoveComments {
     }
 
     private async removeScriptComments(): Promise<void> {
-        const { editBuilder, document, source, languageId } = this;
-
-        let ast: ASTNode;
-        try {
-            ast = await parseSourceToAst(source);
-        } catch (error) {
-            console.error(error);
-            vscode.window.showErrorMessage(
-                `Your ${ID_LANG_MAPPER.get(languageId)} code exists syntax error!`,
-            );
-            return;
-        }
-        recast.visit(ast, {
-            visitComment(path) {
-                const { start, end } = path.value;
-                editBuilder.delete(new Range(document.positionAt(start), document.positionAt(end)));
-                return false;
-            },
-        });
+        const { editor, document } = this;
+        await replaceAllTextOfEditor(
+            editor,
+            await RemoveComments.getCommentsRemovedScriptCode(document.getText()),
+        );
     }
 
     private async removeJSONCComments(): Promise<void> {
@@ -169,23 +179,9 @@ export default class RemoveComments {
         const scriptMatch = source.match(scriptRE);
         if (scriptMatch && scriptMatch.index != null) {
             const scriptString = scriptMatch[1];
-            let ast: ASTNode;
-            try {
-                ast = await parseSourceToAst(scriptString);
-            } catch (error) {
-                console.error(error);
-                vscode.window.showErrorMessage(`Your script code exists syntax error!`);
-                return;
-            }
-            recast.visit(ast, {
-                visitComment(path) {
-                    path.prune();
-                    return false;
-                },
-            });
             source =
                 source.slice(0, scriptMatch.index) +
-                `<script>${recast.print(ast).code}</script>` +
+                `<script>${RemoveComments.getCommentsRemovedScriptCode(scriptString)}</script>` +
                 source.slice(scriptMatch.index + scriptMatch[0].length);
         }
 
