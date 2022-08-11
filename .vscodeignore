@@ -28,3 +28,6 @@ tsconfig.base.json
 yarn.lock
 pnpm-lock.yaml
 
+images
+!images/logo.png
+

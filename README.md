@@ -6,6 +6,7 @@
 
 - remove comments
 - transform module imports
+- transform ECMAScript syntax
 - pluralize word
 - remove irregular whitespace
 - transform color format
@@ -13,7 +14,7 @@
 - space god
 - copy with line number
 - copy text without syntax
-- transform ECMAScript syntax
+- smart copy
 
 ## Usage
 
@@ -46,6 +47,16 @@ command: `transform module imports`
 This feature allow you to convert between `commonjs` and `esm`.
 
 ![transform module imports](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_module_imports.gif?raw=true)
+
+### transform ECMAScript syntax
+
+You can use command: `FE Helper: transform ECMAScript syntax` to transform ECMAScript syntax.
+
+For now, supports:
+
+- ES5 to ES6/ES7
+- Using tsc compile code to ES5
+- Using tsc compile code to ES3
 
 ### pluralize word
 
@@ -105,15 +116,12 @@ You can use command: `FE Helper: copy with line number` to copy some content wit
 
 You can use command: `FE Helper: copy text without syntax` to copy selected text without syntax.
 
-### transform ECMAScript syntax
+### smart copy
 
-You can use command: `FE Helper: transform ECMAScript syntax` to transform ECMAScript syntax.
+with command `FE Helper: Smart Copy`, you can:
 
-For now, supports:
-
-- ES5 to ES6/ES7
-- Using tsc compile code to ES5
-- Using tsc compile code to ES3
+- copy without syntax
+- auto correct indent because some external editor can't deal with indent of paste code correctly
 
 ## TODO
 

@@ -4,6 +4,21 @@
 
 ## Fixed
 
+- module transform doesn't work
+
+## Changed
+
+- optimize startup speed
+- tsCompile will prefer to use local installed typescript
+
+## Added
+
+- smart copy
+
+## [0.2.1] - 2022-07-06
+
+## Fixed
+
 - remove comments doesn't work
 - upgrade dependencies
 
