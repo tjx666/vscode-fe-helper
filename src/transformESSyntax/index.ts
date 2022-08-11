@@ -1,3 +1,4 @@
+import { dirname } from 'path';
 import type TS from 'typescript';
 import vscode, { TextEditor } from 'vscode';
 
@@ -27,7 +28,7 @@ export default async function transformESSyntax(editor: TextEditor): Promise<voi
         let result: TransformResult | undefined;
         try {
             result = pickedTransform.startsWith('Using tsc')
-                ? await tscCompile(source, target!)
+                ? await tscCompile(source, target!, dirname(document.uri.fsPath))
                 : await ES5ToES6(source);
         } catch (error) {
             console.error(error);
