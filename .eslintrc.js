@@ -68,6 +68,7 @@ module.exports = {
         'no-bitwise': OFF,
         'no-cond-assign': OFF,
         'no-console': OFF,
+        'no-continue': OFF,
         'no-param-reassign': OFF,
         'no-plusplus': OFF,
         'no-restricted-syntax': OFF,

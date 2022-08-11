@@ -8,6 +8,7 @@ import copyWithLineNumber from './copyWithLineNumber';
 import jsonToObject from './jsonToObject';
 import pluralize from './pluralize';
 import removeIrregularWhitespace from './removeIrregularWhitespace';
+import smartCopy from './smartCopy';
 import spaceGod from './spaceGod';
 import transformColorFormat from './transformColorFormat';
 import { EXTENSION_ID } from './utils/constants';
@@ -43,51 +44,26 @@ export function activate(context: vscode.ExtensionContext): void {
                     new TransformModule(textEditor).handle(),
                 ),
         ),
-    );
-
-    const pluralizeCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.pluralize',
-        pluralize,
-    );
-
-    const removeIrregularWhitespaceCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.removeIrregularWhitespace',
-        removeIrregularWhitespace,
-    );
-
-    const transformColorFormatCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.transformColorFormat',
-        transformColorFormat,
-    );
-
-    const jsonToObjectCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.jsonToObject',
-        jsonToObject,
-    );
-
-    const spaceGodCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.spaceGod',
-        spaceGod,
-    );
-
-    const copyWithLineNumberCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.copyWithLineNumber',
-        copyWithLineNumber,
-    );
-
-    const copyTextWithoutSyntaxCmd = vscode.commands.registerTextEditorCommand(
-        'VSCodeFEHelper.copyTextWithoutSyntax',
-        copyTextWithoutSyntax,
-    );
-
-    context.subscriptions.push(
-        pluralizeCmd,
-        removeIrregularWhitespaceCmd,
-        transformColorFormatCmd,
-        jsonToObjectCmd,
-        spaceGodCmd,
-        copyWithLineNumberCmd,
-        copyTextWithoutSyntaxCmd,
+        vscode.commands.registerTextEditorCommand('VSCodeFEHelper.pluralize', pluralize),
+        vscode.commands.registerTextEditorCommand(
+            'VSCodeFEHelper.removeIrregularWhitespace',
+            removeIrregularWhitespace,
+        ),
+        vscode.commands.registerTextEditorCommand(
+            'VSCodeFEHelper.transformColorFormat',
+            transformColorFormat,
+        ),
+        vscode.commands.registerTextEditorCommand('VSCodeFEHelper.jsonToObject', jsonToObject),
+        vscode.commands.registerTextEditorCommand('VSCodeFEHelper.spaceGod', spaceGod),
+        vscode.commands.registerTextEditorCommand(
+            'VSCodeFEHelper.copyWithLineNumber',
+            copyWithLineNumber,
+        ),
+        vscode.commands.registerTextEditorCommand(
+            'VSCodeFEHelper.copyTextWithoutSyntax',
+            copyTextWithoutSyntax,
+        ),
+        vscode.commands.registerTextEditorCommand('VSCodeFEHelper.smartCopy', smartCopy),
     );
 }
 

@@ -69,6 +69,7 @@
     "activationEvents": [
         "onCommand:VSCodeFEHelper.removeComments",
         "onCommand:VSCodeFEHelper.transformModuleImports",
+        "onCommand:VSCodeFEHelper.transformESSyntax",
         "onCommand:VSCodeFEHelper.pluralize",
         "onCommand:VSCodeFEHelper.removeIrregularWhitespace",
         "onCommand:VSCodeFEHelper.transformColorFormat",
@@ -76,7 +77,7 @@
         "onCommand:VSCodeFEHelper.spaceGod",
         "onCommand:VSCodeFEHelper.copyWithLineNumber",
         "onCommand:VSCodeFEHelper.copyTextWithoutSyntax",
-        "onCommand:VSCodeFEHelper.transformESSyntax"
+        "onCommand:VSCodeFEHelper.smartCopy"
     ],
     "contributes": {
         "commands": [
@@ -87,6 +88,10 @@
             {
                 "command": "VSCodeFEHelper.transformModuleImports",
                 "title": "FE Helper: transform module imports"
+            },
+            {
+                "command": "VSCodeFEHelper.transformESSyntax",
+                "title": "FE Helper: transform ECMAScript syntax"
             },
             {
                 "command": "VSCodeFEHelper.pluralize",
@@ -117,8 +122,8 @@
                 "title": "FE Helper: copy text without syntax"
             },
             {
-                "command": "VSCodeFEHelper.transformESSyntax",
-                "title": "FE Helper: transform ECMAScript syntax"
+                "command": "VSCodeFEHelper.smartCopy",
+                "title": "FE Helper: Smart Copy"
             }
         ]
     },
