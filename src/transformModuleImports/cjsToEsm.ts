@@ -1,5 +1,9 @@
 import type { ASTNode } from 'ast-types';
-import { Range, TextDocument, TextEditor } from 'vscode';
+import {
+    Range,
+    TextDocument,
+    TextEditor,
+} from 'vscode';
 
 export default class CjsToESMTransformer {
     private readonly editor: TextEditor;
@@ -13,7 +17,7 @@ export default class CjsToESMTransformer {
     }
 
     public async transform(): Promise<void> {
-        const { default: recast } = await import('recast');
+        const recast = await import('recast');
         const { editor, document, ast } = this;
         editor.edit((editBuilder) => {
             recast.visit(ast, {
