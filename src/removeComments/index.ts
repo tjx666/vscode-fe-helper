@@ -1,10 +1,10 @@
+/* eslint-disable unicorn/better-regex, prefer-template */
 import { ASTNode } from 'ast-types';
 import * as jsonc from 'jsonc-parser';
 import postcss, { Result as PostcssProcessResult } from 'postcss';
 import lessSyntax from 'postcss-less';
 import scssSyntax from 'postcss-scss';
 import * as recast from 'recast';
-/* eslint-disable unicorn/better-regex, prefer-template */
 import vscode, {
     Range,
     TextDocument,
@@ -46,7 +46,7 @@ export default class RemoveComments {
         this.source = editor.document.getText();
     }
 
-    public handle(): void {
+    public async handle(): Promise<any> {
         const { languageId } = this;
         if (RemoveComments.supportedMarkLangs.has(languageId)) {
             this.removeMarkLanguageComments();
@@ -63,21 +63,28 @@ export default class RemoveComments {
             this.removeIgnoreComments();
         } else if (RemoveComments.supportedYamlCommentsLikeLangs.has(languageId)) {
             this.removeYamlComments();
+        } else {
+            return;
         }
+
+        // eslint-disable-next-line consistent-return
+        return vscode.commands.executeCommand('editor.action.formatDocument');
     }
 
     private removeCommentsMatchRegexp(commentRegexp: RegExp): void {
-        const { editBuilder, document, source } = this;
+        const { editor, document, source } = this;
         let execResult: RegExpExecArray | null;
-        while ((execResult = commentRegexp.exec(source))) {
-            editBuilder.replace(
-                new Range(
-                    document.positionAt(execResult.index),
-                    document.positionAt(execResult.index + execResult[0].length),
-                ),
-                '',
-            );
-        }
+        editor.edit((editBuilder) => {
+            while ((execResult = commentRegexp.exec(source))) {
+                editBuilder.replace(
+                    new Range(
+                        document.positionAt(execResult.index),
+                        document.positionAt(execResult.index + execResult[0].length),
+                    ),
+                    '',
+                );
+            }
+        });
     }
 
     private removeMarkLanguageComments(): void {
@@ -141,18 +148,20 @@ export default class RemoveComments {
     }
 
     private async removeJSONCComments(): Promise<void> {
-        const { editBuilder, document, source } = this;
+        const { editor, document, source } = this;
 
         try {
-            jsonc.visit(source, {
-                onComment(offset: number, length: number) {
-                    editBuilder.delete(
-                        new Range(
-                            document.positionAt(offset),
-                            document.positionAt(offset + length),
-                        ),
-                    );
-                },
+            editor.edit((editBuilder) => {
+                jsonc.visit(source, {
+                    onComment(offset: number, length: number) {
+                        editBuilder.delete(
+                            new Range(
+                                document.positionAt(offset),
+                                document.positionAt(offset + length),
+                            ),
+                        );
+                    },
+                });
             });
         } catch (error) {
             console.error(error);
