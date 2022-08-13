@@ -51,14 +51,14 @@ export default class RemoveComments {
         if (RemoveComments.supportedMarkLangs.has(languageId)) {
             this.removeMarkLanguageComments();
         } else if (RemoveComments.supportedStyleLangs.has(languageId)) {
-            this.removeStyleComments();
+            await this.removeStyleComments();
         } else if (RemoveComments.supportedScriptLangs.has(languageId)) {
-            this.removeScriptComments();
+            await this.removeScriptComments();
             // eslint-disable-next-line unicorn/prefer-switch
         } else if (languageId === 'jsonc') {
-            this.removeJSONCComments();
+            await this.removeJSONCComments();
         } else if (languageId === 'vue') {
-            this.removeVueComments();
+            await this.removeVueComments();
         } else if (languageId === 'ignore') {
             this.removeIgnoreComments();
         } else if (RemoveComments.supportedYamlCommentsLikeLangs.has(languageId)) {

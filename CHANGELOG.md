@@ -1,5 +1,15 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.2.4] - 2022-08-13
+
+## Fixed
+
+- remove xml,jsonc comments
+
+## Changed
+
+- auto format after remove comments
+
 ## [0.2.3] - 2022-08-13
 
 ## Fixed
