@@ -1,28 +1,34 @@
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.2.5] - 2022-08-24
+
+### Added
+
+- new command: `FE Helper: Copy as Markdown Code Block`
+
 ## [0.2.4] - 2022-08-13
 
-## Fixed
+### Fixed
 
 - remove xml,jsonc comments
 
-## Changed
+### Changed
 
 - auto format after remove comments
 
 ## [0.2.3] - 2022-08-13
 
-## Fixed
+### Fixed
 
 - cjsToEsm
 
 ## [0.2.2] - 2022-08-06
 
-## Fixed
+### Fixed
 
 - module transform doesn't work
 
-## Changed
+### Changed
 
 - optimize startup speed
 - tsCompile will prefer to use local installed typescript
@@ -33,33 +39,33 @@
 
 ## [0.2.1] - 2022-07-06
 
-## Fixed
+### Fixed
 
 - remove comments doesn't work
 - upgrade dependencies
 
 ## [0.2.0] - 2022-02-27
 
-### Changed
+#### Changed
 
 - upgrade dependencies
 - optimize startup speed
 
 ## [0.1.5] - 2021-12-4
 
-### Changed
+#### Changed
 
 - upgrade dependencies
 
 ## [0.1.4] - 2021-10-15
 
-### Fixed
+#### Fixed
 
 - can not require typescript error
 
 ## [0.1.3] - 2021-10-14
 
-### Fixed
+#### Fixed
 
 - https://github.com/advisories/GHSA-93q8-gq69-wqmw
 
@@ -77,7 +83,7 @@
 
 ## [0.0.10] - 2021-05-01
 
-### Changed
+#### Changed
 
 - upgrade dependencies to latest
 
@@ -96,7 +102,7 @@
 
 ## [0.0.7] - 2020-11-25
 
-### Changed
+#### Changed
 
 - update all dependencies to latest
 - upgrade webpack5
@@ -107,7 +113,7 @@
 
 - support paste JSON as code
 
-### Changed
+#### Changed
 
 - update all dependencies to latest
 
@@ -117,7 +123,7 @@
 
 - add more document
 
-### Changed
+#### Changed
 
 - update all dependencies to latest
 
@@ -135,7 +141,7 @@
 
 ## [0.0.2] - 2020-05-29
 
-### Fixed
+#### Fixed
 
 - remove comments from ignore file doesn't work
 

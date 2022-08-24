@@ -123,6 +123,15 @@ with command `FE Helper: Smart Copy`, you can:
 - copy without syntax
 - auto correct indent because some external editor can't deal with indent of paste code correctly
 
+### Copy as Markdown Code Block
+
+with command `FE Helper: Copy as Markdown Code Block`, you can:
+
+- copy without syntax
+- auto correct indent because some external editor can't deal with indent of paste code correctly
+- detect the code language
+- wrap code with markdown code block syntax
+
 ## TODO
 
 Some of them may be implemented as a standalone extension.
