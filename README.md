@@ -15,6 +15,7 @@
 - copy with line number
 - copy text without syntax
 - smart copy
+- copy as markdown code block
 
 ## Usage
 
@@ -123,7 +124,7 @@ with command `FE Helper: Smart Copy`, you can:
 - copy without syntax
 - auto correct indent because some external editor can't deal with indent of paste code correctly
 
-### Copy as Markdown Code Block
+### copy as markdown code block
 
 with command `FE Helper: Copy as Markdown Code Block`, you can:
 
@@ -131,20 +132,3 @@ with command `FE Helper: Copy as Markdown Code Block`, you can:
 - auto correct indent because some external editor can't deal with indent of paste code correctly
 - detect the code language
 - wrap code with markdown code block syntax
-
-## TODO
-
-Some of them may be implemented as a standalone extension.
-
-- [ ] convert between codePoint and str
-- [ ] translate
-- [ ] regexp preview
-- [ ] JSON to types
-- [ ] color highlight
-- [ ] file info, mp3, mp4 etc
-- [ ] highlight text
-- [ ] regexp preview
-- [ ] directory tree
-- [ ] apng preview like gif preview
-- [ ] font preview supports checking font info like assent/descent
-- [ ] command plate: open extension folder
