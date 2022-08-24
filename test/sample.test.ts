@@ -1,5 +1,5 @@
 import { strictEqual } from 'assert';
-import * as vscode from 'vscode';
+import vscode from 'vscode';
 
 describe('#test sample', () => {
     before(() => {

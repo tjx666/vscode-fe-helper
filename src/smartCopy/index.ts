@@ -1,6 +1,3 @@
-/**
- * reference: https://github.com/bmaupin/vscode-copy-without-formatting/blob/master/src/extension.ts
- */
 import vscode, {
     Position,
     Range,
@@ -12,7 +9,7 @@ import {
     getIndentChar,
 } from '../utils/editor';
 
-function getIndentCorrectText(
+export function getIndentCorrectText(
     selectionText: string,
     selectionStart: vscode.Position,
     indentChar: string,

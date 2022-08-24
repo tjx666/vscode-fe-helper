@@ -4,7 +4,7 @@ import { parseSourceToAst } from '../utils/ast';
 import CjsToESMTransformer from './cjsToEsm';
 import EsmToCjsTransformer from './esmToCjs';
 
-export default class TransformModule {
+export class TransformModule {
     private readonly editor: TextEditor;
 
     constructor(editor: TextEditor) {

@@ -7,7 +7,7 @@ import ES5ToES6 from './ES5ToES6';
 import tscCompile from './tscCompile';
 import { TransformResult } from './type';
 
-export default async function transformESSyntax(editor: TextEditor): Promise<void> {
+export async function transformESSyntax(editor: TextEditor): Promise<void> {
     const { ScriptTarget } = await import('typescript');
     const pickItems = [
         'ES5 to ES6/ES7',

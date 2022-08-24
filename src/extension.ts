@@ -3,6 +3,7 @@ import vscode, {
     TextEditorEdit,
 } from 'vscode';
 
+import copyAsMarkdownCodeBlock from './copyAsMarkdownCodeBlock';
 import copyTextWithoutSyntax from './copyTextWithoutSyntax';
 import copyWithLineNumber from './copyWithLineNumber';
 import jsonToObject from './jsonToObject';
@@ -26,21 +27,21 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerTextEditorCommand(
             'VSCodeFEHelper.removeComments',
             (textEditor: TextEditor, editBuilder: TextEditorEdit) =>
-                import('./removeComments').then(({ default: RemoveComments }) =>
+                import('./removeComments').then(({ RemoveComments }) =>
                     new RemoveComments(textEditor, editBuilder).handle(),
                 ),
         ),
         vscode.commands.registerTextEditorCommand(
             'VSCodeFEHelper.transformESSyntax',
             (textEditor: TextEditor) =>
-                import('./transformESSyntax').then(({ default: transformESSyntax }) =>
+                import('./transformESSyntax').then(({ transformESSyntax }) =>
                     transformESSyntax(textEditor),
                 ),
         ),
         vscode.commands.registerTextEditorCommand(
             'VSCodeFEHelper.transformModuleImports',
             (textEditor: TextEditor) =>
-                import('./transformModuleImports').then(({ default: TransformModule }) =>
+                import('./transformModuleImports').then(({ TransformModule }) =>
                     new TransformModule(textEditor).handle(),
                 ),
         ),
@@ -64,6 +65,10 @@ export function activate(context: vscode.ExtensionContext): void {
             copyTextWithoutSyntax,
         ),
         vscode.commands.registerTextEditorCommand('VSCodeFEHelper.smartCopy', smartCopy),
+        vscode.commands.registerTextEditorCommand(
+            'VSCodeFEHelper.copyAsMarkdownCodeBlock',
+            copyAsMarkdownCodeBlock,
+        ),
     );
 }
 

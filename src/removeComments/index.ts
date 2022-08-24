@@ -1,10 +1,10 @@
 /* eslint-disable unicorn/better-regex, prefer-template */
 import { ASTNode } from 'ast-types';
-import * as jsonc from 'jsonc-parser';
+import jsonc from 'jsonc-parser';
 import postcss, { Result as PostcssProcessResult } from 'postcss';
 import lessSyntax from 'postcss-less';
 import scssSyntax from 'postcss-scss';
-import * as recast from 'recast';
+import recast from 'recast';
 import vscode, {
     Range,
     TextDocument,
@@ -17,7 +17,7 @@ import { ID_LANG_MAPPER } from '../utils/constants';
 import { replaceAllTextOfEditor } from '../utils/editor';
 import postcssDiscardComments from './postcssDiscardComments';
 
-export default class RemoveComments {
+export class RemoveComments {
     private static readonly supportedMarkLangs = new Set(['html', 'xml', 'markdown']);
     private static readonly supportedScriptLangs = new Set([
         'javascript',

@@ -77,7 +77,8 @@
         "onCommand:VSCodeFEHelper.spaceGod",
         "onCommand:VSCodeFEHelper.copyWithLineNumber",
         "onCommand:VSCodeFEHelper.copyTextWithoutSyntax",
-        "onCommand:VSCodeFEHelper.smartCopy"
+        "onCommand:VSCodeFEHelper.smartCopy",
+        "onCommand:VSCodeFEHelper.copyAsMarkdownCodeBlock"
     ],
     "contributes": {
         "commands": [
@@ -124,6 +125,10 @@
             {
                 "command": "VSCodeFEHelper.smartCopy",
                 "title": "FE Helper: Smart Copy"
+            },
+            {
+                "command": "VSCodeFEHelper.copyAsMarkdownCodeBlock",
+                "title": "FE Helper: Copy as Markdown Code Block"
             }
         ]
     },

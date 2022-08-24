@@ -1,5 +1,5 @@
 import type { OutputChannel } from 'vscode';
-import * as vscode from 'vscode';
+import vscode from 'vscode';
 
 import { EXTENSION_NAME } from './constants';
 
