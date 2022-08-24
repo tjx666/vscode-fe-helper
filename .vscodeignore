@@ -27,6 +27,7 @@ tsconfig.base.json
 .prettierrc
 yarn.lock
 pnpm-lock.yaml
+.npmrc
 
 images
 !images/logo.png

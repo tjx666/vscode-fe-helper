@@ -4,7 +4,8 @@ import jsonc from 'jsonc-parser';
 import postcss, { Result as PostcssProcessResult } from 'postcss';
 import lessSyntax from 'postcss-less';
 import scssSyntax from 'postcss-scss';
-import recast from 'recast';
+// !: 使用默认导入编译不报错，运行时报错
+import * as recast from 'recast';
 import vscode, {
     Range,
     TextDocument,

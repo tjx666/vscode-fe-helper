@@ -1,4 +1,8 @@
-<!-- https://keepachangelog.com/en/1.0.0/ -->
+## [0.2.6] - 2022-08-25
+
+### Fixed
+
+- remove comments failed
 
 ## [0.2.5] - 2022-08-24
 
