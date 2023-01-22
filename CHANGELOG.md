@@ -1,3 +1,13 @@
+## [0.2.7] - 2023-01-22
+
+### Fixed
+
+- remove comments of vue file
+
+### Changed
+
+- upgrade deps
+
 ## [0.2.6] - 2022-08-25
 
 ### Fixed
@@ -71,7 +81,7 @@
 
 #### Fixed
 
-- https://github.com/advisories/GHSA-93q8-gq69-wqmw
+- <https://github.com/advisories/GHSA-93q8-gq69-wqmw>
 
 ## [0.1.2] - 2021-10-13
 
