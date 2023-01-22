@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         /* Basic Options */
-        "target": "ES2021",
+        "target": "ES2022",
         "module": "commonjs",
 
         /* Strict Type-Checking Options */
@@ -12,7 +12,7 @@
         "noFallthroughCasesInSwitch": true,
 
         /* Module Resolution Options */
-        "moduleResolution": "node",
+        "moduleResolution": "NodeNext",
         "esModuleInterop": true,
         "resolveJsonModule": true,
 
