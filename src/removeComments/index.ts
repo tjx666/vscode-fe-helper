@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/better-regex, prefer-template */
 import { ASTNode } from 'ast-types';
-import jsonc from 'jsonc-parser';
+import * as jsonc from 'jsonc-parser';
 import postcss, { Result as PostcssProcessResult } from 'postcss';
 import lessSyntax from 'postcss-less';
 import scssSyntax from 'postcss-scss';
@@ -191,7 +191,9 @@ export class RemoveComments {
             const scriptString = scriptMatch[1];
             source =
                 source.slice(0, scriptMatch.index) +
-                `<script>${RemoveComments.getCommentsRemovedScriptCode(scriptString)}</script>` +
+                `<script>${await RemoveComments.getCommentsRemovedScriptCode(
+                    scriptString,
+                )}</script>` +
                 source.slice(scriptMatch.index + scriptMatch[0].length);
         }
 
