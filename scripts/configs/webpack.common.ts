@@ -41,7 +41,7 @@ const commonWebpackConfig: Configuration = {
         new WebpackBar({
             name: 'Build VSCode Extension',
             color: '#0066B8',
-        }) as any,
+        }),
         new FriendlyErrorsPlugin(),
     ],
 };
