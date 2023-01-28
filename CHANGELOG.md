@@ -1,3 +1,9 @@
+## [0.3.0] - 2023-01-29
+
+### Changed
+
+- migrate copy commands to [clipboard master](https://marketplace.visualstudio.com/items?itemName=YuTengjing.clipboard-master)
+
 ## [0.2.7] - 2023-01-22
 
 ### Fixed

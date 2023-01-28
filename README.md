@@ -12,10 +12,6 @@
 - transform color format
 - paste JSON as code
 - space god
-- copy with line number
-- copy text without syntax
-- smart copy
-- copy as markdown code block
 
 ## Usage
 
@@ -107,28 +103,11 @@ For Chinese users, there should be space between English word, number, and punct
 
 ![space god](https://github.com/tjx666/vscode-fe-helper/raw/master/images/space_god.gif?raw=true)
 
-### copy with line number
+### Copy Commands
 
-You can use command: `FE Helper: copy with line number` to copy some content with line number.
+following commands had been migrated to another extension: [Clipboard Master](https://marketplace.visualstudio.com/items?itemName=YuTengjing.clipboard-master)
 
-![copy with line number](https://github.com/tjx666/vscode-fe-helper/raw/master/images/copy_with_line_number.gif?raw=true)
-
-### copy text without syntax
-
-You can use command: `FE Helper: copy text without syntax` to copy selected text without syntax.
-
-### smart copy
-
-with command `FE Helper: Smart Copy`, you can:
-
-- copy without syntax
-- auto correct indent because some external editor can't deal with indent of paste code correctly
-
-### copy as markdown code block
-
-with command `FE Helper: Copy as Markdown Code Block`, you can:
-
-- copy without syntax
-- auto correct indent because some external editor can't deal with indent of paste code correctly
-- detect the code language
-- wrap code with markdown code block syntax
+- copy with line number
+- copy text without syntax
+- smart copy
+- copy as markdown code block
