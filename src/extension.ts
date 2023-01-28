@@ -3,13 +3,9 @@ import vscode, {
     TextEditorEdit,
 } from 'vscode';
 
-import copyAsMarkdownCodeBlock from './copyAsMarkdownCodeBlock';
-import copyTextWithoutSyntax from './copyTextWithoutSyntax';
-import copyWithLineNumber from './copyWithLineNumber';
 import jsonToObject from './jsonToObject';
 import pluralize from './pluralize';
 import removeIrregularWhitespace from './removeIrregularWhitespace';
-import smartCopy from './smartCopy';
 import spaceGod from './spaceGod';
 import transformColorFormat from './transformColorFormat';
 import { EXTENSION_ID } from './utils/constants';
@@ -56,19 +52,6 @@ export function activate(context: vscode.ExtensionContext): void {
         ),
         vscode.commands.registerTextEditorCommand('VSCodeFEHelper.jsonToObject', jsonToObject),
         vscode.commands.registerTextEditorCommand('VSCodeFEHelper.spaceGod', spaceGod),
-        vscode.commands.registerTextEditorCommand(
-            'VSCodeFEHelper.copyWithLineNumber',
-            copyWithLineNumber,
-        ),
-        vscode.commands.registerTextEditorCommand(
-            'VSCodeFEHelper.copyTextWithoutSyntax',
-            copyTextWithoutSyntax,
-        ),
-        vscode.commands.registerTextEditorCommand('VSCodeFEHelper.smartCopy', smartCopy),
-        vscode.commands.registerTextEditorCommand(
-            'VSCodeFEHelper.copyAsMarkdownCodeBlock',
-            copyAsMarkdownCodeBlock,
-        ),
     );
 }
 
