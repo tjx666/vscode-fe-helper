@@ -1,3 +1,10 @@
+## [0.3.1] - 2023-03-20
+
+### Changed
+
+- log support syntax highlight
+- remove bundled typescript
+
 ## [0.3.0] - 2023-01-29
 
 ### Changed

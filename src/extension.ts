@@ -63,10 +63,6 @@ export function activate(context: vscode.ExtensionContext): void {
     registerTextEditorCommand('spaceGod', (editor: TextEditor) => {
         import('./spaceGod').then((mod) => mod.spaceGod(editor));
     });
-
-    registerTextEditorCommand('sortJsonProperties', (editor: TextEditor) => {
-        import('./sortJsonProperties').then((mod) => mod.sortJsonProperties(editor));
-    });
 }
 
 export function deactivate(): void {
