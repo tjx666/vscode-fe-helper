@@ -7,10 +7,13 @@ import vscode from 'vscode';
 import ES5ToES6 from './ES5ToES6';
 import tscCompile from './tscCompile';
 import type { TransformResult } from './type';
+import { getTypescript } from './typescript';
 import { outputPanelLogger } from '../utils/log';
 
 export async function transformESSyntax(editor: TextEditor): Promise<void> {
-    const { ScriptTarget } = await import('typescript');
+    const { document, selection } = editor;
+    const cwd = dirname(document.uri.fsPath);
+    const { ScriptTarget } = await getTypescript(cwd);
     const pickItems = [
         'ES5 to ES6/ES7',
         'Using tsc compile code to ES5',
@@ -25,12 +28,11 @@ export async function transformESSyntax(editor: TextEditor): Promise<void> {
             target = ScriptTarget.ES3;
         }
 
-        const { document, selection } = editor;
         const source = document.getText(selection);
         let result: TransformResult | undefined;
         try {
             result = pickedTransform.startsWith('Using tsc')
-                ? await tscCompile(source, target!, dirname(document.uri.fsPath))
+                ? await tscCompile(source, target!, cwd)
                 : await ES5ToES6(source);
         } catch (error) {
             console.error(error);

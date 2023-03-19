@@ -1,7 +1,7 @@
-export async function parseSourceToAst(source: string): Promise<any> {
-    const recast = await import('recast');
-    const { parse: babelParse } = await import('@babel/parser');
+import { parse as babelParse } from '@babel/parser';
+import recast from 'recast';
 
+export async function parseSourceToAst(source: string): Promise<any> {
     return recast.parse(source, {
         parser: {
             // copied from https://github.com/nicoespeon/abracadabra/blob/master/src/ast/transformation.ts#L68
