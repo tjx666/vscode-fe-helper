@@ -3,5 +3,5 @@
     "compilerOptions": {
         "module": "ESNext"
     },
-    "include": ["**/*.ts"]
+    "include": ["**/*.mts"]
 }
