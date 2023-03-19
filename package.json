@@ -87,6 +87,10 @@
             {
                 "command": "VSCodeFEHelper.spaceGod",
                 "title": "FE Helper: spaceGod"
+            },
+            {
+                "command": "VSCodeFEHelper.sortJsonProperties",
+                "title": "FE Helper: sort json properties"
             }
         ]
     },

@@ -1,7 +1,7 @@
 import type { TextEditor } from 'vscode';
 import vscode from 'vscode';
 
-export default async function jsonToObject(editor: TextEditor): Promise<void> {
+export async function jsonToObject(editor: TextEditor): Promise<void> {
     const json = await vscode.env.clipboard.readText();
     const jsCode = json.replace(/"([^"]*)"\s*:/g, '$1:');
     editor.edit((builder) => {

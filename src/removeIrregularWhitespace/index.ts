@@ -8,10 +8,7 @@ function removeIrregular(text: string): string {
     return text.replace(new RegExp(IRREGULAR_WHITESPACE_RE, 'g'), ' ');
 }
 
-export default function removeIrregularWhitespace(
-    editor: TextEditor,
-    editBuilder: TextEditorEdit,
-): void {
+export function removeIrregularWhitespace(editor: TextEditor, editBuilder: TextEditorEdit): void {
     const { document } = editor;
     const wholeText = document.getText();
     editBuilder.replace(getWholeDocumentRange(document), removeIrregular(wholeText));
