@@ -6,14 +6,9 @@ import pluralize from './pluralize';
 import removeIrregularWhitespace from './removeIrregularWhitespace';
 import spaceGod from './spaceGod';
 import transformColorFormat from './transformColorFormat';
-import { EXTENSION_ID } from './utils/constants';
-import { log, outputPanelLogger } from './utils/log';
+import { outputPanelLogger } from './utils/log';
 
 export function activate(context: vscode.ExtensionContext): void {
-    const extension = vscode.extensions.getExtension(EXTENSION_ID);
-    const version = extension?.packageJSON?.version ?? '-';
-    log(`${EXTENSION_ID}(V.${version}) now active! : ${context.extensionPath}`);
-
     context.subscriptions.push(
         vscode.commands.registerTextEditorCommand(
             'VSCodeFEHelper.removeComments',
