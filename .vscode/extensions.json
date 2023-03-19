@@ -1,15 +1,10 @@
-// https://gist.github.com/tjx666/daa6317cf80ab5f467c50b2693527875
 {
+    // See http://go.microsoft.com/fwlink/?LinkId=827846
+    // for the documentation about the extensions.json format
     "recommendations": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "yutengjing.view-github-repository",
-        "yutengjing.open-in-external-app",
-        "yutengjing.vscode-fe-helper"
-    ],
-    "unwantedRecommendations": [
-        "hookyqr.beautify",
-        "ms-vscode.vscode-typescript-tslint-plugin",
-        "dbaeumer.jshint"
+        "connor4312.esbuild-problem-matchers",
+        "cschleiden.vscode-github-actions"
     ]
 }

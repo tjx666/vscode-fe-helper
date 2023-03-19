@@ -1,4 +1,4 @@
-import { TextEditor } from 'vscode';
+import type { TextEditor } from 'vscode';
 
 export default async function plur(editor: TextEditor): Promise<void> {
     const { default: pluralize } = await import('pluralize');

@@ -1,22 +1,19 @@
-/* eslint-disable unicorn/better-regex, prefer-template */
-import { ASTNode } from 'ast-types';
+/* eslint-disable prefer-template */
+import type { ASTNode } from 'ast-types';
 import * as jsonc from 'jsonc-parser';
-import postcss, { Result as PostcssProcessResult } from 'postcss';
+import type { Result as PostcssProcessResult } from 'postcss';
+import postcss from 'postcss';
 import lessSyntax from 'postcss-less';
 import scssSyntax from 'postcss-scss';
 // !: 使用默认导入编译不报错，运行时报错
 import * as recast from 'recast';
-import vscode, {
-    Range,
-    TextDocument,
-    TextEditor,
-    TextEditorEdit,
-} from 'vscode';
+import type { TextDocument, TextEditor, TextEditorEdit } from 'vscode';
+import vscode, { Range } from 'vscode';
 
+import postcssDiscardComments from './postcssDiscardComments';
 import { parseSourceToAst } from '../utils/ast';
 import { ID_LANG_MAPPER } from '../utils/constants';
 import { replaceAllTextOfEditor } from '../utils/editor';
-import postcssDiscardComments from './postcssDiscardComments';
 
 export class RemoveComments {
     private static readonly supportedMarkLangs = new Set(['html', 'xml', 'markdown']);
@@ -26,11 +23,13 @@ export class RemoveComments {
         'javascriptreact',
         'typescriptreact',
     ]);
+
     private static readonly supportedStyleLangs = new Map([
         ['css', undefined],
         ['scss', scssSyntax],
         ['less', lessSyntax],
     ]);
+
     private static readonly supportedYamlCommentsLikeLangs = new Set(['yaml', 'editorconfig']);
 
     private readonly editor: TextEditor;
@@ -68,7 +67,6 @@ export class RemoveComments {
             return;
         }
 
-        // eslint-disable-next-line consistent-return
         return vscode.commands.executeCommand('editor.action.formatDocument');
     }
 
@@ -76,6 +74,7 @@ export class RemoveComments {
         const { editor, document, source } = this;
         let execResult: RegExpExecArray | null;
         editor.edit((editBuilder) => {
+            // eslint-disable-next-line no-cond-assign
             while ((execResult = commentRegexp.exec(source))) {
                 editBuilder.replace(
                     new Range(
@@ -89,7 +88,7 @@ export class RemoveComments {
     }
 
     private removeMarkLanguageComments(): void {
-        const templateCommentRE = /<!--(\n|\r|.)*?-->/gm;
+        const templateCommentRE = /<!--([\n\r]|.)*?-->/g;
         this.removeCommentsMatchRegexp(templateCommentRE);
     }
 
@@ -174,18 +173,18 @@ export class RemoveComments {
         const { editor, document } = this;
 
         let source = document.getText();
-        const templateRE = /<template>(\n|\r|.)*<\/template>/m;
+        const templateRE = /<template>([\n\r]|.)*<\/template>/;
         const templateMatch = source.match(templateRE);
         if (templateMatch && templateMatch.index != null) {
             const templateString = templateMatch[0];
-            const templateCommentRE = /<!--(\n|\r|.)*?-->/gm;
+            const templateCommentRE = /<!--([\n\r]|.)*?-->/g;
             source =
                 source.slice(0, templateMatch.index) +
                 templateString.replace(templateCommentRE, '') +
                 source.slice(templateMatch.index + templateString.length);
         }
 
-        const scriptRE = /<script>((\n|\r|.)*)<\/script>/m;
+        const scriptRE = /<script>(([\n\r]|.)*)<\/script>/;
         const scriptMatch = source.match(scriptRE);
         if (scriptMatch && scriptMatch.index != null) {
             const scriptString = scriptMatch[1];
@@ -197,11 +196,11 @@ export class RemoveComments {
                 source.slice(scriptMatch.index + scriptMatch[0].length);
         }
 
-        const styleRE = /<style([^>]*)>((\n|\r|.)*)<\/style>/m;
+        const styleRE = /<style([^>]*)>(([\n\r]|.)*)<\/style>/;
         const styleMatch = source.match(styleRE);
         if (styleMatch && styleMatch.index != null) {
             const styleString = styleMatch[2];
-            const langMatch = styleMatch[1].match(/lang=['"](\w+)['"]/m);
+            const langMatch = styleMatch[1].match(/lang=['"](\w+)['"]/);
             const lang = langMatch ? langMatch[1].trim() : 'css';
             const commentsRemovedStyleCode = await RemoveComments.getCommentsRemovedStyleCode(
                 styleString,
@@ -222,7 +221,7 @@ export class RemoveComments {
     }
 
     private removeYamlComments(): void {
-        const commentRE = /\s*#.*/gm;
+        const commentRE = /\s*#.*/g;
         this.removeCommentsMatchRegexp(commentRE);
     }
 }

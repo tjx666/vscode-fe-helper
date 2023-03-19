@@ -1,7 +1,5 @@
-import vscode, {
-    TextEditor,
-    TextEditorEdit,
-} from 'vscode';
+import type { TextEditor, TextEditorEdit } from 'vscode';
+import vscode from 'vscode';
 
 import jsonToObject from './jsonToObject';
 import pluralize from './pluralize';
@@ -9,10 +7,7 @@ import removeIrregularWhitespace from './removeIrregularWhitespace';
 import spaceGod from './spaceGod';
 import transformColorFormat from './transformColorFormat';
 import { EXTENSION_ID } from './utils/constants';
-import {
-    log,
-    outputPanelLogger,
-} from './utils/log';
+import { log, outputPanelLogger } from './utils/log';
 
 export function activate(context: vscode.ExtensionContext): void {
     const extension = vscode.extensions.getExtension(EXTENSION_ID);

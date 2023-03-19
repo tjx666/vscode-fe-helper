@@ -1,9 +1,6 @@
 import type { ASTNode } from 'ast-types';
-import {
-    Range,
-    TextDocument,
-    TextEditor,
-} from 'vscode';
+import type { TextDocument, TextEditor } from 'vscode';
+import { Range } from 'vscode';
 
 export default class CjsToESMTransformer {
     private readonly editor: TextEditor;

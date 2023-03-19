@@ -1,4 +1,4 @@
-import { TextEditor, TextEditorEdit } from 'vscode';
+import type { TextEditor, TextEditorEdit } from 'vscode';
 
 import { getWholeDocumentRange } from '../utils/editor';
 

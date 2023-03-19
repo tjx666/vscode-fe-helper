@@ -9,16 +9,23 @@
             "name": "Run Extension",
             "type": "extensionHost",
             "request": "launch",
-            "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test-workspace"
+            ],
+            "outFiles": ["${workspaceFolder}/out/**/*.js"],
             "skipFiles": [
                 "<node_internals>/**",
                 "**/node_modules/**",
                 "**/resources/app/out/vs/**",
-                "**/Contents/Resources/app/out/vs/**",
-                "**/.vscode-insiders/extensions/**",
-                "**/.vscode/extensions/**"
+                "**/.vscode-insiders/extensions/",
+                "**/.vscode/extensions/"
             ],
+            "sourceMaps": true,
+            "env": {
+                "VSCODE_DEBUG_MODE": "true"
+            },
             "preLaunchTask": "${defaultBuildTask}"
         },
         {
@@ -26,11 +33,12 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
+                "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/dist/test/index"
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
             ],
-            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-            "preLaunchTask": "tasks: watch-tests"
+            "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+            "preLaunchTask": "${defaultBuildTask}"
         }
     ]
 }

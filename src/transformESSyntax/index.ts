@@ -1,11 +1,13 @@
-import { dirname } from 'path';
-import type TS from 'typescript';
-import vscode, { TextEditor } from 'vscode';
+import { dirname } from 'node:path';
 
-import { outputPanelLogger } from '../utils/log';
+import type TS from 'typescript';
+import type { TextEditor } from 'vscode';
+import vscode from 'vscode';
+
 import ES5ToES6 from './ES5ToES6';
 import tscCompile from './tscCompile';
-import { TransformResult } from './type';
+import type { TransformResult } from './type';
+import { outputPanelLogger } from '../utils/log';
 
 export async function transformESSyntax(editor: TextEditor): Promise<void> {
     const { ScriptTarget } = await import('typescript');

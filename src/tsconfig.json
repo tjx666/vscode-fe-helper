@@ -1,6 +1,7 @@
 {
     "extends": "../tsconfig.base.json",
     "compilerOptions": {
-        "sourceMap": true
-    }
+        "outDir": "../out/src"
+    },
+    "include": ["**/*.ts"]
 }

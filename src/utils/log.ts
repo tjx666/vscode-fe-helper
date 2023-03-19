@@ -11,7 +11,7 @@ let feHelperOutputChannel: OutputChannel | undefined;
 const outputPanelLogger = {
     log(message: string): void {
         if (feHelperOutputChannel === undefined) {
-            feHelperOutputChannel = vscode.window.createOutputChannel('FE Helper');
+            feHelperOutputChannel = vscode.window.createOutputChannel('FE Helper', 'log');
         }
         feHelperOutputChannel.append(message);
         feHelperOutputChannel.show();

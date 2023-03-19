@@ -1,4 +1,5 @@
-import { list, Plugin, PluginCreator, Root } from 'postcss';
+import type { Plugin, PluginCreator, Root } from 'postcss';
+import { list } from 'postcss';
 
 import commentParser from './commentParser';
 import CommentRemover from './commentRemover';
@@ -30,7 +31,6 @@ const discardCommentsPlugin: PluginCreator<Record<string, any>> = (opts = {}): P
             return replacerCache[key];
         }
 
-        // eslint-disable-next-line unicorn/no-array-reduce
         const parsed = commentParser(source).reduce((value, [type, start, end]) => {
             const contents = source.slice(start, end);
 

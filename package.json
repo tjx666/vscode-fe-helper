@@ -33,7 +33,7 @@
         "url": "https://github.com/tjx666/vscode-fe-helper"
     },
     "engines": {
-        "vscode": "^1.74.0"
+        "vscode": "^1.76.0"
     },
     "categories": [
         "Other"
@@ -53,29 +53,7 @@
         "ES5",
         "ES6"
     ],
-    "main": "dist/extension.js",
-    "scripts": {
-        "vscode:prepublish": "yarn build",
-        "compile": "cross-env NODE_ENV=development ts-node --files -P ./scripts/tsconfig.json ./scripts",
-        "watch": "cross-env NODE_ENV=development ts-node --files -P ./scripts/tsconfig.json ./scripts --watch",
-        "test-compile": "tsc -p ./test/tsconfig.json",
-        "watch-tests": "tsc -w -p ./test/tsconfig.json",
-        "build": "cross-env NODE_ENV=production ts-node --files -P ./scripts/tsconfig.json ./scripts",
-        "build-analyze": "yarn build --analyze",
-        "lint": "eslint -c .eslintrc.js --ext .ts ./{scripts,src,test}/**/*.ts",
-        "test": "yarn compile && yarn test-compile && node ./dist/test/runTests.js",
-        "prepare": "husky install"
-    },
-    "activationEvents": [
-        "onCommand:VSCodeFEHelper.removeComments",
-        "onCommand:VSCodeFEHelper.transformModuleImports",
-        "onCommand:VSCodeFEHelper.transformESSyntax",
-        "onCommand:VSCodeFEHelper.pluralize",
-        "onCommand:VSCodeFEHelper.removeIrregularWhitespace",
-        "onCommand:VSCodeFEHelper.transformColorFormat",
-        "onCommand:VSCodeFEHelper.jsonToObject",
-        "onCommand:VSCodeFEHelper.spaceGod"
-    ],
+    "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
@@ -112,73 +90,76 @@
             }
         ]
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
+    "eslintConfig": {
+        "extends": "@yutengjing/eslint-config-typescript",
+        "ignorePatterns": [
+            "test-workspace"
+        ]
     },
+    "prettier": "@yutengjing/prettier-config",
     "lint-staged": {
-        "*.ts": [
-            "eslint -c .eslintrc.js",
-            "format-imports"
-        ],
-        "*.{ts,json,md}": [
+        "*.{js,ts,json,md}": [
+            "eslint --fix",
             "prettier --write"
         ]
     },
-    "dependencies": {
-        "typescript": "^4.9.4"
+    "simple-git-hooks": {
+        "pre-commit": "npx lint-staged"
+    },
+    "scripts": {
+        "vscode:prepublish": "pnpm esbuild:base --minify",
+        "preinstall": "npx only-allow pnpm",
+        "postinstall": "stale-dep -u",
+        "clean": "rimraf -rf ./out",
+        "esbuild:base": "stale-dep && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+        "esbuild:watch": "pnpm esbuild:base --sourcemap --watch",
+        "esbuild:analyze": "pnpm esbuild:base --minify --metafile=meta.json && esbuild-visualizer --metadata ./meta.json --open",
+        "compile:test": "pnpm clean && tsc -b ./test/tsconfig.json",
+        "lint": "eslint src --ext ts",
+        "test": "stale-dep && pnpm compile:test && node ./out/test/runTests.js",
+        "package": "vsce package --no-dependencies",
+        "release": "bumpp -c \"release: v%s\" package.json",
+        "publish:vs-marketplace": "vsce publish --no-dependencies",
+        "publish:open-vsx": "ovsx publish --no-dependencies"
     },
     "devDependencies": {
-        "@babel/parser": "^7.20.13",
-        "@nuxt/friendly-errors-webpack-plugin": "^2.5.2",
         "@types/color": "^3.0.3",
-        "@types/glob": "^8.0.1",
+        "@types/glob": "^8.1.0",
         "@types/mocha": "^10.0.1",
-        "@types/node": "^18.11.18",
+        "@types/node": "^18.15.3",
         "@types/pangu": "^4.0.0",
         "@types/pluralize": "^0.0.29",
-        "@types/vscode": "^1.74.0",
-        "@types/webpack": "^5.28.0",
-        "@types/webpack-bundle-analyzer": "^4.6.0",
-        "@types/webpack-env": "^1.18.0",
-        "@types/webpackbar": "^4.0.3",
-        "@types/yargs": "^17.0.20",
-        "@typescript-eslint/eslint-plugin": "^5.49.0",
-        "@typescript-eslint/parser": "^5.49.0",
-        "@vscode/test-electron": "^2.2.2",
-        "clean-webpack-plugin": "^4.0.0",
-        "color": "^4.2.3",
-        "cross-env": "^7.0.3",
-        "eslint": "^8.32.0",
-        "eslint-config-airbnb-base": "^15.0.0",
-        "eslint-config-prettier": "^8.6.0",
-        "eslint-import-resolver-typescript": "^3.5.3",
-        "eslint-plugin-import": "^2.27.5",
-        "eslint-plugin-prettier": "^4.2.1",
-        "eslint-plugin-unicorn": "^45.0.2",
-        "format-imports": "^3.2.2",
-        "glob": "^8.1.0",
-        "husky": "^8.0.3",
-        "jsonc-parser": "^3.2.0",
-        "lebab": "^3.1.1",
-        "lint-staged": "^13.1.0",
+        "@types/vscode": "^1.76.0",
+        "@vscode/test-electron": "^2.3.0",
+        "@vscode/vsce": "^2.18.0",
+        "@yutengjing/eslint-config-typescript": "^0.2.8",
+        "@yutengjing/prettier-config": "^0.0.1",
+        "ast-types": "^0.14.2",
+        "bumpp": "^9.0.0",
+        "esbuild": "^0.17.12",
+        "esbuild-visualizer": "^0.4.0",
+        "eslint": "^8.36.0",
+        "glob": "^9.3.0",
+        "lint-staged": "^13.2.0",
         "mocha": "^10.2.0",
+        "ovsx": "^0.8.0",
+        "prettier": "^2.8.4",
+        "rimraf": "^4.4.0",
+        "simple-git-hooks": "^2.8.1",
+        "stale-dep": "^0.6.0"
+    },
+    "dependencies": {
+        "@babel/parser": "^7.21.3",
+        "color": "^4.2.3",
+        "jsonc-parser": "^3.2.0",
+        "lebab": "^3.2.1",
         "pangu": "^4.0.7",
         "pluralize": "^8.0.0",
         "postcss": "^8.4.21",
         "postcss-less": "^6.0.0",
         "postcss-scss": "^4.0.6",
-        "prettier": "^2.8.3",
         "recast": "^0.22.0",
         "resolve-from": "^5.0.0",
-        "terser-webpack-plugin": "^5.3.6",
-        "ts-loader": "^9.4.2",
-        "ts-node": "^10.9.1",
-        "webpack": "^5.75.0",
-        "webpack-bundle-analyzer": "^4.7.0",
-        "webpack-merge": "^5.8.0",
-        "webpackbar": "^5.0.2",
-        "yargs": "^17.6.2"
+        "typescript": "^5.0.2"
     }
 }

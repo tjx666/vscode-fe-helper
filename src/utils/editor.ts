@@ -1,8 +1,5 @@
-import vscode, {
-    Range,
-    TextDocument,
-    TextEditor,
-} from 'vscode';
+import type { TextDocument, TextEditor } from 'vscode';
+import vscode, { Range } from 'vscode';
 
 export function getWholeDocumentRange(document: TextDocument): Range {
     const oneLineMoreRange = new Range(0, 0, document.lineCount, 0);
