@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext): void {
     );
 
     registerTextEditorCommand('transformESSyntax', (editor: TextEditor) =>
-        import('./transformESSyntax').then(({ transformESSyntax }) => transformESSyntax(editor)),
+        import('./transformESSyntax').then((mod) => mod.transformESSyntax(editor)),
     );
 
     registerTextEditorCommand('transformModuleImports', async (editor: TextEditor) => {
@@ -56,13 +56,13 @@ export function activate(context: vscode.ExtensionContext): void {
         import('./transformColorFormat').then((mod) => mod.transformColorFormat(editor)),
     );
 
-    registerTextEditorCommand('jsonToObject', (editor: TextEditor) => {
-        import('./jsonToObject').then((mod) => mod.jsonToObject(editor));
-    });
+    registerTextEditorCommand('jsonToObject', (editor: TextEditor) =>
+        import('./jsonToObject').then((mod) => mod.jsonToObject(editor)),
+    );
 
-    registerTextEditorCommand('spaceGod', (editor: TextEditor) => {
-        import('./spaceGod').then((mod) => mod.spaceGod(editor));
-    });
+    registerTextEditorCommand('spaceGod', (editor: TextEditor) =>
+        import('./spaceGod').then((mod) => mod.spaceGod(editor)),
+    );
 }
 
 export function deactivate(): void {
