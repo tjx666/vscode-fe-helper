@@ -1,4 +1,5 @@
 # develop
+.github
 .vscode/
 typings/
 configs/
@@ -9,10 +10,13 @@ src/
 # test and output
 .vscode-test/
 test/
+test-workspace/
 out/test/
-test-fixture/
 .nyc_output/
 coverage/
+**/*.js.map
+meta.json
+stats.html
 
 # configs
 .gitignore
@@ -25,6 +29,7 @@ tsconfig.base.json
 .eslintrc.js
 .eslintignore
 .prettierrc
+.prettierignore
 yarn.lock
 pnpm-lock.yaml
 .npmrc

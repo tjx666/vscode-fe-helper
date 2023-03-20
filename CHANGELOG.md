@@ -1,3 +1,9 @@
+## [0.3.3] - 2023-03-20
+
+### Changed
+
+- reduce extension size
+
 ## [0.3.2] - 2023-03-20
 
 ### Changed
