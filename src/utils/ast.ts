@@ -1,5 +1,5 @@
 import { parse as babelParse } from '@babel/parser';
-import recast from 'recast';
+import * as recast from 'recast';
 
 export async function parseSourceToAst(source: string): Promise<any> {
     return recast.parse(source, {

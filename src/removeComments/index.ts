@@ -107,7 +107,7 @@ export class RemoveComments {
             vscode.window.showErrorMessage(
                 `Your ${ID_LANG_MAPPER.get(languageId)} code exists syntax error!`,
             );
-            return '';
+            return source;
         }
         return result.content;
     }
@@ -119,7 +119,7 @@ export class RemoveComments {
         } catch (error) {
             console.error(error);
             vscode.window.showErrorMessage(`Your script code exists syntax error!`);
-            return '';
+            return source;
         }
         recast.visit(ast, {
             visitComment(path) {
