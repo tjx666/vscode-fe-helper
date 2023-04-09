@@ -1,3 +1,14 @@
+## [0.4.0] - 2023-04-10
+
+### Added
+
+- new command `Clear Terminal with Output Backup`
+- new command `Open Terminal Output Backup`
+
+### Fixed
+
+- remove comments of js file failed
+
 ## [0.3.3] - 2023-03-20
 
 ### Changed
