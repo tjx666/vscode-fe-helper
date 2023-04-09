@@ -5,6 +5,18 @@ import { outputPanelLogger } from './utils/log';
 
 export function activate(context: vscode.ExtensionContext): void {
     const { commands } = vscode;
+    const extName = 'VSCodeFEHelper';
+
+    const registerCommand = (
+        commandName: string,
+        callback: (...args: any[]) => any,
+        thisArg?: any,
+    ) => {
+        const cmd = commands.registerCommand(`${extName}.${commandName}`, callback, thisArg);
+        context.subscriptions.push(cmd);
+        return cmd;
+    };
+
     const registerTextEditorCommand = (
         commandName: string,
         callback: (
@@ -15,7 +27,7 @@ export function activate(context: vscode.ExtensionContext): void {
         thisArg?: any,
     ) => {
         const cmd = commands.registerTextEditorCommand(
-            `VSCodeFEHelper.${commandName}`,
+            `${extName}.${commandName}`,
             callback,
             thisArg,
         );
@@ -62,6 +74,18 @@ export function activate(context: vscode.ExtensionContext): void {
 
     registerTextEditorCommand('spaceGod', (editor: TextEditor) =>
         import('./spaceGod').then((mod) => mod.spaceGod(editor)),
+    );
+
+    registerCommand('clearTerminalWithOutputBackup', () =>
+        import('./terminalOutputBackup/clearTerminalWithOutputBackup').then((mod) =>
+            mod.clearTerminalWithOutputBackup(context),
+        ),
+    );
+
+    registerCommand('openTerminalOutputBackup', () =>
+        import('./terminalOutputBackup/openTerminalOutputBackup').then((mod) =>
+            mod.openTerminalOutputBackup(context),
+        ),
     );
 }
 

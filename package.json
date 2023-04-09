@@ -87,6 +87,14 @@
             {
                 "command": "VSCodeFEHelper.spaceGod",
                 "title": "FE Helper: spaceGod"
+            },
+            {
+                "command": "VSCodeFEHelper.clearTerminalWithOutputBackup",
+                "title": "FE Helper: Clear Terminal with Output Backup"
+            },
+            {
+                "command": "VSCodeFEHelper.openTerminalOutputBackup",
+                "title": "FE Helper: Open Terminal Output Backup"
             }
         ]
     },
