@@ -8,7 +8,7 @@ import ES5ToES6 from './ES5ToES6';
 import tscCompile from './tscCompile';
 import type { TransformResult } from './type';
 import { getTypescript } from './typescript';
-import { outputPanelLogger } from '../utils/log';
+import { logger } from '../utils/log';
 
 export async function transformESSyntax(editor: TextEditor): Promise<void> {
     const { document, selection } = editor;
@@ -36,12 +36,12 @@ export async function transformESSyntax(editor: TextEditor): Promise<void> {
                 : await ES5ToES6(source);
         } catch (error) {
             console.error(error);
-            outputPanelLogger.log(`transform syntax error:${String(error)}`);
+            logger.log(`transform syntax error:${String(error)}`);
             return;
         }
 
         if (result?.output) {
-            outputPanelLogger.log(result.output);
+            logger.log(result.output);
         }
 
         if (result.code) {

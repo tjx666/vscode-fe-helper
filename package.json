@@ -95,6 +95,22 @@
             {
                 "command": "VSCodeFEHelper.openTerminalOutputBackup",
                 "title": "FE Helper: Open Terminal Output Backup"
+            },
+            {
+                "command": "VSCodeFEHelper.forcePrettier",
+                "title": "FE Helper: Force Prettier"
+            },
+            {
+                "command": "VSCodeFEHelper.forceESLint",
+                "title": "FE Helper: Force ESLint"
+            },
+            {
+                "command": "VSCodeFEHelper.forceStylelint",
+                "title": "FE Helper: Force Stylelint"
+            },
+            {
+                "command": "VSCodeFEHelper.forceMarkdownlint",
+                "title": "FE Helper: Force Markdownlint"
             }
         ]
     },
@@ -160,6 +176,7 @@
     "dependencies": {
         "@babel/parser": "^7.21.4",
         "color": "^4.2.3",
+        "execa": "^7.1.1",
         "jsonc-parser": "^3.2.0",
         "lebab": "^3.2.1",
         "pangu": "^4.0.7",

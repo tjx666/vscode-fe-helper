@@ -1,9 +1,11 @@
 import type { TextEditor, TextEditorEdit } from 'vscode';
 import vscode from 'vscode';
 
-import { outputPanelLogger } from './utils/log';
+import { logger, shellLogger } from './utils/log';
+import { store } from './utils/store';
 
 export function activate(context: vscode.ExtensionContext): void {
+    store.storageDir = context.storageUri!.fsPath;
     const { commands } = vscode;
     const extName = 'VSCodeFEHelper';
 
@@ -87,8 +89,25 @@ export function activate(context: vscode.ExtensionContext): void {
             mod.openTerminalOutputBackup(context),
         ),
     );
+
+    registerTextEditorCommand('forcePrettier', () =>
+        import('./shellCommands/forcePrettier').then((mod) => mod.forcePrettier()),
+    );
+
+    registerTextEditorCommand('forceESLint', (editor) =>
+        import('./shellCommands/forceESLint').then((mod) => mod.forceESLint(editor)),
+    );
+
+    registerTextEditorCommand('forceStylelint', (editor) =>
+        import('./shellCommands/forceStylelint').then((mod) => mod.forceStylelint(editor)),
+    );
+
+    registerTextEditorCommand('forceMarkdownlint', (editor) =>
+        import('./shellCommands/forceMarkdownlint').then((mod) => mod.forceMarkdownlint(editor)),
+    );
 }
 
 export function deactivate(): void {
-    outputPanelLogger.dispose();
+    logger.dispose();
+    shellLogger.dispose();
 }

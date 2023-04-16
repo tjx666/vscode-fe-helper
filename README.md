@@ -113,3 +113,9 @@ following commands had been migrated to another extension: [Clipboard Master](ht
 - copy text without syntax
 - smart copy
 - copy as markdown code block
+
+## todo
+
+- [ ] show file prettier/eslint/stylelint/markdownlint config
+- [ ] show current file eslint costs
+- [ ] show workspace storage path
