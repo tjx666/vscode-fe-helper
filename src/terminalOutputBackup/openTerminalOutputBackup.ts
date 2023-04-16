@@ -1,7 +1,6 @@
 import vscode from 'vscode';
 
 import { getBackups } from './common';
-import { openDocument } from '../utils/editor';
 
 export async function openTerminalOutputBackup(context: vscode.ExtensionContext) {
     const backups = await getBackups(context);
@@ -16,6 +15,9 @@ export async function openTerminalOutputBackup(context: vscode.ExtensionContext)
     );
 
     if (selectedBackup) {
-        await openDocument(vscode.Uri.file(selectedBackup.value.backupPath));
+        await vscode.commands.executeCommand(
+            'vscode.open',
+            vscode.Uri.file(selectedBackup.value.backupPath),
+        );
     }
 }

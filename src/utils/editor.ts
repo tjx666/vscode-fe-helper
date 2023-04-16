@@ -36,11 +36,3 @@ export function getEOL(document: TextDocument) {
 export function getIndentChar(text: string, eol: string) {
     return text.split(eol).some((line) => line.startsWith('\t')) ? '\t' : ' ';
 }
-
-export async function openDocument(document: vscode.Uri, languageId?: string): Promise<void> {
-    const textDocument = await vscode.workspace.openTextDocument(document);
-    if (languageId !== undefined) {
-        vscode.languages.setTextDocumentLanguage(textDocument, languageId);
-    }
-    await vscode.window.showTextDocument(textDocument);
-}
