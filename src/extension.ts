@@ -94,16 +94,28 @@ export function activate(context: vscode.ExtensionContext): void {
         import('./shellCommands/forcePrettier').then((mod) => mod.forcePrettier()),
     );
 
-    registerTextEditorCommand('forceESLint', (editor) =>
-        import('./shellCommands/forceESLint').then((mod) => mod.forceESLint(editor)),
+    registerTextEditorCommand('forceESLint', () =>
+        import('./shellCommands/forceESLint').then((mod) => mod.forceESLint()),
     );
 
-    registerTextEditorCommand('forceStylelint', (editor) =>
-        import('./shellCommands/forceStylelint').then((mod) => mod.forceStylelint(editor)),
+    registerTextEditorCommand('forceStylelint', () =>
+        import('./shellCommands/forceStylelint').then((mod) => mod.forceStylelint()),
     );
 
-    registerTextEditorCommand('forceMarkdownlint', (editor) =>
-        import('./shellCommands/forceMarkdownlint').then((mod) => mod.forceMarkdownlint(editor)),
+    registerTextEditorCommand('forceMarkdownlint', () =>
+        import('./shellCommands/forceMarkdownlint').then((mod) => mod.forceMarkdownlint()),
+    );
+
+    registerTextEditorCommand('activeFileESLintPerformance', () =>
+        import('./shellCommands/activeFileESLintPerformance').then((mod) =>
+            mod.activeFileESLintPerformance(),
+        ),
+    );
+
+    registerTextEditorCommand('activeFileStylelintConfig', () =>
+        import('./shellCommands/activeFileStylelintConfig').then((mod) =>
+            mod.activeFileStylelintConfig(),
+        ),
     );
 }
 

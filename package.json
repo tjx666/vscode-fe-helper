@@ -111,6 +111,18 @@
             {
                 "command": "VSCodeFEHelper.forceMarkdownlint",
                 "title": "FE Helper: Force Markdownlint"
+            },
+            {
+                "command": "VSCodeFEHelper.activeFileESLintPerformance",
+                "title": "FE Helper: Show Active File ESLint Performance"
+            },
+            {
+                "command": "VSCodeFEHelper.activeFileESLintConfig",
+                "title": "FE Helper: Show Active File ESLint Config"
+            },
+            {
+                "command": "VSCodeFEHelper.activeFileStylelintConfig",
+                "title": "FE Helper: Show Active File Stylelint Config"
             }
         ]
     },
