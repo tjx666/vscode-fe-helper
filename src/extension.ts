@@ -112,6 +112,12 @@ export function activate(context: vscode.ExtensionContext): void {
         ),
     );
 
+    registerTextEditorCommand('activeFileESLintConfig', () =>
+        import('./shellCommands/activeFileESLintConfig').then((mod) =>
+            mod.activeFileESLintConfig(),
+        ),
+    );
+
     registerTextEditorCommand('activeFileStylelintConfig', () =>
         import('./shellCommands/activeFileStylelintConfig').then((mod) =>
             mod.activeFileStylelintConfig(),

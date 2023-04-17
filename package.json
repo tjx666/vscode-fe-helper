@@ -172,7 +172,7 @@
         "@yutengjing/prettier-config": "^0.0.1",
         "ast-types": "^0.14.2",
         "bumpp": "^9.1.0",
-        "esbuild": "^0.17.16",
+        "esbuild": "^0.17.17",
         "esbuild-visualizer": "^0.4.0",
         "eslint": "^8.38.0",
         "glob": "^10.1.0",
