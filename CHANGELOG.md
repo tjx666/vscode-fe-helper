@@ -1,3 +1,9 @@
+## [0.6.0] - 2023-04-18
+
+### Added
+
+- add new extension icon, thanks <https://www.flaticon.com/>
+
 ## [0.5.0] - 2023-04-18
 
 ### Added

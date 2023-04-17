@@ -51,9 +51,14 @@
         "lebab",
         "ES3",
         "ES5",
-        "ES6"
+        "ES6",
+        "prettier",
+        "eslint",
+        "stylelint",
+        "markdownlint"
     ],
     "main": "./out/extension.js",
+    "icon": "images/logo.png",
     "contributes": {
         "commands": [
             {
