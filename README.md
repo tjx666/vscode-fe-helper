@@ -114,8 +114,25 @@ following commands had been migrated to another extension: [Clipboard Master](ht
 - smart copy
 - copy as markdown code block
 
-## todo
+### Other Useful FrontEnd Tools Commands
 
-- [ ] show file prettier/eslint/stylelint/markdownlint config
-- [ ] show current file eslint costs
-- [ ] show workspace storage path
+- `FE Helper: Force Prettier`
+- `FE Helper: Force ESLint`
+- `FE Helper: Force Stylelint`
+- `FE Helper: Force Markdownlint`
+- `FE Helper: Show Active File ESLint Performance`
+- `FE Helper: Show Active File ESLint Config`
+- `FE Helper: Show Active File Stylelint Config`
+
+## My extensions
+
+- [Open in External App](https://github.com/tjx666/open-in-external-app)
+- [Neo File Utils](https://github.com/tjx666/vscode-neo-file-utils)
+- [Package Manager Enhancer](https://github.com/tjx666/package-manager-enhancer)
+- [VSCode archive](https://github.com/tjx666/vscode-archive)
+- [Modify File Warning](https://github.com/tjx666/modify-file-warning)
+- [Power Edit](https://github.com/tjx666/power-edit)
+- [Adobe Extension Development Tools](https://github.com/tjx666/vscode-adobe-extension-devtools)
+- [Scripting Listener](https://github.com/tjx666/scripting-listener)
+
+Check all here: [publishers/YuTengjing](https://marketplace.visualstudio.com/publishers/YuTengjing)

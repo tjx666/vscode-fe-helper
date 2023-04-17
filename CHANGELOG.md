@@ -1,3 +1,17 @@
+## [0.5.0] - 2023-04-18
+
+### Added
+
+some useful frontEnd tools commands:
+
+- `FE Helper: Force Prettier`
+- `FE Helper: Force ESLint`
+- `FE Helper: Force Stylelint`
+- `FE Helper: Force Markdownlint`
+- `FE Helper: Show Active File ESLint Performance`
+- `FE Helper: Show Active File ESLint Config`
+- `FE Helper: Show Active File Stylelint Config`
+
 ## [0.4.0] - 2023-04-10
 
 ### Added
