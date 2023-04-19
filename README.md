@@ -4,26 +4,15 @@
 
 ![test](https://github.com/tjx666/vscode-fe-helper/actions/workflows/test.yml/badge.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![Percentage of issues still open](https://isitmaintained.com/badge/open/tjx666/vscode-fe-helper.svg)](http://isitmaintained.com/project/tjx666/vscode-fe-helper') [![MIT License](https://img.shields.io/github/license/tjx666/vscode-fe-helper)](https://github.com/tjx666/vscode-fe-helper/blob/master/LICENSE)
 
-## Features
-
-- remove comments
-- transform module imports
-- transform ECMAScript syntax
-- pluralize word
-- remove irregular whitespace
-- transform color format
-- paste JSON as code
-- space god
-
 ## Usage
 
-All the features using by run it's command. You can show command panel by keyboard shortcut <kbd>ctrl</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **Windows** or <kbd>⌘</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **MacOS**.
+All the features are used by run command. You can show command panel with keyboard shortcut <kbd>ctrl</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **Windows** or <kbd>⌘</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **MacOS**. All commands provided by this extension is prefixed with `FE Helper:`.
 
-## Details
+## Features
 
 ### remove comments
 
-command: `remove comments`
+command: `FE Helper: remove comments`
 
 supported languages:
 
@@ -41,7 +30,7 @@ supported languages:
 
 ### transform module imports
 
-command: `transform module imports`
+command: `FE Helper: transform module imports`
 
 This feature allow you to convert between `commonjs` and `esm`.
 
@@ -59,7 +48,7 @@ For now, supports:
 
 ### pluralize word
 
-command: `pluralize`
+command: `FE Helper: pluralize`
 
 Pluralize all the words selected in current active editor.
 
@@ -67,7 +56,7 @@ Pluralize all the words selected in current active editor.
 
 ### remove irregular whitespace
 
-command: `remove irregular whitespace`
+command: `FE Helper: remove irregular whitespace`
 
 Sometime I copy description from LeetCode problem and paste into VSCode, but there are some irregular whitespace in the text. For that time, this feature is very useful and convenient.
 
@@ -75,7 +64,7 @@ Sometime I copy description from LeetCode problem and paste into VSCode, but the
 
 ### transform color format
 
-command: `transform color format`
+command: `FE Helper: transform color format`
 
 supported formats:
 
@@ -105,14 +94,7 @@ For Chinese users, there should be space between English word, number, and punct
 
 ![space god](https://github.com/tjx666/vscode-fe-helper/raw/master/images/space_god.gif?raw=true)
 
-### Copy Commands
-
-following commands had been migrated to another extension: [Clipboard Master](https://marketplace.visualstudio.com/items?itemName=YuTengjing.clipboard-master)
-
-- copy with line number
-- copy text without syntax
-- smart copy
-- copy as markdown code block
+### Clear Terminal Output witch Backup
 
 ### Other Useful FrontEnd Tools Commands
 

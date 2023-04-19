@@ -1,3 +1,10 @@
+## [0.6.1] - 2023-04-19
+
+### Fixed
+
+- doesn't restore origin clipboard content after clear terminal
+- doesn't remove the overflow terminal output backups
+
 ## [0.6.0] - 2023-04-18
 
 ### Added
