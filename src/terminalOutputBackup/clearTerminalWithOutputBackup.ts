@@ -25,10 +25,11 @@ function getLastExecutedCommand(output: string) {
 }
 
 export async function clearTerminalWithOutputBackup(context: vscode.ExtensionContext) {
-    await vscode.commands.executeCommand('workbench.action.terminal.selectAll');
+    // NOTE: should before selectAll because selectAll will also copy all
     const originalClipboardContent = await vscode.env.clipboard.readText();
     let terminalOutput: string;
     try {
+        await vscode.commands.executeCommand('workbench.action.terminal.selectAll');
         await vscode.commands.executeCommand('workbench.action.terminal.copyAndClearSelection');
         await vscode.commands.executeCommand('workbench.action.terminal.clear');
         terminalOutput = await vscode.env.clipboard.readText();

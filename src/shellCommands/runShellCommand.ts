@@ -44,8 +44,8 @@ export async function runShellCommand(shellCommand: string, args: string[], opti
         timeout: 10 * 1000,
         ...options,
     });
-    const costs = ((Date.now() - start) / 1000).toFixed(3);
-    const profile = `exit: ${exitCode} cost: ${costs}s`;
+    const cost = ((Date.now() - start) / 1000).toFixed(3);
+    const profile = `exit: ${exitCode} cost: ${cost}s`;
     if (failed || options?.documentTitle === undefined) {
         shellLogger.log(`${escapedCommand}\n${stderr || stdout || ''}\n\n${profile}`, true);
     } else {
