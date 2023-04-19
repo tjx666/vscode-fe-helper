@@ -15,6 +15,7 @@ function getLastExecutedCommand(output: string) {
 
     for (const cmd of commands) {
         const cmdStr = cmd[0].trim();
+        // skip empty command
         if (cmdStr !== cmdPrefix) {
             lastExecutedCommand = cmdStr;
             break;
@@ -37,6 +38,7 @@ export async function clearTerminalWithOutputBackup(context: vscode.ExtensionCon
         console.error(error);
         return;
     } finally {
+        // restore clipboard content
         await vscode.env.clipboard.writeText(originalClipboardContent);
     }
 
@@ -50,11 +52,21 @@ export async function clearTerminalWithOutputBackup(context: vscode.ExtensionCon
     const backupPath = resolve(backupsFolder, `${now}.log`);
     await fs.writeFile(backupPath, terminalOutput, 'utf8');
 
+    // store limit count backups
     const maxBackupCount = 10;
     backups.unshift({
         timestamp: now,
         backupPath,
         lastCommand: getLastExecutedCommand(terminalOutput),
     });
-    await context.globalState.update(backupKey, backups.slice(0, maxBackupCount));
+    const newBackups = backups.slice(0, maxBackupCount);
+    await context.globalState.update(backupKey, newBackups);
+
+    // remove overflow backups
+    const backupsOverflow = backups.slice(maxBackupCount);
+    for (const { backupPath } of backupsOverflow) {
+        if (await pathExists(backupPath)) {
+            await fs.unlink(backupPath);
+        }
+    }
 }
