@@ -63,35 +63,35 @@
         "commands": [
             {
                 "command": "VSCodeFEHelper.removeComments",
-                "title": "FE Helper: remove comments"
+                "title": "FE Helper: Remove Comments"
             },
             {
                 "command": "VSCodeFEHelper.transformModuleImports",
-                "title": "FE Helper: transform module imports"
+                "title": "FE Helper: Transform Module Imports"
             },
             {
                 "command": "VSCodeFEHelper.transformESSyntax",
-                "title": "FE Helper: transform ECMAScript syntax"
+                "title": "FE Helper: Transform ECMAScript Syntax"
             },
             {
                 "command": "VSCodeFEHelper.pluralize",
-                "title": "FE Helper: pluralize"
+                "title": "FE Helper: Pluralize"
             },
             {
                 "command": "VSCodeFEHelper.removeIrregularWhitespace",
-                "title": "FE Helper: remove irregular whitespace"
+                "title": "FE Helper: Remove Irregular Whitespace"
             },
             {
                 "command": "VSCodeFEHelper.transformColorFormat",
-                "title": "FE Helper: transform color format"
+                "title": "FE Helper: Transform Color Format"
             },
             {
                 "command": "VSCodeFEHelper.jsonToObject",
-                "title": "FE Helper: paste JSON as Object"
+                "title": "FE Helper: Paste JSON as Object"
             },
             {
                 "command": "VSCodeFEHelper.spaceGod",
-                "title": "FE Helper: spaceGod"
+                "title": "FE Helper: SpaceGod"
             },
             {
                 "command": "VSCodeFEHelper.clearTerminalWithOutputBackup",

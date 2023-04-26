@@ -6,13 +6,13 @@
 
 ## Usage
 
-All the features are used by run command. You can show command panel with keyboard shortcut <kbd>ctrl</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **Windows** or <kbd>⌘</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **MacOS**. All commands provided by this extension is prefixed with `FE Helper:`.
+All the features are used by run command. You can show command plate by keyboard shortcut <kbd>ctrl</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **Windows** or <kbd>⌘</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd> on **MacOS**. All commands provided by this extension is prefixed with `FE Helper:`.
 
 ## Features
 
-### remove comments
+### Remove Comments
 
-command: `FE Helper: remove comments`
+command: `FE Helper: Remove Comments`
 
 supported languages:
 
@@ -26,19 +26,19 @@ supported languages:
 - yaml
 - ignore (eg: .gitignore, .eslintignore)
 
-![remove comments](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_comments.gif?raw=true)
+![Remove Comments](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_comments.gif?raw=true)
 
-### transform module imports
+### Transform Module Imports
 
-command: `FE Helper: transform module imports`
+Command: `FE Helper: Transform Module Imports`
 
-This feature allow you to convert between `commonjs` and `esm`.
+This feature allow you to convert import statements between `commonjs` and `esm`.
 
-![transform module imports](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_module_imports.gif?raw=true)
+![Transform Module Imports](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_module_imports.gif?raw=true)
 
-### transform ECMAScript syntax
+### Transform ECMAScript Syntax
 
-You can use command: `FE Helper: transform ECMAScript syntax` to transform ECMAScript syntax.
+Command: `FE Helper: Transform ECMAScript Syntax`
 
 For now, supports:
 
@@ -46,25 +46,25 @@ For now, supports:
 - Using tsc compile code to ES5
 - Using tsc compile code to ES3
 
-### pluralize word
+### Pluralize
 
-command: `FE Helper: pluralize`
+command: `FE Helper: Pluralize`
 
 Pluralize all the words selected in current active editor.
 
-![pluralize word](https://github.com/tjx666/vscode-fe-helper/raw/master/images/pluralize.gif?raw=true)
+![Pluralize](https://github.com/tjx666/vscode-fe-helper/raw/master/images/pluralize.gif?raw=true)
 
-### remove irregular whitespace
+### Remove Irregular Whitespace
 
-command: `FE Helper: remove irregular whitespace`
+Command: `FE Helper: Remove Irregular Whitespace`
 
 Sometime I copy description from LeetCode problem and paste into VSCode, but there are some irregular whitespace in the text. For that time, this feature is very useful and convenient.
 
-![remove irregular whitespace](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_irregular_whitespace.gif?raw=true)
+![Remove Irregular Whitespace](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_irregular_whitespace.gif?raw=true)
 
-### transform color format
+### Transform Color Format
 
-command: `FE Helper: transform color format`
+Command: `FE Helper: Transform Color Format`
 
 supported formats:
 
@@ -76,9 +76,9 @@ supported formats:
 - ansi16
 - ansi256
 
-![transform color format](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_color_format.gif?raw=true)
+![Transform Color Format](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_color_format.gif?raw=true)
 
-### paste JSON as Object
+### Paste JSON as Object
 
 You can copy JSON content, and paste as JavaScript code. The principle behind this functionality is very simple:
 
@@ -86,15 +86,13 @@ You can copy JSON content, and paste as JavaScript code. The principle behind th
 const jsCode = jsonFromClipboard.replace(/"([^"]*)"\s*:/gm, '$1:');
 ```
 
-![paste JSON as code](https://github.com/tjx666/vscode-fe-helper/raw/master/images/jsonToCode.gif?raw=true)
+![Paste JSON as Object](https://github.com/tjx666/vscode-fe-helper/raw/master/images/jsonToCode.gif?raw=true)
 
-### space god
+### SpaceGod
 
-For Chinese users, there should be space between English word, number, and punctuation. It's very convenient to add space between them by command `FE Helper: spaceGod`。
+For Chinese users, there should be space between English word, number, and punctuation. It's very convenient to add space between them by command `FE Helper: SpaceGod`。
 
-![space god](https://github.com/tjx666/vscode-fe-helper/raw/master/images/space_god.gif?raw=true)
-
-### Clear Terminal Output witch Backup
+![SpaceGod](https://github.com/tjx666/vscode-fe-helper/raw/master/images/space_god.gif?raw=true)
 
 ### Other Useful FrontEnd Tools Commands
 
@@ -109,12 +107,13 @@ For Chinese users, there should be space between English word, number, and punct
 ## My extensions
 
 - [Open in External App](https://github.com/tjx666/open-in-external-app)
-- [Neo File Utils](https://github.com/tjx666/vscode-neo-file-utils)
 - [Package Manager Enhancer](https://github.com/tjx666/package-manager-enhancer)
+- [Neo File Utils](https://github.com/tjx666/vscode-neo-file-utils)
+- [VSCode FE Helper](https://github.com/tjx666/vscode-fe-helper)
 - [VSCode archive](https://github.com/tjx666/vscode-archive)
+- [Better Colorizer](https://github.com/tjx666/better-colorizer/tree/main)
 - [Modify File Warning](https://github.com/tjx666/modify-file-warning)
 - [Power Edit](https://github.com/tjx666/power-edit)
-- [Adobe Extension Development Tools](https://github.com/tjx666/vscode-adobe-extension-devtools)
-- [Scripting Listener](https://github.com/tjx666/scripting-listener)
+- [Reload Can Solve Any Problems](https://github.com/tjx666/reload-can-solve-any-problems)
 
 Check all here: [publishers/YuTengjing](https://marketplace.visualstudio.com/publishers/YuTengjing)
