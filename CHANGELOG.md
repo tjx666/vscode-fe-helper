@@ -1,3 +1,10 @@
+## [0.6.2] - 2023-04-27
+
+### Changed
+
+- update deps
+- adjust README title case
+
 ## [0.6.1] - 2023-04-19
 
 ### Fixed
