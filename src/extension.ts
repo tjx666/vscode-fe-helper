@@ -49,11 +49,6 @@ export function activate(context: vscode.ExtensionContext): void {
         import('./transformESSyntax').then((mod) => mod.transformESSyntax(editor)),
     );
 
-    registerTextEditorCommand('transformModuleImports', async (editor: TextEditor) => {
-        const { TransformModule } = await import('./transformModuleImports');
-        return new TransformModule(editor).handle();
-    });
-
     registerTextEditorCommand('pluralize', (editor: TextEditor) =>
         import('./pluralize').then((mod) => mod.plur(editor)),
     );

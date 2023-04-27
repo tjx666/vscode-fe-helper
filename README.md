@@ -28,14 +28,6 @@ supported languages:
 
 ![Remove Comments](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_comments.gif?raw=true)
 
-### Transform Module Imports
-
-Command: `FE Helper: Transform Module Imports`
-
-This feature allow you to convert import statements between `commonjs` and `esm`.
-
-![Transform Module Imports](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_module_imports.gif?raw=true)
-
 ### Transform ECMAScript Syntax
 
 Command: `FE Helper: Transform ECMAScript Syntax`

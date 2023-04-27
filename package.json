@@ -66,10 +66,6 @@
                 "title": "FE Helper: Remove Comments"
             },
             {
-                "command": "VSCodeFEHelper.transformModuleImports",
-                "title": "FE Helper: Transform Module Imports"
-            },
-            {
                 "command": "VSCodeFEHelper.transformESSyntax",
                 "title": "FE Helper: Transform ECMAScript Syntax"
             },
