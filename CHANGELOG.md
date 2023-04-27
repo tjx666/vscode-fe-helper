@@ -1,3 +1,9 @@
+## [0.7.0] - 2023-04-28
+
+### Braking Change
+
+- remove transform module feature because typescript has builtin support
+
 ## [0.6.2] - 2023-04-27
 
 ### Changed
@@ -130,26 +136,26 @@ some useful frontEnd tools commands:
 
 ## [0.2.0] - 2022-02-27
 
-#### Changed
+### Changed
 
 - upgrade dependencies
 - optimize startup speed
 
 ## [0.1.5] - 2021-12-4
 
-#### Changed
+### Changed
 
 - upgrade dependencies
 
 ## [0.1.4] - 2021-10-15
 
-#### Fixed
+### Fixed
 
 - can not require typescript error
 
 ## [0.1.3] - 2021-10-14
 
-#### Fixed
+### Fixed
 
 - <https://github.com/advisories/GHSA-93q8-gq69-wqmw>
 
@@ -167,7 +173,7 @@ some useful frontEnd tools commands:
 
 ## [0.0.10] - 2021-05-01
 
-#### Changed
+### Changed
 
 - upgrade dependencies to latest
 
@@ -186,7 +192,7 @@ some useful frontEnd tools commands:
 
 ## [0.0.7] - 2020-11-25
 
-#### Changed
+### Changed
 
 - update all dependencies to latest
 - upgrade webpack5
@@ -225,7 +231,7 @@ some useful frontEnd tools commands:
 
 ## [0.0.2] - 2020-05-29
 
-#### Fixed
+### Fixed
 
 - remove comments from ignore file doesn't work
 
