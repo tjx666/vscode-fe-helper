@@ -142,3 +142,7 @@ $RECYCLE.BIN/
 
 # apple
 .DS_Store
+
+# esbuild
+stats.html
+meta.json

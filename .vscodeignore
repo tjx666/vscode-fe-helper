@@ -11,7 +11,8 @@ src/
 .vscode-test/
 test/
 test-workspace/
-out/test/
+out/
+!out/extension.js
 .nyc_output/
 coverage/
 **/*.js.map
@@ -36,4 +37,3 @@ pnpm-lock.yaml
 
 images
 !images/logo.png
-
