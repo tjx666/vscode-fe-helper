@@ -1,3 +1,9 @@
+## [0.7.1] - 2024-01-04
+
+### Added
+
+- migrate code from <https://github.com/kufii/vscode-js-unicode-preview>
+
 ## [0.7.0] - 2023-04-28
 
 ### Braking Change

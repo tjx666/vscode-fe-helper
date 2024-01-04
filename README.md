@@ -96,6 +96,18 @@ For Chinese users, there should be space between English word, number, and punct
 - `FE Helper: Show Active File ESLint Config`
 - `FE Helper: Show Active File Stylelint Config`
 
+### JS Unicode Preview
+
+check [vscode-js-unicode-preview](https://github.com/kufii/vscode-js-unicode-preview) for more details:
+
+**settings**:
+
+`vscode-fe-helper.js-unicode-preview.languages`: An array of language ids to add the previews on. Defaults to `["javascript", "javascriptreact", "typescript", "typescriptreact"]`
+
+`vscode-fe-helper.js-unicode-preview.inline`: Boolean whether or not to show the previews inline. Defaults to `true`.
+
+`vscode-fe-helper.js-unicode-preview.hover`: Boolean whether or not to show the previews on hover. Defaults to `true`.
+
 ## My extensions
 
 - [Open in External App](https://github.com/tjx666/open-in-external-app)
