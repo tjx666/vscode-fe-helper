@@ -55,10 +55,14 @@
         "prettier",
         "eslint",
         "stylelint",
-        "markdownlint"
+        "markdownlint",
+        "unicode"
     ],
     "main": "./out/extension.js",
     "icon": "images/logo.png",
+    "activationEvents": [
+        "onStartupFinished"
+    ],
     "contributes": {
         "commands": [
             {
@@ -125,12 +129,41 @@
                 "command": "VSCodeFEHelper.activeFileStylelintConfig",
                 "title": "FE Helper: Show Active File Stylelint Config"
             }
-        ]
+        ],
+        "configuration": {
+            "title": "VSCode FE Helper",
+            "properties": {
+                "vscode-fe-helper.js-unicode-preview.languages": {
+                    "type": "array",
+                    "scope": "resource",
+                    "default": [
+                        "javascript",
+                        "javascriptreact",
+                        "typescript",
+                        "typescriptreact"
+                    ],
+                    "description": "The list of languages to add JS unicode previews to"
+                },
+                "vscode-fe-helper.js-unicode-preview.inline": {
+                    "type": "boolean",
+                    "scope": "resource",
+                    "default": true,
+                    "description": "Show the unicode previews inline"
+                },
+                "vscode-fe-helper.js-unicode-preview.hover": {
+                    "type": "boolean",
+                    "scope": "resource",
+                    "default": true,
+                    "description": "Show the unicode previews as a hover tooltip"
+                }
+            }
+        }
     },
     "eslintConfig": {
         "extends": "@yutengjing/eslint-config-typescript",
         "ignorePatterns": [
-            "test-workspace"
+            "test-workspace",
+            "src/jsUnicodePreview"
         ]
     },
     "prettier": "@yutengjing/prettier-config",

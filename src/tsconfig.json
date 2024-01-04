@@ -3,5 +3,5 @@
     "compilerOptions": {
         "outDir": "../out/src"
     },
-    "include": ["**/*.ts"]
+    "include": ["**/*.ts", "jsUnicodePreview/*.js"]
 }

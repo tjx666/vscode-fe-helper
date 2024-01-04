@@ -1,6 +1,7 @@
 import type { TextEditor, TextEditorEdit } from 'vscode';
 import vscode from 'vscode';
 
+import { jsUnicodePreview } from './jsUnicodePreview';
 import { logger, shellLogger } from './utils/log';
 import { store } from './utils/store';
 
@@ -8,6 +9,8 @@ export function activate(context: vscode.ExtensionContext): void {
     store.storageDir = context.storageUri!.fsPath;
     const { commands } = vscode;
     const extName = 'VSCodeFEHelper';
+
+    jsUnicodePreview(context);
 
     const registerCommand = (
         commandName: string,
@@ -36,6 +39,8 @@ export function activate(context: vscode.ExtensionContext): void {
         context.subscriptions.push(cmd);
         return cmd;
     };
+
+    // jsUnicodePreview(context);
 
     registerTextEditorCommand(
         'removeComments',
