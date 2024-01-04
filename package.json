@@ -164,7 +164,10 @@
         "ignorePatterns": [
             "test-workspace",
             "src/jsUnicodePreview"
-        ]
+        ],
+        "rules": {
+            "jsdoc/tag-lines": 0
+        }
     },
     "prettier": "@yutengjing/prettier-config",
     "lint-staged": {
@@ -193,45 +196,45 @@
         "publish:open-vsx": "ovsx publish --no-dependencies"
     },
     "devDependencies": {
-        "@types/color": "^3.0.3",
+        "@types/color": "^3.0.6",
         "@types/glob": "^8.1.0",
-        "@types/mocha": "^10.0.1",
-        "@types/node": "^18.16.1",
-        "@types/pangu": "^4.0.0",
-        "@types/pluralize": "^0.0.29",
-        "@types/vscode": "^1.77.0",
-        "@vscode/test-electron": "^2.3.0",
-        "@vscode/vsce": "^2.19.0",
-        "@yutengjing/eslint-config-typescript": "^0.3.0",
-        "@yutengjing/prettier-config": "^0.0.1",
+        "@types/mocha": "^10.0.6",
+        "@types/node": "^18.19.4",
+        "@types/pangu": "^4.0.2",
+        "@types/pluralize": "^0.0.33",
+        "@types/vscode": "^1.85.0",
+        "@vscode/test-electron": "^2.3.8",
+        "@vscode/vsce": "^2.22.0",
+        "@yutengjing/eslint-config-typescript": "^0.4.2",
+        "@yutengjing/prettier-config": "^1.0.0",
         "ast-types": "^0.14.2",
-        "bumpp": "^9.1.0",
-        "esbuild": "^0.17.18",
-        "esbuild-visualizer": "^0.4.0",
-        "eslint": "^8.39.0",
-        "glob": "^10.2.2",
-        "lint-staged": "^13.2.2",
+        "bumpp": "^9.2.1",
+        "esbuild": "^0.19.11",
+        "esbuild-visualizer": "^0.6.0",
+        "eslint": "^8.56.0",
+        "glob": "^10.3.10",
+        "lint-staged": "^15.2.0",
         "mocha": "^10.2.0",
-        "ovsx": "^0.8.0",
-        "prettier": "^2.8.8",
-        "rimraf": "^5.0.0",
-        "simple-git-hooks": "^2.8.1",
-        "stale-dep": "^0.6.0",
-        "tsx": "^3.12.6"
+        "ovsx": "^0.8.3",
+        "prettier": "^3.1.1",
+        "rimraf": "^5.0.5",
+        "simple-git-hooks": "^2.9.0",
+        "stale-dep": "^0.7.0",
+        "tsx": "^4.7.0"
     },
     "dependencies": {
-        "@babel/parser": "^7.21.4",
+        "@babel/parser": "^7.23.6",
         "color": "^4.2.3",
-        "execa": "^7.1.1",
+        "execa": "^8.0.1",
         "jsonc-parser": "^3.2.0",
-        "lebab": "^3.2.1",
+        "lebab": "^3.2.3",
         "pangu": "^4.0.7",
         "pluralize": "^8.0.0",
-        "postcss": "^8.4.23",
+        "postcss": "^8.4.32",
         "postcss-less": "^6.0.0",
-        "postcss-scss": "^4.0.6",
-        "recast": "^0.22.0",
+        "postcss-scss": "^4.0.9",
+        "recast": "^0.23.4",
         "resolve-from": "^5.0.0",
-        "typescript": "^5.0.4"
+        "typescript": "^5.3.3"
     }
 }

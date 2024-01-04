@@ -7,7 +7,7 @@ export function getWholeDocumentRange(document: TextDocument): Range {
 }
 
 /**
- * an utility to replace all text of an editor
+ * An utility to replace all text of an editor
  *
  * @param editor
  * @param value

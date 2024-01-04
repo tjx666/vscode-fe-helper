@@ -65,7 +65,9 @@ export async function clearTerminalWithOutputBackup(context: vscode.ExtensionCon
     // remove overflow backups
     const backupsOverflow = backups.slice(maxBackupCount);
     for (const { backupPath } of backupsOverflow) {
+        // eslint-disable-next-line no-await-in-loop
         if (await pathExists(backupPath)) {
+            // eslint-disable-next-line no-await-in-loop
             await fs.unlink(backupPath);
         }
     }

@@ -5,7 +5,7 @@ import { getWholeDocumentRange } from '../utils/editor';
 function removeIrregular(text: string): string {
     // eslint-disable-next-line no-irregular-whitespace
     const IRREGULAR_WHITESPACE_RE = / /;
-    return text.replace(new RegExp(IRREGULAR_WHITESPACE_RE, 'g'), ' ');
+    return text.replaceAll(new RegExp(IRREGULAR_WHITESPACE_RE, 'g'), ' ');
 }
 
 export function removeIrregularWhitespace(editor: TextEditor, editBuilder: TextEditorEdit): void {

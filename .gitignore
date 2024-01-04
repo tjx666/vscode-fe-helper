@@ -137,5 +137,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# custom 
+# custom
 *.zip
+
+# apple
+.DS_Store

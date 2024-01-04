@@ -180,7 +180,7 @@ export class RemoveComments {
             const templateCommentRE = /<!--([\n\r]|.)*?-->/g;
             source =
                 source.slice(0, templateMatch.index) +
-                templateString.replace(templateCommentRE, '') +
+                templateString.replaceAll(templateCommentRE, '') +
                 source.slice(templateMatch.index + templateString.length);
         }
 

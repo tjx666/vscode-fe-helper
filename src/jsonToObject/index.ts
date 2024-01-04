@@ -3,7 +3,7 @@ import vscode from 'vscode';
 
 export async function jsonToObject(editor: TextEditor): Promise<void> {
     const json = await vscode.env.clipboard.readText();
-    const jsCode = json.replace(/"([^"]*)"\s*:/g, '$1:');
+    const jsCode = json.replaceAll(/"([^"]*)"\s*:/g, '$1:');
     editor.edit((builder) => {
         const selectionText = editor.document.getText(editor.selection);
         if (selectionText.length === 0) {
