@@ -1,3 +1,3 @@
 export const store = {
-    storageDir: undefined as string | undefined,
+    storageDir: undefined as unknown as string,
 };

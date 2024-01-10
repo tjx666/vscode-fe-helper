@@ -19,12 +19,7 @@ export async function runShellCommand(shellCommand: string, args: string[], opti
     const editor = vscode.window.activeTextEditor;
     if (!editor) return;
 
-    const storageDir = store.storageDir!;
-    if (!(await pathExists(storageDir))) {
-        await fs.mkdir(storageDir);
-    }
-
-    const emptyIgnoreFile = resolve(storageDir, '.empty-ignore');
+    const emptyIgnoreFile = resolve(store.storageDir, '.empty-ignore');
     if (!(await pathExists(emptyIgnoreFile))) {
         await fs.writeFile(emptyIgnoreFile, '', 'utf8');
     }

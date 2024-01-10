@@ -18,7 +18,7 @@ export async function removeTsTypes(editor: TextEditor) {
     }
 
     const tsSourceCode = document.getText(range);
-    const tempFilePath = path.resolve(store.storageDir!, 'temp-removeTsTypes.ts');
+    const tempFilePath = path.resolve(store.storageDir, 'temp-removeTsTypes.ts');
     await fs.writeFile(tempFilePath, tsSourceCode, 'utf8');
     const workspace = vscode.workspace.getWorkspaceFolder(editor.document.uri);
 
