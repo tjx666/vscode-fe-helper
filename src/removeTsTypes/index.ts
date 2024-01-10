@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import { execa } from 'execa';
 import type { Range, TextEditor } from 'vscode';
+import vscode from 'vscode';
 
 import { getWholeDocumentRange } from '../utils/editor';
 import { store } from '../utils/store';
@@ -19,12 +20,15 @@ export async function removeTsTypes(editor: TextEditor) {
     const tsSourceCode = document.getText(range);
     const tempFilePath = path.resolve(store.storageDir!, 'temp-removeTsTypes.ts');
     await fs.writeFile(tempFilePath, tsSourceCode, 'utf8');
-    const { stdout: jsCode } = await execa('swc', [
-        tempFilePath,
-        '--config',
-        'jsc.target=esnext',
-        '--quiet',
-    ]);
+    const workspace = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+
+    const { stdout: jsCode } = await execa(
+        'swc',
+        [tempFilePath, '--config', 'jsc.target=esnext', '--quiet'],
+        {
+            cwd: workspace?.uri.fsPath,
+        },
+    );
     await editor.edit((editBuilder) => {
         editBuilder.replace(range!, jsCode);
     });
