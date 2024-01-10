@@ -74,6 +74,10 @@
                 "title": "FE Helper: Transform ECMAScript Syntax"
             },
             {
+                "command": "VSCodeFEHelper.removeTsTypes",
+                "title": "FE Helper: Remove TypeScript Types"
+            },
+            {
                 "command": "VSCodeFEHelper.pluralize",
                 "title": "FE Helper: Pluralize"
             },

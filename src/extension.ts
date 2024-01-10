@@ -1,14 +1,22 @@
+import fs from 'node:fs/promises';
+
 import type { TextEditor, TextEditorEdit } from 'vscode';
 import vscode from 'vscode';
 
 import { jsUnicodePreview } from './jsUnicodePreview';
+import { pathExists } from './utils/fs';
 import { logger, shellLogger } from './utils/log';
 import { store } from './utils/store';
 
-export function activate(context: vscode.ExtensionContext): void {
-    store.storageDir = context.storageUri!.fsPath;
+export async function activate(context: vscode.ExtensionContext) {
     const { commands } = vscode;
     const extName = 'VSCodeFEHelper';
+
+    const storageDir = context.storageUri!.fsPath;
+    store.storageDir = storageDir;
+    if (!(await pathExists(storageDir))) {
+        await fs.mkdir(storageDir);
+    }
 
     jsUnicodePreview(context);
 
@@ -52,6 +60,10 @@ export function activate(context: vscode.ExtensionContext): void {
 
     registerTextEditorCommand('transformESSyntax', (editor: TextEditor) =>
         import('./transformESSyntax').then((mod) => mod.transformESSyntax(editor)),
+    );
+
+    registerTextEditorCommand('removeTsTypes', (editor: TextEditor) =>
+        import('./removeTsTypes').then((mod) => mod.removeTsTypes(editor)),
     );
 
     registerTextEditorCommand('pluralize', (editor: TextEditor) =>
