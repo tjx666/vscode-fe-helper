@@ -1,3 +1,9 @@
+## [0.8.1] - 2024-01-10
+
+### Fixed
+
+- readme `Remove TypeScript Types` gif disappear
+
 ## [0.8.0] - 2024-01-10
 
 ### Added
