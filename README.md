@@ -38,6 +38,15 @@ For now, supports:
 - Using tsc compile code to ES5
 - Using tsc compile code to ES3
 
+### Remove TypeScript Types
+
+Command `FE Helper: Remove TypeScript Types`
+
+> [!NOTE]  
+> You need to install [swc cli](https://swc.rs/docs/usage/cli) local or global
+
+![Remove TypeScript Types](https://github.com/tjx666/vscode-fe-helper/blob/main/images/remove-typescript-types.gif?raw=true)
+
 ### Pluralize
 
 command: `FE Helper: Pluralize`

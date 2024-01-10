@@ -1,3 +1,9 @@
+## [0.8.0] - 2024-01-10
+
+### Added
+
+- support `Remove Typescript Types`
+
 ## [0.7.1] - 2024-01-04
 
 ### Added
