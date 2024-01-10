@@ -6,7 +6,10 @@ import CommentRemover from './commentRemover';
 
 const { space } = list;
 
-// copied from https://github.com/cssnano/cssnano/blob/master/packages/postcss-discard-comments/src/index.js
+/**
+ * Copied from
+ * https://github.com/cssnano/cssnano/blob/master/packages/postcss-discard-comments/src/index.js
+ */
 const discardCommentsPlugin: PluginCreator<Record<string, any>> = (opts = {}): Plugin => {
     const remover = new CommentRemover(opts);
     const matcherCache: Record<string, any> = {};

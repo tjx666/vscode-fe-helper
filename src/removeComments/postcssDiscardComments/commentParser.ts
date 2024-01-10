@@ -1,8 +1,8 @@
 export default function commentParser(input: string): any[] {
-    const tokens = [];
+    const tokens: number[][] = [];
     const { length } = input;
     let pos = 0;
-    let next;
+    let next: number;
 
     while (pos < length) {
         next = input.indexOf('/*', pos);
