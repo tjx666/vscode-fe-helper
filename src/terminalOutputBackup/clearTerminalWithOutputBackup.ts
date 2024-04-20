@@ -3,8 +3,8 @@ import { resolve } from 'node:path';
 
 import vscode from 'vscode';
 
-import { backupKey, getBackups } from './common';
 import { pathExists } from '../utils/fs';
+import { backupKey, getBackups } from './common';
 
 const cmdPrefix = '❯';
 const commandRegexp = /^❯ .*/gm;

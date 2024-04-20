@@ -2,6 +2,7 @@
     "name": "vscode-fe-helper",
     "displayName": "VSCode FE Helper",
     "version": "0.8.2",
+    "packageManager": "pnpm@9.0.4",
     "preview": true,
     "description": "Provide some useful tools for front end development",
     "publisher": "YuTengjing",
@@ -33,7 +34,7 @@
         "url": "https://github.com/tjx666/vscode-fe-helper"
     },
     "engines": {
-        "vscode": "^1.85.0"
+        "vscode": "^1.86.0"
     },
     "categories": [
         "Other"
@@ -203,42 +204,42 @@
         "@types/color": "^3.0.6",
         "@types/glob": "^8.1.0",
         "@types/mocha": "^10.0.6",
-        "@types/node": "^18.19.6",
+        "@types/node": "^18.19.31",
         "@types/pangu": "^4.0.2",
         "@types/pluralize": "^0.0.33",
-        "@types/vscode": "^1.85.0",
-        "@vscode/test-electron": "^2.3.8",
-        "@vscode/vsce": "^2.22.0",
-        "@yutengjing/eslint-config-typescript": "^0.5.2",
-        "@yutengjing/prettier-config": "^1.0.0",
+        "@types/vscode": "^1.86.0",
+        "@vscode/test-electron": "^2.3.9",
+        "@vscode/vsce": "^2.26.0",
+        "@yutengjing/eslint-config-typescript": "^0.7.0",
+        "@yutengjing/prettier-config": "^1.2.0",
         "ast-types": "^0.14.2",
-        "bumpp": "^9.2.1",
-        "esbuild": "^0.19.11",
+        "bumpp": "^9.4.0",
+        "esbuild": "^0.20.2",
         "esbuild-visualizer": "^0.6.0",
-        "eslint": "^8.56.0",
-        "glob": "^10.3.10",
-        "lint-staged": "^15.2.0",
-        "mocha": "^10.2.0",
-        "ovsx": "^0.8.3",
-        "prettier": "^3.1.1",
+        "eslint": "^8.57.0",
+        "glob": "^10.3.12",
+        "lint-staged": "^15.2.2",
+        "mocha": "^10.4.0",
+        "ovsx": "^0.9.1",
+        "prettier": "^3.2.5",
         "rimraf": "^5.0.5",
-        "simple-git-hooks": "^2.9.0",
+        "simple-git-hooks": "^2.11.1",
         "stale-dep": "^0.7.0",
-        "tsx": "^4.7.0"
+        "tsx": "^4.7.2"
     },
     "dependencies": {
-        "@babel/parser": "^7.23.6",
+        "@babel/parser": "^7.24.4",
         "color": "^4.2.3",
         "execa": "^8.0.1",
-        "jsonc-parser": "^3.2.0",
-        "lebab": "^3.2.3",
+        "jsonc-parser": "^3.2.1",
+        "lebab": "^3.2.4",
         "pangu": "^4.0.7",
         "pluralize": "^8.0.0",
-        "postcss": "^8.4.33",
+        "postcss": "^8.4.38",
         "postcss-less": "^6.0.0",
         "postcss-scss": "^4.0.9",
-        "recast": "^0.23.4",
+        "recast": "^0.23.6",
         "resolve-from": "^5.0.0",
-        "typescript": "^5.3.3"
+        "typescript": "^5.4.5"
     }
 }

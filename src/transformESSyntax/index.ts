@@ -4,11 +4,11 @@ import type TS from 'typescript';
 import type { TextEditor } from 'vscode';
 import vscode from 'vscode';
 
+import { logger } from '../utils/log';
 import ES5ToES6 from './ES5ToES6';
 import tscCompile from './tscCompile';
 import type { TransformResult } from './type';
 import { getTypescript } from './typescript';
-import { logger } from '../utils/log';
 
 export async function transformESSyntax(editor: TextEditor): Promise<void> {
     const { document, selection } = editor;

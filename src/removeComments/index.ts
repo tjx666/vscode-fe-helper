@@ -10,10 +10,10 @@ import * as recast from 'recast';
 import type { TextDocument, TextEditor, TextEditorEdit } from 'vscode';
 import vscode, { Range } from 'vscode';
 
-import postcssDiscardComments from './postcssDiscardComments';
 import { parseSourceToAst } from '../utils/ast';
 import { ID_LANG_MAPPER } from '../utils/constants';
 import { replaceAllTextOfEditor } from '../utils/editor';
+import postcssDiscardComments from './postcssDiscardComments';
 
 export class RemoveComments {
     private static readonly supportedMarkLangs = new Set(['html', 'xml', 'markdown']);
