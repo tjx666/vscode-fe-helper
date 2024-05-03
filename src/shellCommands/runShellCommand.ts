@@ -41,8 +41,14 @@ export async function runShellCommand(shellCommand: string, args: string[], opti
     });
     const cost = ((Date.now() - start) / 1000).toFixed(3);
     const profile = `exit: ${exitCode} cost: ${cost}s`;
+    let logCommand = escapedCommand;
+    if (options?.env) {
+        logCommand = `${Object.entries(options.env)
+            .map(([key, value]) => `${key}=${value}`)
+            .join(' ')} ${logCommand}`;
+    }
     if (failed || options?.documentTitle === undefined) {
-        shellLogger.log(`${escapedCommand}\n${stderr || stdout || ''}\n\n${profile}`, true);
+        shellLogger.log(`${logCommand}\n${stderr || stdout || ''}\n\n${profile}`, true);
     } else {
         const document = await vscode.workspace.openTextDocument(
             vscode.Uri.parse(`untitled:/${options.documentTitle}`),
@@ -50,7 +56,7 @@ export async function runShellCommand(shellCommand: string, args: string[], opti
         const editor = await vscode.window.showTextDocument(document);
         await replaceAllTextOfEditor(editor, stdout, true);
         await vscode.commands.executeCommand('editor.foldLevel2');
-        shellLogger.log(`${escapedCommand}\n${profile}`);
+        shellLogger.log(`${logCommand}\n${profile}`);
     }
     return stdout;
 }
