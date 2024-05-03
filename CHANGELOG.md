@@ -1,3 +1,15 @@
+## v0.9.0 (2024-05-04)
+
+### 🚀 Features
+
+- Support output command env when run shell command ([536414a](https://github.com/tjx666/vscode-fe-helper/commit/536414a))
+
+### ❤️ Contributors
+
+- YuTengjing <yutengjing@openart.ai>
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.8.2...v0.9.0 '2024-05-04')
+
 ## [0.8.1] - 2024-01-10
 
 ### Fixed

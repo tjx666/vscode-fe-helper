@@ -1,7 +1,7 @@
 {
     "name": "vscode-fe-helper",
     "displayName": "VSCode FE Helper",
-    "version": "0.8.2",
+    "version": "0.9.0",
     "packageManager": "pnpm@9.0.6",
     "preview": true,
     "description": "Provide some useful tools for front end development",
