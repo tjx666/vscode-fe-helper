@@ -1,3 +1,9 @@
+## v0.10.1 (2024-05-16)
+
+No significant changes
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.10.0...v0.10.1 '2024-05-16')
+
 ## v0.10.0 (2024-05-16)
 
 ### 🚀 Features
