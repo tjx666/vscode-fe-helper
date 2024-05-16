@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/visual-studio-marketplace/v/YuTengjing.vscode-fe-helper)](https://marketplace.visualstudio.com/items/YuTengjing.vscode-fe-helper/changelog) [![Installs](https://img.shields.io/visual-studio-marketplace/i/YuTengjing.vscode-fe-helper)](https://marketplace.visualstudio.com/items?itemName=YuTengjing.vscode-fe-helper) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/YuTengjing.vscode-fe-helper)](https://marketplace.visualstudio.com/items?itemName=YuTengjing.vscode-fe-helper) [![Rating Star](https://img.shields.io/visual-studio-marketplace/stars/YuTengjing.vscode-fe-helper)](https://marketplace.visualstudio.com/items?itemName=YuTengjing.vscode-fe-helper&ssr=false#review-details) [![Last Updated](https://img.shields.io/visual-studio-marketplace/last-updated/YuTengjing.vscode-fe-helper)](https://github.com/tjx666/vscode-fe-helper)
 
-![CI](https://github.com/tjx666/vscode-fe-helper/actions/workflows/ci.yml/badge.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![Percentage of issues still open](https://isitmaintained.com/badge/open/tjx666/vscode-fe-helper.svg)](http://isitmaintained.com/project/tjx666/vscode-fe-helper') [![MIT License](https://img.shields.io/github/license/tjx666/vscode-fe-helper)](https://github.com/tjx666/vscode-fe-helper/blob/master/LICENSE)
+![CI](https://github.com/tjx666/vscode-fe-helper/actions/workflows/ci.yml/badge.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![Percentage of issues still open](https://isitmaintained.com/badge/open/tjx666/vscode-fe-helper.svg)](http://isitmaintained.com/project/tjx666/vscode-fe-helper') [![MIT License](https://img.shields.io/github/license/tjx666/vscode-fe-helper)](https://github.com/tjx666/vscode-fe-helper/blob/main/LICENSE)
 
 ## Usage
 
@@ -26,7 +26,7 @@ supported languages:
 - yaml
 - ignore (eg: .gitignore, .eslintignore)
 
-![Remove Comments](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_comments.gif?raw=true)
+![Remove Comments](https://github.com/tjx666/vscode-fe-helper/raw/main/images/remove_comments.gif?raw=true)
 
 ### Transform ECMAScript Syntax
 
@@ -45,7 +45,7 @@ Command `FE Helper: Remove TypeScript Types`
 > [!NOTE]  
 > You need to install [swc cli](https://swc.rs/docs/usage/cli) local or global
 
-![Remove TypeScript Types](https://github.com/tjx666/vscode-fe-helper/blob/master/images/remove-typescript-types.gif?raw=true)
+![Remove TypeScript Types](https://github.com/tjx666/vscode-fe-helper/blob/main/images/remove-typescript-types.gif?raw=true)
 
 ### Pluralize
 
@@ -53,7 +53,7 @@ command: `FE Helper: Pluralize`
 
 Pluralize all the words selected in current active editor.
 
-![Pluralize](https://github.com/tjx666/vscode-fe-helper/raw/master/images/pluralize.gif?raw=true)
+![Pluralize](https://github.com/tjx666/vscode-fe-helper/raw/main/images/pluralize.gif?raw=true)
 
 ### Remove Irregular Whitespace
 
@@ -61,7 +61,7 @@ Command: `FE Helper: Remove Irregular Whitespace`
 
 Sometime I copy description from LeetCode problem and paste into VSCode, but there are some irregular whitespace in the text. For that time, this feature is very useful and convenient.
 
-![Remove Irregular Whitespace](https://github.com/tjx666/vscode-fe-helper/raw/master/images/remove_irregular_whitespace.gif?raw=true)
+![Remove Irregular Whitespace](https://github.com/tjx666/vscode-fe-helper/raw/main/images/remove_irregular_whitespace.gif?raw=true)
 
 ### Transform Color Format
 
@@ -77,7 +77,7 @@ supported formats:
 - ansi16
 - ansi256
 
-![Transform Color Format](https://github.com/tjx666/vscode-fe-helper/raw/master/images/transform_color_format.gif?raw=true)
+![Transform Color Format](https://github.com/tjx666/vscode-fe-helper/raw/main/images/transform_color_format.gif?raw=true)
 
 ### Paste JSON as Object
 
@@ -87,13 +87,13 @@ You can copy JSON content, and paste as JavaScript code. The principle behind th
 const jsCode = jsonFromClipboard.replace(/"([^"]*)"\s*:/gm, '$1:');
 ```
 
-![Paste JSON as Object](https://github.com/tjx666/vscode-fe-helper/raw/master/images/jsonToCode.gif?raw=true)
+![Paste JSON as Object](https://github.com/tjx666/vscode-fe-helper/raw/main/images/jsonToCode.gif?raw=true)
 
 ### SpaceGod
 
 For Chinese users, there should be space between English word, number, and punctuation. It's very convenient to add space between them by command `FE Helper: SpaceGod`。
 
-![SpaceGod](https://github.com/tjx666/vscode-fe-helper/raw/master/images/space_god.gif?raw=true)
+![SpaceGod](https://github.com/tjx666/vscode-fe-helper/raw/main/images/space_god.gif?raw=true)
 
 ### Other Useful FrontEnd Tools Commands
 
@@ -116,6 +116,10 @@ check [vscode-js-unicode-preview](https://github.com/kufii/vscode-js-unicode-pre
 `vscode-fe-helper.js-unicode-preview.inline`: Boolean whether or not to show the previews inline. Defaults to `true`.
 
 `vscode-fe-helper.js-unicode-preview.hover`: Boolean whether or not to show the previews on hover. Defaults to `true`.
+
+### Check Jsx Extension
+
+[check js extension screenshot](https://github.com/tjx666/vscode-fe-helper/blob/main/images/check-jsx-extension.png?raw=true)
 
 ## My extensions
 

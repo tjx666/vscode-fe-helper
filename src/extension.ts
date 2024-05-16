@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import type { TextEditor, TextEditorEdit } from 'vscode';
 import vscode from 'vscode';
 
+import { checkJsxFileExtension } from './checkJsxFileExtension';
 import { jsUnicodePreview } from './jsUnicodePreview';
 import { pathExists } from './utils/fs';
 import { logger, shellLogger } from './utils/log';
@@ -19,6 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     jsUnicodePreview(context);
+    checkJsxFileExtension(context);
 
     const registerCommand = (
         commandName: string,
