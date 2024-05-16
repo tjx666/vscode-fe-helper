@@ -1,3 +1,16 @@
+## v0.10.0 (2024-05-16)
+
+### 🚀 Features
+
+- Support check jsx extension ([699c3b4](https://github.com/tjx666/vscode-fe-helper/commit/699c3b4))
+- Upgrade deps ([33191d6](https://github.com/tjx666/vscode-fe-helper/commit/33191d6))
+
+### ❤️ Contributors
+
+- 余腾靖 ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.9.1...v0.10.0 '2024-05-16')
+
 ## v0.9.1 (2024-05-04)
 
 No significant changes
