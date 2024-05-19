@@ -1,3 +1,15 @@
+## v0.11.0 (2024-05-19)
+
+### 🚀 Features
+
+- Add setting vscode-fe-helper.check-jsx-extension.fileExtensions ([98490b8](https://github.com/tjx666/vscode-fe-helper/commit/98490b8))
+
+### ❤️ Contributors
+
+- 余腾靖 ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.10.1...v0.11.0 '2024-05-19')
+
 ## v0.10.1 (2024-05-16)
 
 No significant changes
