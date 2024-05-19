@@ -160,6 +160,14 @@
                     "scope": "resource",
                     "default": true,
                     "description": "Show the unicode previews as a hover tooltip"
+                },
+                "vscode-fe-helper.check-jsx-extension.fileExtensions": {
+                    "type": "array",
+                    "default": [
+                        ".js",
+                        ".ts"
+                    ],
+                    "description": "The file extensions to check whether this file should be renamed to jsx"
                 }
             }
         }

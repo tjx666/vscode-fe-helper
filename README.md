@@ -119,7 +119,15 @@ check [vscode-js-unicode-preview](https://github.com/kufii/vscode-js-unicode-pre
 
 ### Check Jsx Extension
 
-[check js extension screenshot](https://github.com/tjx666/vscode-fe-helper/blob/main/images/check-jsx-extension.png?raw=true)
+settings:
+
+```json
+{
+  "vscode-fe-helper.check-jsx-extension.fileExtensions": [".jsx", ".tsx"]
+}
+```
+
+![check js extension screenshot](https://github.com/tjx666/vscode-fe-helper/blob/main/images/check-jsx-extension.png?raw=true)
 
 ## My extensions
 

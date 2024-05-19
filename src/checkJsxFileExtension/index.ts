@@ -5,12 +5,30 @@ import type { ASTNode } from 'ast-types';
 import * as recast from 'recast';
 import vscode, { type ExtensionContext } from 'vscode';
 
+import { getSettings } from '../jsUnicodePreview/util';
 import { parseSourceToAst } from '../utils/ast';
 
 /**
  * 文件保存的时候，如果文件时 .js 或者 .ts，但是包含 jsx 元素，提示用户修改文件后缀为 .jsx
  */
 export function checkJsxFileExtension(context: ExtensionContext) {
+    let config = { fileExtensions: [] as string[] };
+    const settingSection = 'vscode-fe-helper.check-jsx-extension';
+    const updateConfig = () => {
+        config = getSettings(settingSection, ['fileExtensions']);
+    };
+    updateConfig();
+
+    vscode.workspace.onDidChangeConfiguration(
+        async (event) => {
+            if (event.affectsConfiguration(settingSection)) {
+                await updateConfig();
+            }
+        },
+        null,
+        context.subscriptions,
+    );
+
     vscode.workspace.onDidSaveTextDocument(
         async (document) => {
             const { fsPath } = document.uri;
@@ -19,10 +37,9 @@ export function checkJsxFileExtension(context: ExtensionContext) {
             const autoSaveDelay = vscode.workspace
                 .getConfiguration()
                 .get<number>('files.autoSaveDelay');
-            console.log('autoSave', autoSave, autoSaveDelay);
             if (
                 document !== vscode.window.activeTextEditor?.document ||
-                !(fileExt === '.js' || fileExt === '.ts') ||
+                !config.fileExtensions.includes(fileExt) ||
                 (autoSave === 'afterDelay' && autoSaveDelay && autoSaveDelay < 1000)
             ) {
                 return;
