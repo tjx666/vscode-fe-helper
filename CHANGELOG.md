@@ -1,3 +1,15 @@
+## v0.12.1 (2024-09-01)
+
+### 🚀 Features
+
+- Goto the first highlight when declaration not found ([85e51fa](https://github.com/tjx666/vscode-fe-helper/commit/85e51fa))
+
+### ❤️ Contributors
+
+- 余腾靖 ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.12.0...v0.12.1 '2024-09-01')
+
 ## v0.12.0 (2024-09-01)
 
 ### 🚀 Features
