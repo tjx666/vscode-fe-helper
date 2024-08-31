@@ -84,7 +84,7 @@ supported formats:
 You can copy JSON content, and paste as JavaScript code. The principle behind this functionality is very simple:
 
 ```javascript
-const jsCode = jsonFromClipboard.replace(/"([^"]*)"\s*:/gm, '$1:');
+const jsCode = jsonFromClipboard.replaceAll(/"([^"]*)"\s*:/g, '$1:');
 ```
 
 ![Paste JSON as Object](https://github.com/tjx666/vscode-fe-helper/raw/main/images/jsonToCode.gif?raw=true)
@@ -128,6 +128,12 @@ settings:
 ```
 
 ![check js extension screenshot](https://github.com/tjx666/vscode-fe-helper/blob/main/images/check-jsx-extension.png?raw=true)
+
+### Goto Declaration
+
+command: `FE Helper: Goto Declaration`
+
+only for javascript/typescript/javascriptreact/typescriptreact file. Unlike built-in `Go to Definition`, this command only work for current file, if the identifier is imported, will jump to it's import statement instead of definition.
 
 ## My extensions
 
