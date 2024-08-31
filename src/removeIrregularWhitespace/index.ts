@@ -3,7 +3,6 @@ import type { TextEditor, TextEditorEdit } from 'vscode';
 import { getWholeDocumentRange } from '../utils/editor';
 
 function removeIrregular(text: string): string {
-    // eslint-disable-next-line no-irregular-whitespace
     const IRREGULAR_WHITESPACE_RE = / /;
     return text.replaceAll(new RegExp(IRREGULAR_WHITESPACE_RE, 'g'), ' ');
 }
