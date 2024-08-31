@@ -3,7 +3,8 @@ import { extname } from 'node:path';
 
 import type { ASTNode } from 'ast-types';
 import * as recast from 'recast';
-import vscode, { type ExtensionContext } from 'vscode';
+import type { ExtensionContext } from 'vscode';
+import vscode from 'vscode';
 
 import { getSettings } from '../jsUnicodePreview/util';
 import { parseSourceToAst } from '../utils/ast';
@@ -56,7 +57,7 @@ export function checkJsxFileExtension(context: ExtensionContext) {
             const source = document.getText();
             let ast: ASTNode;
             try {
-                ast = await parseSourceToAst(source);
+                ast = parseSourceToAst(source);
             } catch {
                 // ignore syntax error
                 return;

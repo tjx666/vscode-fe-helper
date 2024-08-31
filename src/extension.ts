@@ -137,6 +137,10 @@ export async function activate(context: vscode.ExtensionContext) {
             mod.activeFileStylelintConfig(),
         ),
     );
+
+    registerTextEditorCommand('gotoDeclaration', (editor: TextEditor) =>
+        import('./gotoDeclaration').then((mod) => mod.gotoDeclaration(editor)),
+    );
 }
 
 export function deactivate(): void {

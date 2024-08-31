@@ -112,10 +112,10 @@ export class RemoveComments {
         return result.content;
     }
 
-    private static async getCommentsRemovedScriptCode(source: string) {
+    private static getCommentsRemovedScriptCode(source: string) {
         let ast: ASTNode;
         try {
-            ast = await parseSourceToAst(source);
+            ast = parseSourceToAst(source);
         } catch (error) {
             console.error(error);
             vscode.window.showErrorMessage(`Your script code exists syntax error!`);
@@ -143,7 +143,7 @@ export class RemoveComments {
         const { editor, document } = this;
         await replaceAllTextOfEditor(
             editor,
-            await RemoveComments.getCommentsRemovedScriptCode(document.getText()),
+            RemoveComments.getCommentsRemovedScriptCode(document.getText()),
         );
     }
 
@@ -190,9 +190,7 @@ export class RemoveComments {
             const scriptString = scriptMatch[1];
             source =
                 source.slice(0, scriptMatch.index) +
-                `<script>${await RemoveComments.getCommentsRemovedScriptCode(
-                    scriptString,
-                )}</script>` +
+                `<script>${RemoveComments.getCommentsRemovedScriptCode(scriptString)}</script>` +
                 source.slice(scriptMatch.index + scriptMatch[0].length);
         }
 
