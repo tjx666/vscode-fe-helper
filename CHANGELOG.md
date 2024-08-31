@@ -1,3 +1,15 @@
+## v0.12.0 (2024-09-01)
+
+### 🚀 Features
+
+- New command goto `Goto Declaration` ([46680b0](https://github.com/tjx666/vscode-fe-helper/commit/46680b0))
+
+### ❤️ Contributors
+
+- 余腾靖 ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.11.0...v0.12.0 '2024-09-01')
+
 ## v0.11.0 (2024-05-19)
 
 ### 🚀 Features
