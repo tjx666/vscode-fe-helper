@@ -1,6 +1,7 @@
 import type { ButtonProps } from 'antd';
 
 import { Button } from 'antd';
+import { xyz } from 'color';
 
 let var1 = 123;
 
@@ -9,7 +10,7 @@ console.log(a);
 function Comp() {
     return (
         <div>
-            Comp
+            Comp xyz
             <Button>Button</Button>
         </div>
     );
@@ -31,3 +32,5 @@ const person: Person = {
     name: 'John',
     age: 30,
 };
+
+console.log(xyz);

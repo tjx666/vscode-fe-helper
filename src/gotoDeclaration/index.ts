@@ -6,12 +6,11 @@ import vscode, { Position, Range } from 'vscode';
 
 import { parseSourceToAst } from '../utils/ast';
 
-const UNABLE_TO_LOCATE = 'Unable to locate precise definition for';
-const NO_DEFINITION_FOUND = 'No definition found for';
+const NO_DEFINITION_OR_HIGHLIGHT = 'No definition or highlight found for';
 const ERROR_ANALYZING_CODE = 'Error analyzing code';
-const messageDuration = 3000;
+const languageUseAst = new Set(['javascript', 'javascriptreact', 'typescript', 'typescriptreact']);
 
-export function gotoDeclaration(editor: TextEditor): void {
+export async function gotoDeclaration(editor: TextEditor): Promise<void> {
     const document = editor.document;
     const position = editor.selection.active;
     const wordRange = document.getWordRangeAtPosition(position);
@@ -22,25 +21,49 @@ export function gotoDeclaration(editor: TextEditor): void {
     const sourceCode = document.getText();
 
     try {
-        const ast = parseSourceToAst(sourceCode);
-        const { definitionNode, definitionPath } = findDefinition(ast, word);
+        if (languageUseAst.has(document.languageId)) {
+            const ast = parseSourceToAst(sourceCode);
+            const { definitionNode, definitionPath } = findDefinition(ast, word);
 
-        if (!definitionNode || !definitionPath) {
-            vscode.window.setStatusBarMessage(`${NO_DEFINITION_FOUND} '${word}'`, messageDuration);
-            return;
+            if (definitionNode && definitionPath) {
+                const range = getDefinitionRange(definitionNode);
+                if (range) {
+                    gotoRange(editor, range);
+                    return;
+                }
+            }
         }
 
-        const range = getDefinitionRange(definitionNode);
-        if (!range) {
-            vscode.window.setStatusBarMessage(`${UNABLE_TO_LOCATE} '${word}'`, messageDuration);
-            return;
+        // If no definition found, try to go to the first highlight
+        const success = await gotoFirstHighlight(editor, position);
+        if (!success) {
+            vscode.window.setStatusBarMessage(`${NO_DEFINITION_OR_HIGHLIGHT} '${word}'`, 3000);
         }
-
-        editor.selection = new vscode.Selection(range.start, range.end);
-        editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
     } catch {
-        vscode.window.setStatusBarMessage(ERROR_ANALYZING_CODE, messageDuration);
+        vscode.window.setStatusBarMessage(ERROR_ANALYZING_CODE, 3000);
     }
+}
+
+async function gotoFirstHighlight(editor: TextEditor, position: Position): Promise<boolean> {
+    const highlights =
+        (await vscode.commands.executeCommand<vscode.DocumentHighlight[]>(
+            'vscode.executeDocumentHighlights',
+            editor.document.uri,
+            position,
+        )) || [];
+
+    if (highlights.length > 0) {
+        const firstHighlight = highlights[0];
+        gotoRange(editor, firstHighlight.range);
+        return true;
+    }
+
+    return false;
+}
+
+function gotoRange(editor: TextEditor, range: Range): void {
+    editor.selection = new vscode.Selection(range.start, range.end);
+    editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
 }
 
 function findDefinition(

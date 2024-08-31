@@ -135,6 +135,8 @@ command: `FE Helper: Goto Declaration`
 
 only for javascript/typescript/javascriptreact/typescriptreact file. Unlike built-in `Go to Definition`, this command only work for current file, if the identifier is imported, will jump to it's import statement instead of definition.
 
+If can't find the declaration, will try to find the first highlight of the identifier.
+
 ## My extensions
 
 - [Open in External App](https://github.com/tjx666/open-in-external-app)
