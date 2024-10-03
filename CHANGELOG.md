@@ -1,3 +1,15 @@
+## v0.13.0 (2024-10-04)
+
+### 🚀 Features
+
+- Use bundled ts-blank-space implement remove ts types ([ace90f4](https://github.com/tjx666/vscode-fe-helper/commit/ace90f4))
+
+### ❤️ Contributors
+
+- 余腾靖 ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.12.1...v0.13.0 '2024-10-04')
+
 ## v0.12.1 (2024-09-01)
 
 ### 🚀 Features
