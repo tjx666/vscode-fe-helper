@@ -141,7 +141,10 @@ export async function activate(context: vscode.ExtensionContext) {
     registerTextEditorCommand('gotoDeclaration', (editor: TextEditor) =>
         import('./gotoDeclaration').then((mod) => mod.gotoDeclaration(editor)),
     );
+
+    import('./sidebar').then((mod) => mod.activateSidebar(context));
 }
+
 
 export function deactivate(): void {
     logger.dispose();

@@ -137,8 +137,50 @@
             {
                 "command": "VSCodeFEHelper.gotoDeclaration",
                 "title": "FE Helper: Goto Declaration"
+            },
+            {
+                "command": "VSCodeFEHelper.projectStatus.resetVercelCache",
+                "title": "FE Helper: Reset Vercel Team Cache"
+            },
+            {
+                "command": "VSCodeFEHelper.projectStatus.refresh",
+                "title": "FE Helper: Refresh Project Status",
+                "icon": "$(refresh)"
             }
         ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "vscodeFeHelperProjectStatus",
+                    "title": "Project Status",
+                    "icon": "$(pulse)"
+                }
+            ]
+        },
+        "views": {
+            "vscodeFeHelperProjectStatus": [
+                {
+                    "id": "vscodeFeHelperProjectStatus",
+                    "name": "Project Status",
+                    "icon": "$(pulse)"
+                }
+            ]
+        },
+        "viewsWelcome": [
+            {
+                "view": "vscodeFeHelperProjectStatus",
+                "contents": "Watch GitHub PRs / CI and Vercel deployments for the current repo (and submodules).\n\n[Enable GitHub](command:workbench.action.openSettings?%22vscode-fe-helper.projectStatus.github.enabled%22)\n[Enable Vercel](command:workbench.action.openSettings?%22vscode-fe-helper.projectStatus.vercel.enabled%22)\n\nRequires `gh` and/or `vc` CLIs."
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "VSCodeFEHelper.projectStatus.refresh",
+                    "when": "view == vscodeFeHelperProjectStatus",
+                    "group": "navigation"
+                }
+            ]
+        },
         "configuration": {
             "title": "VSCode FE Helper",
             "properties": {
@@ -172,6 +214,30 @@
                         ".ts"
                     ],
                     "description": "The file extensions to check whether this file should be renamed to jsx"
+                },
+                "vscode-fe-helper.projectStatus.github.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show open PR + CI checks for the current branch in the Project Status sidebar. Requires `gh` CLI."
+                },
+                "vscode-fe-helper.projectStatus.vercel.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show production and preview deployments for the current commit in the Project Status sidebar. Requires `vc` CLI."
+                },
+                "vscode-fe-helper.projectStatus.refreshInterval": {
+                    "type": "number",
+                    "default": 30000,
+                    "minimum": 5000,
+                    "description": "How often (ms) to poll `gh` and `vc` for fresh status while the VS Code window is focused."
+                },
+                "vscode-fe-helper.projectStatus.ignoredChecks": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "description": "Glob patterns excluded from the CI failure rollup (and folded into a `N ignored` row in the tree). Each pattern matches the check's job name, status context, and workflow name — so `\"E2E CI\"` skips every job in that workflow."
                 }
             }
         }
