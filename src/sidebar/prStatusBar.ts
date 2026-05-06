@@ -1,7 +1,8 @@
 import vscode from 'vscode';
 
 import { buildMarkdownTooltip } from './common';
-import { type ProjectStatusProvider, VIEW_ID } from './tree';
+import type { ProjectStatusProvider } from './tree';
+import { VIEW_ID } from './tree';
 
 export function activatePrStatusBar(provider: ProjectStatusProvider): vscode.Disposable {
     const item = vscode.window.createStatusBarItem(

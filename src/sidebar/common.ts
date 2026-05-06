@@ -41,7 +41,7 @@ export function matchAnyGlob(patterns: string[], name: string): boolean {
 }
 
 function globToRegExp(pattern: string): RegExp {
-    const escaped = pattern.replaceAll(/[.+?^${}()|[\]\\]/g, '\\$&').replaceAll('*', '.*');
+    const escaped = pattern.replaceAll(/[.+?^${}()|[\]\\]/g, String.raw`\$&`).replaceAll('*', '.*');
     return new RegExp(`^${escaped}$`);
 }
 
@@ -53,7 +53,9 @@ export function safeJsonParse<T>(input: string, fallback: T): T {
     }
 }
 
-export function buildMarkdownTooltip(builder: (md: vscode.MarkdownString) => void): vscode.MarkdownString {
+export function buildMarkdownTooltip(
+    builder: (md: vscode.MarkdownString) => void,
+): vscode.MarkdownString {
     const md = new vscode.MarkdownString('', true);
     md.isTrusted = true;
     md.supportThemeIcons = true;

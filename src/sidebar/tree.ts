@@ -2,15 +2,11 @@ import os from 'node:os';
 
 import vscode from 'vscode';
 
-import { CliError, type CliErrorKind, runCli } from './cli';
-import {
-    buildMarkdownTooltip,
-    errorHint,
-    errorLabel,
-    matchAnyGlob,
-    safeJsonParse,
-} from './common';
-import { type RepoContext, getRepoContexts } from './gitContext';
+import type { CliErrorKind } from './cli';
+import { CliError, runCli } from './cli';
+import { buildMarkdownTooltip, errorHint, errorLabel, matchAnyGlob, safeJsonParse } from './common';
+import type { RepoContext } from './gitContext';
+import { getRepoContexts } from './gitContext';
 import { findVercelTeam } from './vercelLink';
 
 interface CheckEntry {
@@ -113,9 +109,9 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
     }
 
     /**
-     * Single-flight + trailing: at most one fetch runs at a time. Calls that
-     * arrive while one is in flight collapse into a single trailing run, so a
-     * slow refresh can't clobber a newer one's result.
+     * Single-flight + trailing: at most one fetch runs at a time. Calls that arrive while one is in
+     * flight collapse into a single trailing run, so a slow refresh can't clobber a newer one's
+     * result.
      */
     async refresh(): Promise<void> {
         if (this.inFlight) {
@@ -299,8 +295,10 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                 children.push({ kind: 'deployment', rootPath: node.rootPath, env: 'preview' });
             }
             if (state.pr) children.push({ kind: 'pr', rootPath: node.rootPath });
-            if (state.vcError) children.push({ kind: 'error', rootPath: node.rootPath, source: 'vc' });
-            if (state.ghError) children.push({ kind: 'error', rootPath: node.rootPath, source: 'gh' });
+            if (state.vcError)
+                children.push({ kind: 'error', rootPath: node.rootPath, source: 'vc' });
+            if (state.ghError)
+                children.push({ kind: 'error', rootPath: node.rootPath, source: 'gh' });
             return children;
         }
 
@@ -399,8 +397,7 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         const item = new vscode.TreeItem(ctx.branch ?? '?', vscode.TreeItemCollapsibleState.None);
         item.id = `branch:${rootPath}`;
         item.iconPath = new vscode.ThemeIcon('git-branch');
-        item.description =
-            ctx.branch && ctx.branch === ctx.defaultBranch ? 'default' : undefined;
+        item.description = ctx.branch && ctx.branch === ctx.defaultBranch ? 'default' : undefined;
         item.contextValue = 'projectStatus.branch';
         if (ctx.owner && ctx.repo && ctx.branch) {
             const url = `https://github.com/${ctx.owner}/${ctx.repo}/tree/${encodeURIComponent(ctx.branch)}`;
@@ -409,10 +406,7 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         return item;
     }
 
-    private deploymentItem(
-        rootPath: string,
-        env: 'production' | 'preview',
-    ): vscode.TreeItem {
+    private deploymentItem(rootPath: string, env: 'production' | 'preview'): vscode.TreeItem {
         const state = this.cache.get(rootPath)!;
         const dep = env === 'production' ? state.prod! : state.preview!;
         const status = statusOf(dep) ?? 'unknown';
@@ -459,11 +453,13 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
     }
 }
 
-function placeholderItem(node: { kind: 'placeholder'; text: string; busy?: boolean }): vscode.TreeItem {
+function placeholderItem(node: {
+    kind: 'placeholder';
+    text: string;
+    busy?: boolean;
+}): vscode.TreeItem {
     const item = new vscode.TreeItem(node.text, vscode.TreeItemCollapsibleState.None);
-    item.iconPath = node.busy
-        ? new vscode.ThemeIcon('loading~spin')
-        : new vscode.ThemeIcon('info');
+    item.iconPath = node.busy ? new vscode.ThemeIcon('loading~spin') : new vscode.ThemeIcon('info');
     return item;
 }
 
@@ -567,10 +563,7 @@ function depThemeIcon(d: VcDeployment | undefined): vscode.ThemeIcon {
     }
 }
 
-async function fetchPreviewForCommit(
-    team: string,
-    sha: string,
-): Promise<VcDeployment | undefined> {
+async function fetchPreviewForCommit(team: string, sha: string): Promise<VcDeployment | undefined> {
     return runLs(team, ['--meta', `githubCommitSha=${sha}`, '--environment', 'preview']);
 }
 
