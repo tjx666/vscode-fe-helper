@@ -1,0 +1,19 @@
+- [ ] 常用跳转链接按钮：
+  - [ ] 依赖 gh 和 vc 两个 cli
+  - [ ] github
+    - [ ] 默认点击打开 github 仓库首页
+    - [ ] 如果有 feat 分支打开 feat 分支
+    - [ ] 如果有 pr, 打开 pr 页
+    - [ ] 支持 submodule， 所以是两个图标
+  - [ ] github ci
+    - [ ] 没有 pr 不显示
+    - [ ] 有 pr 的时候支持渲染 running/pass/failed
+    - [ ] 支持配置忽略哪些 ci 错误
+    - [ ] 支持 submodule
+  - [ ] vercel statusbar
+    - [ ] 默认点击打开 vercel project 首页
+    - [ ] 支持 submodule
+  - [ ] vercel deployment status
+    - [ ] 渲染当前提交的 preview 和 production 构建状态 queue/building/success/failed
+    - [ ] 支持 submodule
+- [ ] Where AM I: 左下角显示当前工作区文件夹名

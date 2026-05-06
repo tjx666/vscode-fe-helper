@@ -1,3 +1,19 @@
+## v0.14.0 (2026-05-07)
+
+### 🚀 Features
+
+- Add Project Status sidebar ([1c0f87e](https://github.com/tjx666/vscode-fe-helper/commit/1c0f87e))
+
+### 🐞 Bug Fixes
+
+- **sidebar:** Coalesce concurrent refreshes to avoid stale overwrites ([f6974c2](https://github.com/tjx666/vscode-fe-helper/commit/f6974c2))
+
+### ❤️ Contributors
+
+- YuTengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.13.0...v0.14.0 '2026-05-07')
+
 ## v0.13.0 (2024-10-04)
 
 ### 🚀 Features
