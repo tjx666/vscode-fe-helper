@@ -481,9 +481,9 @@ function aggregateCi(checks: CheckEntry[]): CiAggregate {
             pending++;
             continue;
         }
-        const concl = (c.conclusion ?? c.state ?? '').toLowerCase();
-        if (FAILURE_CONCLUSIONS.has(concl)) failure++;
-        else if (concl === 'pending' || concl === 'expected') pending++;
+        const outcome = (c.conclusion ?? c.state ?? '').toLowerCase();
+        if (FAILURE_CONCLUSIONS.has(outcome)) failure++;
+        else if (outcome === 'pending' || outcome === 'expected') pending++;
     }
     if (failure > 0) return 'failure';
     if (pending > 0) return 'pending';
@@ -506,10 +506,10 @@ function ciThemeIcon(c: CiAggregate | undefined): vscode.ThemeIcon {
 function checkThemeIcon(c: CheckEntry): vscode.ThemeIcon {
     const status = (c.status ?? '').toLowerCase();
     if (PENDING_STATUSES.has(status)) return new vscode.ThemeIcon('circle-large-outline');
-    const concl = (c.conclusion ?? c.state ?? '').toLowerCase();
-    if (SUCCESS_CONCLUSIONS.has(concl))
+    const outcome = (c.conclusion ?? c.state ?? '').toLowerCase();
+    if (SUCCESS_CONCLUSIONS.has(outcome))
         return new vscode.ThemeIcon('pass', new vscode.ThemeColor('charts.green'));
-    if (FAILURE_CONCLUSIONS.has(concl))
+    if (FAILURE_CONCLUSIONS.has(outcome))
         return new vscode.ThemeIcon('error', new vscode.ThemeColor('charts.red'));
     return new vscode.ThemeIcon('circle-outline');
 }
@@ -532,9 +532,9 @@ function checkSort(a: CheckEntry, b: CheckEntry): number {
 function rank(c: CheckEntry): number {
     const status = (c.status ?? '').toLowerCase();
     if (PENDING_STATUSES.has(status)) return 1;
-    const concl = (c.conclusion ?? c.state ?? '').toLowerCase();
-    if (FAILURE_CONCLUSIONS.has(concl)) return 0;
-    if (SUCCESS_CONCLUSIONS.has(concl)) return 2;
+    const outcome = (c.conclusion ?? c.state ?? '').toLowerCase();
+    if (FAILURE_CONCLUSIONS.has(outcome)) return 0;
+    if (SUCCESS_CONCLUSIONS.has(outcome)) return 2;
     return 3;
 }
 
