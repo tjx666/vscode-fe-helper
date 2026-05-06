@@ -104,13 +104,39 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
     private order: string[] = [];
     private loaded = false;
     private treeView: vscode.TreeView<SidebarNode> | undefined;
+    private inFlight: Promise<void> | undefined;
+    private pendingRefresh = false;
 
     setTreeView(view: vscode.TreeView<SidebarNode>): void {
         this.treeView = view;
         this.updateBadge();
     }
 
+    /**
+     * Single-flight + trailing: at most one fetch runs at a time. Calls that
+     * arrive while one is in flight collapse into a single trailing run, so a
+     * slow refresh can't clobber a newer one's result.
+     */
     async refresh(): Promise<void> {
+        if (this.inFlight) {
+            this.pendingRefresh = true;
+            await this.inFlight;
+            return;
+        }
+        const run = this.runRefresh();
+        this.inFlight = run;
+        try {
+            await run;
+        } finally {
+            this.inFlight = undefined;
+        }
+        if (this.pendingRefresh) {
+            this.pendingRefresh = false;
+            await this.refresh();
+        }
+    }
+
+    private async runRefresh(): Promise<void> {
         const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
         const ghEnabled = config.get<boolean>('github.enabled', false);
         const vcEnabled = config.get<boolean>('vercel.enabled', false);
