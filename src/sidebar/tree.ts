@@ -266,7 +266,6 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
 
         if (node.kind === 'repo') {
             const children: SidebarNode[] = [];
-            if (state.pr) children.push({ kind: 'pr', rootPath: node.rootPath });
             children.push({ kind: 'branch', rootPath: node.rootPath });
             if (state.prod) {
                 children.push({ kind: 'deployment', rootPath: node.rootPath, env: 'production' });
@@ -274,8 +273,9 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             if (state.preview) {
                 children.push({ kind: 'deployment', rootPath: node.rootPath, env: 'preview' });
             }
-            if (state.ghError) children.push({ kind: 'error', rootPath: node.rootPath, source: 'gh' });
+            if (state.pr) children.push({ kind: 'pr', rootPath: node.rootPath });
             if (state.vcError) children.push({ kind: 'error', rootPath: node.rootPath, source: 'vc' });
+            if (state.ghError) children.push({ kind: 'error', rootPath: node.rootPath, source: 'gh' });
             return children;
         }
 
@@ -318,10 +318,11 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
     private prItem(rootPath: string): vscode.TreeItem {
         const state = this.cache.get(rootPath)!;
         const pr = state.pr!;
-        const item = new vscode.TreeItem(
-            `#${pr.number} ${pr.title}`,
-            vscode.TreeItemCollapsibleState.Expanded,
-        );
+        const initialState =
+            state.ci === 'failure'
+                ? vscode.TreeItemCollapsibleState.Expanded
+                : vscode.TreeItemCollapsibleState.Collapsed;
+        const item = new vscode.TreeItem(`#${pr.number} ${pr.title}`, initialState);
         item.id = `pr:${rootPath}`;
         item.iconPath = ciThemeIcon(state.ci);
         item.description = state.ci ?? undefined;
