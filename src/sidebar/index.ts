@@ -1,6 +1,5 @@
 import vscode from 'vscode';
 
-import { getRepoContexts } from './gitContext';
 import { activatePrStatusBar } from './prStatusBar';
 import { Scheduler } from './scheduler';
 import { CONFIG_SECTION, ProjectStatusProvider, VIEW_ID } from './tree';
@@ -17,7 +16,7 @@ export async function activateSidebar(context: vscode.ExtensionContext): Promise
     provider.setTreeView(treeView);
 
     const session = new SidebarSession(provider);
-    await session.start();
+    session.start();
 
     context.subscriptions.push(
         treeView,
@@ -48,12 +47,11 @@ class SidebarSession implements vscode.Disposable {
 
     constructor(private readonly provider: ProjectStatusProvider) {}
 
-    async start(): Promise<void> {
+    start(): void {
         const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
         const interval = config.get<number>('refreshInterval', 30_000);
 
-        this.scheduler = new Scheduler();
-        this.scheduler.setInterval(interval);
+        this.scheduler = new Scheduler(interval);
         this.scheduler.onTick(() => this.provider.refresh());
         this.scheduler.start();
 
@@ -73,10 +71,8 @@ class SidebarSession implements vscode.Disposable {
          */
         const handler = () => {
             if (this.branchDebounce) clearTimeout(this.branchDebounce);
-            this.branchDebounce = setTimeout(async () => {
+            this.branchDebounce = setTimeout(() => {
                 this.branchDebounce = undefined;
-                const fresh = await getRepoContexts();
-                if (fresh.length === 0) return;
                 this.scheduler?.triggerNow();
             }, 500);
         };
@@ -84,9 +80,9 @@ class SidebarSession implements vscode.Disposable {
         this.branchWatcher.onDidCreate(handler);
     }
 
-    async restart(): Promise<void> {
+    restart(): void {
         this.disposeRuntime();
-        await this.start();
+        this.start();
     }
 
     private disposeRuntime(): void {

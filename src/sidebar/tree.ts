@@ -14,7 +14,6 @@ import { type RepoContext, getRepoContexts } from './gitContext';
 import { findVercelTeam } from './vercelLink';
 
 interface CheckEntry {
-    __typename?: string;
     name?: string;
     context?: string;
     workflowName?: string;
@@ -336,7 +335,12 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
 
     private checkItem(rootPath: string, idx: number): vscode.TreeItem {
         const state = this.cache.get(rootPath)!;
-        const c = state.visibleChecks![idx];
+        const c = state.visibleChecks?.[idx];
+        if (!c) {
+            const item = new vscode.TreeItem('?', vscode.TreeItemCollapsibleState.None);
+            item.id = `check:${rootPath}:${idx}`;
+            return item;
+        }
         const name = c.workflowName
             ? `${c.workflowName} / ${c.name ?? c.context ?? '?'}`
             : (c.name ?? c.context ?? '?');
@@ -446,6 +450,7 @@ function isIgnored(c: CheckEntry, patterns: string[]): boolean {
 }
 
 function aggregateCi(checks: CheckEntry[]): CiAggregate {
+    if (checks.length === 0) return 'pending';
     let pending = 0;
     let failure = 0;
     for (const c of checks) {

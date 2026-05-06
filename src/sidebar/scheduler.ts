@@ -11,9 +11,10 @@ export class Scheduler implements vscode.Disposable {
     private listeners: Array<() => void | Promise<void>> = [];
     private disposables: vscode.Disposable[] = [];
     private focused = vscode.window.state.focused;
-    private intervalMs = 30_000;
+    private readonly intervalMs: number;
 
-    constructor() {
+    constructor(intervalMs: number) {
+        this.intervalMs = Math.max(5000, intervalMs);
         this.disposables.push(
             vscode.window.onDidChangeWindowState((s) => {
                 const wasFocused = this.focused;
@@ -23,29 +24,20 @@ export class Scheduler implements vscode.Disposable {
         );
     }
 
-    setInterval(ms: number): void {
-        this.intervalMs = Math.max(5000, ms);
-        this.restart();
-    }
-
     onTick(fn: () => void | Promise<void>): void {
         this.listeners.push(fn);
     }
 
     start(): void {
-        this.restart();
+        if (this.timer) clearInterval(this.timer);
+        this.timer = setInterval(() => {
+            if (this.focused) this.fire();
+        }, this.intervalMs);
         this.fire();
     }
 
     triggerNow(): void {
         this.fire();
-    }
-
-    private restart(): void {
-        if (this.timer) clearInterval(this.timer);
-        this.timer = setInterval(() => {
-            if (this.focused) this.fire();
-        }, this.intervalMs);
     }
 
     private fire(): void {

@@ -9,8 +9,6 @@ export interface RepoContext {
     label: string;
     rootPath: string;
     isSubmodule: boolean;
-    /** True when this badge should drop the submodule label from its rendered text. */
-    compactLabel: boolean;
     owner?: string;
     repo?: string;
     branch?: string;
@@ -27,11 +25,6 @@ export async function getRepoContexts(): Promise<RepoContext[]> {
     if (!main) return [];
 
     const submodules = await readSubmodules(rootPath);
-
-    // Auto-compact when there's only one submodule — its name is redundant.
-    const compactLabel = submodules.length === 1;
-    for (const sub of submodules) sub.compactLabel = compactLabel;
-
     return [main, ...submodules];
 }
 
@@ -44,7 +37,6 @@ async function readRepoContext(
         label,
         rootPath: repoPath,
         isSubmodule,
-        compactLabel: false,
     };
 
     const [remote, branch, sha, defaultBranch] = await Promise.all([

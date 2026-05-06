@@ -142,9 +142,10 @@ export async function activate(context: vscode.ExtensionContext) {
         import('./gotoDeclaration').then((mod) => mod.gotoDeclaration(editor)),
     );
 
-    import('./sidebar').then((mod) => mod.activateSidebar(context));
+    import('./sidebar')
+        .then((mod) => mod.activateSidebar(context))
+        .catch((error) => logger.log(`activate sidebar failed: ${String(error)}`));
 }
-
 
 export function deactivate(): void {
     logger.dispose();

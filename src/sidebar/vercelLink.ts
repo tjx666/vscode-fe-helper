@@ -7,21 +7,6 @@ import { safeJsonParse } from './common';
 
 interface Team {
     slug: string;
-    name?: string;
-}
-
-interface DeploymentMeta {
-    githubOrg?: string;
-    githubRepo?: string;
-    githubRepoOwner?: string;
-}
-
-interface DeploymentEntry {
-    meta?: DeploymentMeta;
-}
-
-interface VcLsResponse {
-    deployments?: DeploymentEntry[];
 }
 
 const STATE_KEY_PREFIX = 'vscode-fe-helper.projectStatus.vercelTeam:';
@@ -58,10 +43,12 @@ export async function findVercelTeam(owner: string, repo: string): Promise<strin
     }
     const team = await pending;
 
-    memCache.set(key, team);
-    if (team && stateRef) {
-        await stateRef.update(STATE_KEY_PREFIX + key, team);
+    if (team) {
+        memCache.set(key, team);
+        if (stateRef) await stateRef.update(STATE_KEY_PREFIX + key, team);
     }
+    // Don't memoize null: a transient CLI failure shouldn't permanently mask a
+    // real link until the user manually resets the cache.
     return team;
 }
 
@@ -93,34 +80,37 @@ async function scanTeams(owner: string, repo: string): Promise<string | null> {
     const teams = (Array.isArray(parsed) ? parsed : (parsed.teams ?? [])).filter((t) => t.slug);
     if (teams.length === 0) return null;
 
-    // Race teams in parallel — Promise.any resolves on the first hit. Branches
-    // that throw (or find no match) drop out; if all fall through we return null.
+    // Probe teams in parallel. Each probe resolves to a slug on hit, null on
+    // clean no-match, and rethrows CliError so the caller surfaces the failure
+    // (otherwise an auth/network error would look identical to "no team owns
+    // this repo" and silently disable the Vercel section).
     const probes = teams.map(async (team) => {
-        const stdout = await runCli(
-            'vc',
-            [
-                'ls',
-                '--format',
-                'json',
-                '--scope',
-                team.slug,
-                '--meta',
-                `githubOrg=${owner}`,
-                '--meta',
-                `githubRepo=${repo}`,
-                '--yes',
-            ],
-            cwd,
-        );
-        const data = safeJsonParse<VcLsResponse | DeploymentEntry[]>(stdout, []);
-        const list = Array.isArray(data) ? data : (data.deployments ?? []);
-        if (list.length === 0) throw new Error('no match');
-        return team.slug;
+        try {
+            const stdout = await runCli(
+                'vc',
+                [
+                    'ls',
+                    '--format',
+                    'json',
+                    '--scope',
+                    team.slug,
+                    '--meta',
+                    `githubOrg=${owner}`,
+                    '--meta',
+                    `githubRepo=${repo}`,
+                    '--yes',
+                ],
+                cwd,
+            );
+            const data = safeJsonParse<unknown[] | { deployments?: unknown[] }>(stdout, []);
+            const list = Array.isArray(data) ? data : (data.deployments ?? []);
+            return list.length > 0 ? team.slug : null;
+        } catch (error) {
+            if (error instanceof CliError) throw error;
+            return null;
+        }
     });
 
-    try {
-        return await Promise.any(probes);
-    } catch {
-        return null;
-    }
+    const results = await Promise.all(probes);
+    return results.find((slug): slug is string => slug !== null) ?? null;
 }
