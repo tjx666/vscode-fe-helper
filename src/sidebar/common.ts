@@ -61,10 +61,10 @@ export function githubBranchUrl(owner: string, repo: string, branch: string): st
     return `${githubRepoUrl(owner, repo)}/tree/${encodeURIComponent(branch)}`;
 }
 
-/** Vercel's deployments page filters by branch via `?environment=&branch=<name>`. */
+/** Vercel's deployments page filters by branch via `?filterBranch=<name>`. */
 export function vercelDeploymentsUrl(team: string, project: string, branch?: string): string {
     const base = `https://vercel.com/${team}/${project}/deployments`;
-    return branch ? `${base}?environment=&branch=${encodeURIComponent(branch)}` : base;
+    return branch ? `${base}?filterBranch=${encodeURIComponent(branch)}` : base;
 }
 
 /** Build the canonical `vc ls` arg list. Centralized so query shape stays consistent. */
