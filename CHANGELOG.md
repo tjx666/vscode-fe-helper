@@ -1,3 +1,15 @@
+## v0.14.1 (2026-05-07)
+
+### 🐞 Bug Fixes
+
+- Bump engines.vscode to ^1.94.0 to match @types/vscode ([762e06e](https://github.com/tjx666/vscode-fe-helper/commit/762e06e))
+
+### ❤️ Contributors
+
+- YuTengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.14.0...v0.14.1 '2026-05-07')
+
 ## v0.14.0 (2026-05-07)
 
 ### 🚀 Features
