@@ -1,3 +1,15 @@
+## v0.14.3 (2026-05-07)
+
+### 🚀 Features
+
+- Add Open Repo Websites command ([561cc84](https://github.com/tjx666/vscode-fe-helper/commit/561cc84))
+
+### ❤️ Contributors
+
+- YuTengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.14.2...v0.14.3 '2026-05-07')
+
 ## v0.14.2 (2026-05-07)
 
 ### 🐞 Bug Fixes
