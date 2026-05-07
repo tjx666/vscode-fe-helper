@@ -61,6 +61,26 @@ export function githubBranchUrl(owner: string, repo: string, branch: string): st
     return `${githubRepoUrl(owner, repo)}/tree/${encodeURIComponent(branch)}`;
 }
 
+/** Vercel's deployments page filters by branch via `?environment=&branch=<name>`. */
+export function vercelDeploymentsUrl(team: string, project: string, branch?: string): string {
+    const base = `https://vercel.com/${team}/${project}/deployments`;
+    return branch ? `${base}?environment=&branch=${encodeURIComponent(branch)}` : base;
+}
+
+/** Build the canonical `vc ls` arg list. Centralized so query shape stays consistent. */
+export function vcLsArgs(
+    team: string,
+    opts: { meta?: Record<string, string>; environment?: 'production' | 'preview' } = {},
+): string[] {
+    const args = ['ls', '--format', 'json', '--scope', team];
+    for (const [k, v] of Object.entries(opts.meta ?? {})) {
+        args.push('--meta', `${k}=${v}`);
+    }
+    if (opts.environment) args.push('--environment', opts.environment);
+    args.push('--yes');
+    return args;
+}
+
 /**
  * `vc ls --format json` returns either a bare array or `{ deployments: [...] }` depending on the
  * CLI version, so callers always need this fallback shape.

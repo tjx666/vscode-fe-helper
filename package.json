@@ -231,7 +231,7 @@
                 },
                 "vscode-fe-helper.projectStatus.refreshInterval": {
                     "type": "number",
-                    "default": 30000,
+                    "default": 10000,
                     "minimum": 5000,
                     "description": "How often (ms) to poll `gh` and `vc` for fresh status while the VS Code window is focused."
                 },

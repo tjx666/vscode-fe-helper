@@ -2,6 +2,7 @@ import os from 'node:os';
 
 import vscode from 'vscode';
 
+import { logTiming } from '../utils/log';
 import type { CliErrorKind } from './cli';
 import { CliError, runCli } from './cli';
 import {
@@ -12,10 +13,12 @@ import {
     matchAnyGlob,
     parseVcList,
     safeJsonParse,
+    vcLsArgs,
+    vercelDeploymentsUrl,
 } from './common';
 import type { RepoContext } from './gitContext';
 import { getRepoContexts } from './gitContext';
-import { findVercelTeam } from './vercelLink';
+import { findVercelLink } from './vercelLink';
 
 interface CheckEntry {
     name?: string;
@@ -58,8 +61,22 @@ interface RepoState {
     hiddenCheckCount?: number;
     prod?: VcDeployment;
     preview?: VcDeployment;
+    branchDeployments?: VcDeployment[];
+    vercelTeam?: string;
+    vercelProject?: string;
+    ghChecked?: boolean;
+    vcChecked?: boolean;
     ghError?: { kind: CliErrorKind };
     vcError?: { kind: CliErrorKind };
+}
+
+export interface RepoStateSnapshot {
+    ctx: RepoContext;
+    pr?: { number: number; url: string; title: string };
+    vercelTeam?: string;
+    vercelProject?: string;
+    ghChecked: boolean;
+    vcChecked: boolean;
 }
 
 export type SidebarNode =
@@ -68,6 +85,8 @@ export type SidebarNode =
     | { kind: 'check'; rootPath: string; idx: number }
     | { kind: 'hiddenChecks'; rootPath: string }
     | { kind: 'branch'; rootPath: string }
+    | { kind: 'deployments'; rootPath: string }
+    | { kind: 'branchDeployment'; rootPath: string; idx: number }
     | { kind: 'deployment'; rootPath: string; env: 'production' | 'preview' }
     | { kind: 'error'; rootPath: string; source: 'gh' | 'vc' }
     | { kind: 'placeholder'; text: string; busy?: boolean };
@@ -141,6 +160,7 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
     }
 
     private async runRefresh(): Promise<void> {
+        const start = Date.now();
         const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
         const ghEnabled = config.get<boolean>('github.enabled', false);
         const vcEnabled = config.get<boolean>('vercel.enabled', false);
@@ -153,6 +173,7 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             this.updateBadge();
             // eslint-disable-next-line unicorn/no-useless-undefined
             this._onDidChangeTreeData.fire(undefined);
+            logTiming('sidebar.refresh', start, 'disabled');
             return;
         }
 
@@ -176,6 +197,11 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         this.updateBadge();
         // eslint-disable-next-line unicorn/no-useless-undefined
         this._onDidChangeTreeData.fire(undefined);
+        logTiming(
+            'sidebar.refresh',
+            start,
+            `repos=${repos.length} gh=${ghEnabled} vc=${vcEnabled}`,
+        );
     }
 
     private async fetchGitHub(
@@ -184,6 +210,8 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         ignored: string[],
     ): Promise<void> {
         if (!ctx.owner || !ctx.repo || !ctx.branch) return;
+        state.ghChecked = true;
+        const start = Date.now();
         try {
             const stdout = await runCli(
                 'gh',
@@ -204,7 +232,10 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                 ctx.rootPath,
             );
             const prs = safeJsonParse<PrEntry[]>(stdout, []);
-            if (prs.length === 0) return;
+            if (prs.length === 0) {
+                logTiming(`sidebar.gh ${ctx.label}`, start, 'no pr');
+                return;
+            }
             const pr = prs[0];
             const checks = pr.statusCheckRollup ?? [];
             const visible = checks.filter((c) => !isIgnored(c, ignored));
@@ -212,25 +243,75 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             state.ci = aggregateCi(visible);
             state.visibleChecks = visible.slice().sort(checkSort);
             state.hiddenCheckCount = checks.length - visible.length;
+            logTiming(
+                `sidebar.gh ${ctx.label}`,
+                start,
+                `pr=#${pr.number} checks=${visible.length}+${state.hiddenCheckCount} ci=${state.ci}`,
+            );
         } catch (error) {
-            state.ghError = { kind: error instanceof CliError ? error.kind : 'OTHER' };
+            const kind = error instanceof CliError ? error.kind : 'OTHER';
+            state.ghError = { kind };
+            logTiming(`sidebar.gh ${ctx.label}`, start, `error=${kind}`);
         }
     }
 
     private async fetchVercel(ctx: RepoContext, state: RepoState): Promise<void> {
-        if (!ctx.owner || !ctx.repo || !ctx.headSha) return;
+        if (!ctx.owner || !ctx.repo) return;
+        state.vcChecked = true;
+        const start = Date.now();
         try {
-            const team = await findVercelTeam(ctx.owner, ctx.repo);
-            if (!team) return;
-            const [prod, preview] = await Promise.all([
-                fetchLatestProduction(team, ctx.owner, ctx.repo),
-                fetchPreviewForCommit(team, ctx.headSha),
-            ]);
-            state.prod = prod;
-            state.preview = preview;
+            const link = await findVercelLink(ctx.owner, ctx.repo);
+            if (!link) {
+                logTiming(`sidebar.vc ${ctx.label}`, start, 'no link');
+                return;
+            }
+            state.vercelTeam = link.team;
+            state.vercelProject = link.project;
+            const tasks: Array<Promise<unknown>> = [
+                fetchLatestProduction(link.team, ctx.owner, ctx.repo).then((d) => {
+                    state.prod = d;
+                }),
+            ];
+            if (ctx.headSha) {
+                tasks.push(
+                    fetchPreviewForCommit(link.team, ctx.headSha).then((d) => {
+                        state.preview = d;
+                    }),
+                );
+            }
+            if (ctx.branch) {
+                tasks.push(
+                    fetchBranchDeployments(link.team, ctx.owner, ctx.repo, ctx.branch).then(
+                        (list) => {
+                            state.branchDeployments = list;
+                        },
+                    ),
+                );
+            }
+            await Promise.all(tasks);
+            logTiming(
+                `sidebar.vc ${ctx.label}`,
+                start,
+                `${link.team}/${link.project} prod=${state.prod ? (statusOf(state.prod) ?? '?') : 'none'} preview=${state.preview ? (statusOf(state.preview) ?? '?') : 'none'} branch=${state.branchDeployments?.length ?? 0}`,
+            );
         } catch (error) {
-            state.vcError = { kind: error instanceof CliError ? error.kind : 'OTHER' };
+            const kind = error instanceof CliError ? error.kind : 'OTHER';
+            state.vcError = { kind };
+            logTiming(`sidebar.vc ${ctx.label}`, start, `error=${kind}`);
         }
+    }
+
+    getRepoSnapshot(rootPath: string): RepoStateSnapshot | undefined {
+        const s = this.cache.get(rootPath);
+        if (!s) return undefined;
+        return {
+            ctx: s.ctx,
+            pr: s.pr ? { number: s.pr.number, url: s.pr.url, title: s.pr.title } : undefined,
+            vercelTeam: s.vercelTeam,
+            vercelProject: s.vercelProject,
+            ghChecked: s.ghChecked ?? false,
+            vcChecked: s.vcChecked ?? false,
+        };
     }
 
     getOpenPrs(): OpenPrSummary[] {
@@ -279,6 +360,10 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                 return this.hiddenChecksItem(node.rootPath);
             case 'branch':
                 return this.branchItem(node.rootPath);
+            case 'deployments':
+                return this.deploymentsItem(node.rootPath);
+            case 'branchDeployment':
+                return this.branchDeploymentItem(node.rootPath, node.idx);
             case 'deployment':
                 return this.deploymentItem(node.rootPath, node.env);
             case 'error':
@@ -298,6 +383,9 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         if (node.kind === 'repo') {
             const children: SidebarNode[] = [];
             children.push({ kind: 'branch', rootPath: node.rootPath });
+            if (state.vercelProject) {
+                children.push({ kind: 'deployments', rootPath: node.rootPath });
+            }
             if (state.prod) {
                 children.push({ kind: 'deployment', rootPath: node.rootPath, env: 'production' });
             }
@@ -323,6 +411,15 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                 items.push({ kind: 'hiddenChecks', rootPath: node.rootPath });
             }
             return items;
+        }
+
+        if (node.kind === 'deployments') {
+            const deps = state.branchDeployments ?? [];
+            return deps.map((_, idx) => ({
+                kind: 'branchDeployment' as const,
+                rootPath: node.rootPath,
+                idx,
+            }));
         }
 
         return [];
@@ -412,6 +509,60 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         if (ctx.owner && ctx.repo && ctx.branch) {
             item.command = openUrlCommand(githubBranchUrl(ctx.owner, ctx.repo, ctx.branch));
         }
+        return item;
+    }
+
+    private deploymentsItem(rootPath: string): vscode.TreeItem {
+        const state = this.cache.get(rootPath)!;
+        const ctx = state.ctx;
+        const deps = state.branchDeployments ?? [];
+        const collapsibleState =
+            deps.length > 0
+                ? vscode.TreeItemCollapsibleState.Collapsed
+                : vscode.TreeItemCollapsibleState.None;
+        const item = new vscode.TreeItem('Deployments', collapsibleState);
+        item.id = `deployments:${rootPath}`;
+        item.iconPath = new vscode.ThemeIcon('list-unordered');
+        item.description = ctx.branch ? `${deps.length} on ${ctx.branch}` : `${deps.length}`;
+        item.contextValue = 'projectStatus.deployments';
+        if (state.vercelTeam && state.vercelProject) {
+            item.command = openUrlCommand(
+                vercelDeploymentsUrl(state.vercelTeam, state.vercelProject, ctx.branch),
+            );
+        }
+        item.tooltip = buildMarkdownTooltip((md) => {
+            md.appendMarkdown(`**Deployments** · branch \`${ctx.branch ?? '?'}\`\n\n`);
+            md.appendMarkdown(
+                `Click to open the Vercel deployments page; expand for the latest ${deps.length} on this branch.`,
+            );
+        });
+        return item;
+    }
+
+    private branchDeploymentItem(rootPath: string, idx: number): vscode.TreeItem {
+        const state = this.cache.get(rootPath)!;
+        const dep = state.branchDeployments?.[idx];
+        if (!dep) {
+            const item = new vscode.TreeItem('?', vscode.TreeItemCollapsibleState.None);
+            item.id = `branchDep:${rootPath}:${idx}`;
+            return item;
+        }
+        const status = statusOf(dep) ?? 'unknown';
+        const target = dep.target ?? 'preview';
+        const item = new vscode.TreeItem(dep.url, vscode.TreeItemCollapsibleState.None);
+        item.id = `branchDep:${rootPath}:${idx}`;
+        item.iconPath = depThemeIcon(dep);
+        item.description = `${target} · ${status}`;
+        item.contextValue = 'projectStatus.branchDeployment';
+        item.command = openUrlCommand(dep.inspectorUrl ?? `https://${dep.url}`);
+        item.tooltip = buildMarkdownTooltip((md) => {
+            md.appendMarkdown(`**${target}** · \`${status}\`\n\n`);
+            md.appendMarkdown(`- alias: [${dep.url}](https://${dep.url})\n`);
+            if (dep.inspectorUrl) md.appendMarkdown(`- inspect: [logs](${dep.inspectorUrl})\n`);
+            if (dep.created) {
+                md.appendMarkdown(`- created: ${new Date(dep.created).toLocaleString()}\n`);
+            }
+        });
         return item;
     }
 
@@ -506,7 +657,7 @@ function ciThemeIcon(c: CiAggregate | undefined): vscode.ThemeIcon {
         case 'failure':
             return new vscode.ThemeIcon('error', new vscode.ThemeColor('charts.red'));
         case 'pending':
-            return new vscode.ThemeIcon('circle-large-outline');
+            return new vscode.ThemeIcon('loading~spin');
         default:
             return new vscode.ThemeIcon('git-pull-request');
     }
@@ -514,7 +665,7 @@ function ciThemeIcon(c: CiAggregate | undefined): vscode.ThemeIcon {
 
 function checkThemeIcon(c: CheckEntry): vscode.ThemeIcon {
     const status = (c.status ?? '').toLowerCase();
-    if (PENDING_STATUSES.has(status)) return new vscode.ThemeIcon('circle-large-outline');
+    if (PENDING_STATUSES.has(status)) return new vscode.ThemeIcon('loading~spin');
     const outcome = (c.conclusion ?? c.state ?? '').toLowerCase();
     if (SUCCESS_CONCLUSIONS.has(outcome))
         return new vscode.ThemeIcon('pass', new vscode.ThemeColor('charts.green'));
@@ -564,16 +715,20 @@ function depThemeIcon(d: VcDeployment | undefined): vscode.ThemeIcon {
         case 'failed':
             return new vscode.ThemeIcon('error', new vscode.ThemeColor('charts.red'));
         case 'building':
-            return new vscode.ThemeIcon('circle-large-outline');
+            return new vscode.ThemeIcon('loading~spin');
         case 'queue':
-            return new vscode.ThemeIcon('clock');
+            return new vscode.ThemeIcon('loading~spin');
         default:
             return new vscode.ThemeIcon('rocket');
     }
 }
 
 async function fetchPreviewForCommit(team: string, sha: string): Promise<VcDeployment | undefined> {
-    return runLs(team, ['--meta', `githubCommitSha=${sha}`, '--environment', 'preview']);
+    const list = await listDeployments(team, {
+        meta: { githubCommitSha: sha },
+        environment: 'preview',
+    });
+    return list[0];
 }
 
 async function fetchLatestProduction(
@@ -581,28 +736,35 @@ async function fetchLatestProduction(
     owner: string,
     repo: string,
 ): Promise<VcDeployment | undefined> {
-    return runLs(team, [
-        '--meta',
-        `githubOrg=${owner}`,
-        '--meta',
-        `githubRepo=${repo}`,
-        '--environment',
-        'production',
-    ]);
+    const list = await listDeployments(team, {
+        meta: { githubOrg: owner, githubRepo: repo },
+        environment: 'production',
+    });
+    return list[0];
 }
 
-async function runLs(team: string, extraArgs: string[]): Promise<VcDeployment | undefined> {
+async function fetchBranchDeployments(
+    team: string,
+    owner: string,
+    repo: string,
+    branch: string,
+): Promise<VcDeployment[]> {
+    const list = await listDeployments(team, {
+        meta: { githubOrg: owner, githubRepo: repo, githubCommitRef: branch },
+    });
+    return list.slice(0, 10);
+}
+
+async function listDeployments(
+    team: string,
+    opts: { meta?: Record<string, string>; environment?: 'production' | 'preview' },
+): Promise<VcDeployment[]> {
     // Run from $HOME so vc doesn't try to read .vercel/project.json from a
     // workspace that may not have one — --scope pins the team explicitly.
-    const stdout = await runCli(
-        'vc',
-        ['ls', '--format', 'json', '--scope', team, ...extraArgs, '--yes'],
-        os.homedir(),
-    );
+    const stdout = await runCli('vc', vcLsArgs(team, opts), os.homedir());
     const list = parseVcList<VcDeployment>(stdout);
-    if (list.length === 0) return undefined;
     list.sort((a, b) => (b.created ?? 0) - (a.created ?? 0));
-    return list[0];
+    return list;
 }
 
 function openUrlCommand(url: string): vscode.Command {

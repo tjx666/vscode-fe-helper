@@ -1,18 +1,31 @@
-import os from 'node:os';
-
 import vscode from 'vscode';
 
 import { runCli } from '../sidebar/cli';
-import { githubBranchUrl, githubRepoUrl, parseVcList, safeJsonParse } from '../sidebar/common';
+import {
+    githubBranchUrl,
+    githubRepoUrl,
+    safeJsonParse,
+    vercelDeploymentsUrl,
+} from '../sidebar/common';
 import type { RepoContext } from '../sidebar/gitContext';
 import { getRepoContexts } from '../sidebar/gitContext';
-import { findVercelTeam } from '../sidebar/vercelLink';
+import { getProjectStatusProvider } from '../sidebar/index';
+import type { RepoStateSnapshot } from '../sidebar/tree';
+import { findVercelLink } from '../sidebar/vercelLink';
+import { logTiming } from '../utils/log';
 
 interface Choice extends vscode.QuickPickItem {
     url: string;
 }
 
+interface PrInfo {
+    url: string;
+    number: number;
+    title: string;
+}
+
 export async function openWebsites(): Promise<void> {
+    const start = Date.now();
     const repos = await getRepoContexts();
     if (repos.length === 0) {
         vscode.window.showInformationMessage('No git repository found in workspace.');
@@ -26,6 +39,7 @@ export async function openWebsites(): Promise<void> {
         },
         () => buildItems(repos),
     );
+    logTiming('openWebsites', start, `repos=${repos.length} items=${items.length}`);
 
     if (items.length === 0) {
         vscode.window.showWarningMessage('No URLs available for the current workspace.');
@@ -49,9 +63,11 @@ async function buildItems(repos: RepoContext[]): Promise<Choice[]> {
 }
 
 async function collectForRepo(ctx: RepoContext): Promise<{ pr?: Choice; others: Choice[] }> {
+    const start = Date.now();
     const others: Choice[] = [];
     const repoLabel = ctx.repo ?? ctx.label;
     const groupHint = ctx.isSubmodule ? `submodule · ${ctx.label}` : repoLabel;
+    const cached = getProjectStatusProvider()?.getRepoSnapshot(ctx.rootPath);
 
     if (ctx.owner && ctx.repo) {
         const url = githubRepoUrl(ctx.owner, ctx.repo);
@@ -73,7 +89,10 @@ async function collectForRepo(ctx: RepoContext): Promise<{ pr?: Choice; others: 
         });
     }
 
-    const [prInfo, vercelUrl] = await Promise.all([fetchPrInfo(ctx), fetchVercelProjectUrl(ctx)]);
+    const [prInfo, vercelUrl] = await Promise.all([
+        resolvePrInfo(ctx, cached),
+        resolveVercelUrl(ctx, cached),
+    ]);
 
     if (vercelUrl) {
         others.push({
@@ -93,13 +112,38 @@ async function collectForRepo(ctx: RepoContext): Promise<{ pr?: Choice; others: 
           }
         : undefined;
 
+    logTiming(
+        `openWebsites.repo ${ctx.label}`,
+        start,
+        `gh=${cached?.ghChecked ? 'cache' : 'cli'} vc=${cached?.vcChecked ? 'cache' : 'cli'} pr=${pr ? 'y' : 'n'} vercel=${vercelUrl ? 'y' : 'n'}`,
+    );
     return { pr, others };
 }
 
-interface PrInfo {
-    url: string;
-    number: number;
-    title: string;
+async function resolvePrInfo(
+    ctx: RepoContext,
+    cached: RepoStateSnapshot | undefined,
+): Promise<PrInfo | undefined> {
+    if (cached?.ghChecked) return cached.pr;
+    return fetchPrInfo(ctx);
+}
+
+async function resolveVercelUrl(
+    ctx: RepoContext,
+    cached: RepoStateSnapshot | undefined,
+): Promise<string | undefined> {
+    if (cached?.vcChecked) {
+        return cached.vercelTeam && cached.vercelProject
+            ? vercelDeploymentsUrl(cached.vercelTeam, cached.vercelProject)
+            : undefined;
+    }
+    if (!ctx.owner || !ctx.repo) return undefined;
+    try {
+        const link = await findVercelLink(ctx.owner, ctx.repo);
+        return link ? vercelDeploymentsUrl(link.team, link.project) : undefined;
+    } catch {
+        return undefined;
+    }
 }
 
 async function fetchPrInfo(ctx: RepoContext): Promise<PrInfo | undefined> {
@@ -125,36 +169,6 @@ async function fetchPrInfo(ctx: RepoContext): Promise<PrInfo | undefined> {
         );
         const prs = safeJsonParse<PrInfo[]>(stdout, []);
         return prs[0];
-    } catch {
-        return undefined;
-    }
-}
-
-async function fetchVercelProjectUrl(ctx: RepoContext): Promise<string | undefined> {
-    if (!ctx.owner || !ctx.repo) return undefined;
-    try {
-        const team = await findVercelTeam(ctx.owner, ctx.repo);
-        if (!team) return undefined;
-        const stdout = await runCli(
-            'vc',
-            [
-                'ls',
-                '--format',
-                'json',
-                '--scope',
-                team,
-                '--meta',
-                `githubOrg=${ctx.owner}`,
-                '--meta',
-                `githubRepo=${ctx.repo}`,
-                '--yes',
-            ],
-            os.homedir(),
-        );
-        const list = parseVcList<{ name?: string }>(stdout);
-        const projectName = list[0]?.name;
-        if (!projectName) return undefined;
-        return `https://vercel.com/${team}/${projectName}/deployments`;
     } catch {
         return undefined;
     }

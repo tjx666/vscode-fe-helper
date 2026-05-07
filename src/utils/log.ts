@@ -10,7 +10,10 @@ export function log(message: string): void {
 class Logger {
     channel: OutputChannel | undefined;
 
-    constructor(private name: string, private language: string) {}
+    constructor(
+        private name: string,
+        private language: string,
+    ) {}
 
     log(message: string, active = false): void {
         if (this.channel === undefined) {
@@ -33,3 +36,14 @@ class Logger {
 
 export const logger = new Logger('', 'log');
 export const shellLogger = new Logger('Shell', 'shellscript');
+
+export function logEvent(scope: string, message: string): void {
+    logger.log(`${new Date().toISOString()} [${scope}] ${message}`);
+}
+
+export function logTiming(scope: string, startedAt: number, extra?: string): void {
+    const ms = Date.now() - startedAt;
+    logger.log(
+        `${new Date().toISOString()} [${scope}] ${ms}ms${extra === undefined ? '' : ` ${extra}`}`,
+    );
+}

@@ -5,10 +5,18 @@ import { Scheduler } from './scheduler';
 import { CONFIG_SECTION, ProjectStatusProvider, VIEW_ID } from './tree';
 import { initVercelLink, resetVercelLinkCache } from './vercelLink';
 
+let providerRef: ProjectStatusProvider | undefined;
+
+/** Live ref to the sidebar's provider, so other commands (e.g. openWebsites) can read its cache. */
+export function getProjectStatusProvider(): ProjectStatusProvider | undefined {
+    return providerRef;
+}
+
 export async function activateSidebar(context: vscode.ExtensionContext): Promise<void> {
     initVercelLink(context.globalState);
 
     const provider = new ProjectStatusProvider();
+    providerRef = provider;
     const treeView = vscode.window.createTreeView(VIEW_ID, {
         treeDataProvider: provider,
         showCollapseAll: true,
@@ -23,6 +31,7 @@ export async function activateSidebar(context: vscode.ExtensionContext): Promise
         provider,
         session,
         activatePrStatusBar(provider),
+        { dispose: () => (providerRef = undefined) },
         vscode.workspace.onDidChangeConfiguration((e) => {
             if (e.affectsConfiguration(CONFIG_SECTION)) session.restart();
         }),
@@ -49,7 +58,7 @@ class SidebarSession implements vscode.Disposable {
 
     start(): void {
         const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
-        const interval = config.get<number>('refreshInterval', 30_000);
+        const interval = config.get<number>('refreshInterval', 10_000);
 
         this.scheduler = new Scheduler(interval);
         this.scheduler.onTick(() => this.provider.refresh());
@@ -66,8 +75,8 @@ class SidebarSession implements vscode.Disposable {
             new vscode.RelativePattern(folder, '.git/HEAD'),
         );
         /**
-         * git rewrites HEAD on every fetch/commit/checkout (often in bursts),
-         * so coalesce events into a single re-read.
+         * Git rewrites HEAD on every fetch/commit/checkout (often in bursts), so coalesce events
+         * into a single re-read.
          */
         const handler = () => {
             if (this.branchDebounce) clearTimeout(this.branchDebounce);
