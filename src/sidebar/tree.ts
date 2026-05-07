@@ -186,6 +186,8 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                     ctx.branch,
                     '--state',
                     'open',
+                    '--author',
+                    '@me',
                     '--json',
                     'number,url,title,statusCheckRollup',
                     '--limit',
