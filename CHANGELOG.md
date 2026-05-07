@@ -1,3 +1,15 @@
+## v0.14.5 (2026-05-07)
+
+### 🐞 Bug Fixes
+
+- **sidebar:** Use filterBranch query for Vercel deployments URL ([e751073](https://github.com/tjx666/vscode-fe-helper/commit/e751073))
+
+### ❤️ Contributors
+
+- YuTengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.14.4...v0.14.5 '2026-05-07')
+
 ## v0.14.4 (2026-05-07)
 
 ### 🚀 Features
