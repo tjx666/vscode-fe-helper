@@ -1,3 +1,15 @@
+## v0.14.2 (2026-05-07)
+
+### 🐞 Bug Fixes
+
+- **sidebar:** Only match PRs authored by the current user ([1601d70](https://github.com/tjx666/vscode-fe-helper/commit/1601d70))
+
+### ❤️ Contributors
+
+- YuTengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.14.1...v0.14.2 '2026-05-07')
+
 ## v0.14.1 (2026-05-07)
 
 ### 🐞 Bug Fixes
