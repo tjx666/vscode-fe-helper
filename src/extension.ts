@@ -142,6 +142,10 @@ export async function activate(context: vscode.ExtensionContext) {
         import('./gotoDeclaration').then((mod) => mod.gotoDeclaration(editor)),
     );
 
+    registerCommand('openWebsites', () =>
+        import('./openWebsites').then((mod) => mod.openWebsites()),
+    );
+
     import('./sidebar')
         .then((mod) => mod.activateSidebar(context))
         .catch((error) => logger.log(`activate sidebar failed: ${String(error)}`));

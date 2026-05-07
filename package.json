@@ -139,6 +139,10 @@
                 "title": "FE Helper: Goto Declaration"
             },
             {
+                "command": "VSCodeFEHelper.openWebsites",
+                "title": "FE Helper: Open Repo Websites"
+            },
+            {
                 "command": "VSCodeFEHelper.projectStatus.resetVercelCache",
                 "title": "FE Helper: Reset Vercel Team Cache"
             },

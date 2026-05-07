@@ -53,6 +53,23 @@ export function safeJsonParse<T>(input: string, fallback: T): T {
     }
 }
 
+export function githubRepoUrl(owner: string, repo: string): string {
+    return `https://github.com/${owner}/${repo}`;
+}
+
+export function githubBranchUrl(owner: string, repo: string, branch: string): string {
+    return `${githubRepoUrl(owner, repo)}/tree/${encodeURIComponent(branch)}`;
+}
+
+/**
+ * `vc ls --format json` returns either a bare array or `{ deployments: [...] }` depending on the
+ * CLI version, so callers always need this fallback shape.
+ */
+export function parseVcList<T>(stdout: string): T[] {
+    const data = safeJsonParse<T[] | { deployments?: T[] }>(stdout, []);
+    return Array.isArray(data) ? data : (data.deployments ?? []);
+}
+
 export function buildMarkdownTooltip(
     builder: (md: vscode.MarkdownString) => void,
 ): vscode.MarkdownString {

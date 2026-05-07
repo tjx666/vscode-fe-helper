@@ -3,7 +3,7 @@ import os from 'node:os';
 import type vscode from 'vscode';
 
 import { CliError, runCli } from './cli';
-import { safeJsonParse } from './common';
+import { parseVcList, safeJsonParse } from './common';
 
 interface Team {
     slug: string;
@@ -20,10 +20,9 @@ export function initVercelLink(state: vscode.Memento): void {
 }
 
 /**
- * Resolve the Vercel team slug that owns the given GitHub repo, by scanning
- * the user's accessible teams sequentially. Result is cached in-process
- * forever (within the session) and persisted in globalState only on success
- * — this lets a not-yet-deployed repo pick up its team after the first
+ * Resolve the Vercel team slug that owns the given GitHub repo, by scanning the user's accessible
+ * teams sequentially. Result is cached in-process forever (within the session) and persisted in
+ * globalState only on success — this lets a not-yet-deployed repo pick up its team after the first
  * deployment lands without needing a manual cache reset.
  */
 export async function findVercelTeam(owner: string, repo: string): Promise<string | null> {
@@ -102,8 +101,7 @@ async function scanTeams(owner: string, repo: string): Promise<string | null> {
                 ],
                 cwd,
             );
-            const data = safeJsonParse<unknown[] | { deployments?: unknown[] }>(stdout, []);
-            const list = Array.isArray(data) ? data : (data.deployments ?? []);
+            const list = parseVcList<unknown>(stdout);
             return list.length > 0 ? team.slug : null;
         } catch (error) {
             if (error instanceof CliError) throw error;

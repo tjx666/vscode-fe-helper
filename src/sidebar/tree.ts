@@ -4,7 +4,15 @@ import vscode from 'vscode';
 
 import type { CliErrorKind } from './cli';
 import { CliError, runCli } from './cli';
-import { buildMarkdownTooltip, errorHint, errorLabel, matchAnyGlob, safeJsonParse } from './common';
+import {
+    buildMarkdownTooltip,
+    errorHint,
+    errorLabel,
+    githubBranchUrl,
+    matchAnyGlob,
+    parseVcList,
+    safeJsonParse,
+} from './common';
 import type { RepoContext } from './gitContext';
 import { getRepoContexts } from './gitContext';
 import { findVercelTeam } from './vercelLink';
@@ -402,8 +410,7 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         item.description = ctx.branch && ctx.branch === ctx.defaultBranch ? 'default' : undefined;
         item.contextValue = 'projectStatus.branch';
         if (ctx.owner && ctx.repo && ctx.branch) {
-            const url = `https://github.com/${ctx.owner}/${ctx.repo}/tree/${encodeURIComponent(ctx.branch)}`;
-            item.command = openUrlCommand(url);
+            item.command = openUrlCommand(githubBranchUrl(ctx.owner, ctx.repo, ctx.branch));
         }
         return item;
     }
@@ -592,8 +599,7 @@ async function runLs(team: string, extraArgs: string[]): Promise<VcDeployment | 
         ['ls', '--format', 'json', '--scope', team, ...extraArgs, '--yes'],
         os.homedir(),
     );
-    const items = safeJsonParse<VcDeployment[] | { deployments?: VcDeployment[] }>(stdout, []);
-    const list = Array.isArray(items) ? items : (items.deployments ?? []);
+    const list = parseVcList<VcDeployment>(stdout);
     if (list.length === 0) return undefined;
     list.sort((a, b) => (b.created ?? 0) - (a.created ?? 0));
     return list[0];
