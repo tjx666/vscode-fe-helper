@@ -146,3 +146,6 @@ $RECYCLE.BIN/
 # esbuild
 stats.html
 meta.json
+
+# Claude Code
+.claude/
