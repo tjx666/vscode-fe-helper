@@ -18,6 +18,8 @@ import {
 } from './common';
 import type { RepoContext } from './gitContext';
 import { getRepoContexts } from './gitContext';
+import type { ReviewThreadEntry } from './reviewThreads';
+import { fetchUnresolvedThreads } from './reviewThreads';
 import { findVercelLink } from './vercelLink';
 
 interface CheckEntry {
@@ -59,6 +61,7 @@ interface RepoState {
     ci?: CiAggregate;
     visibleChecks?: CheckEntry[];
     hiddenCheckCount?: number;
+    unresolvedThreads?: ReviewThreadEntry[];
     prod?: VcDeployment;
     preview?: VcDeployment;
     branchDeployments?: VcDeployment[];
@@ -84,6 +87,8 @@ export type SidebarNode =
     | { kind: 'pr'; rootPath: string }
     | { kind: 'check'; rootPath: string; idx: number }
     | { kind: 'hiddenChecks'; rootPath: string }
+    | { kind: 'reviewThreads'; rootPath: string }
+    | { kind: 'reviewThread'; rootPath: string; idx: number }
     | { kind: 'branch'; rootPath: string }
     | { kind: 'deployments'; rootPath: string }
     | { kind: 'branchDeployment'; rootPath: string; idx: number }
@@ -243,10 +248,11 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             state.ci = aggregateCi(visible);
             state.visibleChecks = visible.slice().sort(checkSort);
             state.hiddenCheckCount = checks.length - visible.length;
+            state.unresolvedThreads = await fetchUnresolvedThreads(ctx, pr.number);
             logTiming(
                 `sidebar.gh ${ctx.label}`,
                 start,
-                `pr=#${pr.number} checks=${visible.length}+${state.hiddenCheckCount} ci=${state.ci}`,
+                `pr=#${pr.number} checks=${visible.length}+${state.hiddenCheckCount} ci=${state.ci} unresolved=${state.unresolvedThreads.length}`,
             );
         } catch (error) {
             const kind = error instanceof CliError ? error.kind : 'OTHER';
@@ -334,16 +340,25 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
 
     private updateBadge(): void {
         if (!this.treeView) return;
-        let count = 0;
+        let alerts = 0;
+        let unresolved = 0;
         for (const state of this.cache.values()) {
-            if (state.ci === 'failure') count++;
-            if (statusOf(state.prod) === 'failed') count++;
-            if (statusOf(state.preview) === 'failed') count++;
+            if (state.ci === 'failure') alerts++;
+            if (statusOf(state.prod) === 'failed') alerts++;
+            if (statusOf(state.preview) === 'failed') alerts++;
+            unresolved += state.unresolvedThreads?.length ?? 0;
         }
-        this.treeView.badge =
-            count > 0
-                ? { value: count, tooltip: `${count} project alert${count === 1 ? '' : 's'}` }
-                : undefined;
+        const total = alerts + unresolved;
+        if (total === 0) {
+            this.treeView.badge = undefined;
+            return;
+        }
+        const parts: string[] = [];
+        if (alerts > 0) parts.push(`${alerts} alert${alerts === 1 ? '' : 's'}`);
+        if (unresolved > 0) {
+            parts.push(`${unresolved} unresolved comment${unresolved === 1 ? '' : 's'}`);
+        }
+        this.treeView.badge = { value: total, tooltip: parts.join(' · ') };
     }
 
     getTreeItem(node: SidebarNode): vscode.TreeItem {
@@ -358,6 +373,10 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                 return this.checkItem(node.rootPath, node.idx);
             case 'hiddenChecks':
                 return this.hiddenChecksItem(node.rootPath);
+            case 'reviewThreads':
+                return this.reviewThreadsItem(node.rootPath);
+            case 'reviewThread':
+                return this.reviewThreadItem(node.rootPath, node.idx);
             case 'branch':
                 return this.branchItem(node.rootPath);
             case 'deployments':
@@ -385,6 +404,9 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             children.push({ kind: 'branch', rootPath: node.rootPath });
             if (state.vercelProject) {
                 children.push({ kind: 'deployments', rootPath: node.rootPath });
+            }
+            if ((state.unresolvedThreads?.length ?? 0) > 0) {
+                children.push({ kind: 'reviewThreads', rootPath: node.rootPath });
             }
             if (state.prod) {
                 children.push({ kind: 'deployment', rootPath: node.rootPath, env: 'production' });
@@ -417,6 +439,15 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             const deps = state.branchDeployments ?? [];
             return deps.map((_, idx) => ({
                 kind: 'branchDeployment' as const,
+                rootPath: node.rootPath,
+                idx,
+            }));
+        }
+
+        if (node.kind === 'reviewThreads') {
+            const threads = state.unresolvedThreads ?? [];
+            return threads.map((_, idx) => ({
+                kind: 'reviewThread' as const,
                 rootPath: node.rootPath,
                 idx,
             }));
@@ -495,6 +526,56 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         item.id = `hiddenChecks:${rootPath}`;
         item.iconPath = new vscode.ThemeIcon('eye-closed');
         item.tooltip = 'Hidden by `vscode-fe-helper.projectStatus.ignoredChecks`.';
+        return item;
+    }
+
+    private reviewThreadsItem(rootPath: string): vscode.TreeItem {
+        const state = this.cache.get(rootPath)!;
+        const threads = state.unresolvedThreads ?? [];
+        const n = threads.length;
+        const item = new vscode.TreeItem(
+            'Unresolved Comments',
+            vscode.TreeItemCollapsibleState.Collapsed,
+        );
+        item.id = `reviewThreads:${rootPath}`;
+        item.iconPath = new vscode.ThemeIcon(
+            'comment-unresolved',
+            new vscode.ThemeColor('charts.yellow'),
+        );
+        item.description = String(n);
+        item.contextValue = 'projectStatus.reviewThreads';
+        item.command = openUrlCommand(state.pr!.url);
+        item.tooltip = buildMarkdownTooltip((md) => {
+            md.appendMarkdown(`**${n} unresolved review thread${n === 1 ? '' : 's'}**\n\n`);
+            md.appendMarkdown('Click to open the PR conversation; expand for individual threads.');
+        });
+        return item;
+    }
+
+    private reviewThreadItem(rootPath: string, idx: number): vscode.TreeItem {
+        const state = this.cache.get(rootPath)!;
+        const t = state.unresolvedThreads?.[idx];
+        if (!t) {
+            const item = new vscode.TreeItem('?', vscode.TreeItemCollapsibleState.None);
+            item.id = `reviewThread:${rootPath}:${idx}`;
+            return item;
+        }
+        const location = formatThreadLocation(t.path, t.line);
+        const item = new vscode.TreeItem(location, vscode.TreeItemCollapsibleState.None);
+        item.id = `reviewThread:${rootPath}:${idx}`;
+        item.iconPath = new vscode.ThemeIcon('comment');
+        item.description = oneLine(t.body, 80);
+        item.contextValue = 'projectStatus.reviewThread';
+        item.command = openUrlCommand(t.url);
+        item.tooltip = buildMarkdownTooltip((md) => {
+            const author = t.author ? `@${t.author}` : 'unknown';
+            const when = t.createdAt ? ` · ${new Date(t.createdAt).toLocaleString()}` : '';
+            md.appendMarkdown(`**${author}**${when}\n\n`);
+            if (t.path) {
+                md.appendMarkdown(`\`${t.path}${t.line != null ? `:${t.line}` : ''}\`\n\n`);
+            }
+            md.appendMarkdown(t.body || '_(empty)_');
+        });
         return item;
     }
 
@@ -773,4 +854,14 @@ function openUrlCommand(url: string): vscode.Command {
         title: 'Open',
         arguments: [vscode.Uri.parse(url)],
     };
+}
+
+function oneLine(s: string, max: number): string {
+    const collapsed = s.replaceAll(/\s+/g, ' ').trim();
+    return collapsed.length > max ? `${collapsed.slice(0, max - 1)}…` : collapsed;
+}
+
+function formatThreadLocation(path: string | undefined, line: number | null | undefined): string {
+    if (!path) return 'general';
+    return line == null ? path : `${path}:${line}`;
 }
