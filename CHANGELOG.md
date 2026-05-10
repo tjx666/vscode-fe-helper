@@ -1,3 +1,15 @@
+## v0.15.0 (2026-05-10)
+
+### 🚀 Features
+
+- **sidebar:** Show unresolved PR review comments ([245db38](https://github.com/tjx666/vscode-fe-helper/commit/245db38))
+
+### ❤️ Contributors
+
+- YuTengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.14.5...v0.15.0 '2026-05-10')
+
 ## v0.14.5 (2026-05-07)
 
 ### 🐞 Bug Fixes
