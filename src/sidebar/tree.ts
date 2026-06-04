@@ -15,6 +15,7 @@ import {
     safeJsonParse,
     vcLsArgs,
     vercelDeploymentsUrl,
+    vercelInspectorUrl,
 } from './common';
 import type { RepoContext } from './gitContext';
 import { getRepoContexts } from './gitContext';
@@ -48,7 +49,6 @@ interface VcDeployment {
     state?: string;
     readyState?: string;
     target?: 'production' | 'preview' | null;
-    inspectorUrl?: string;
     created?: number;
 }
 
@@ -630,16 +630,22 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         }
         const status = statusOf(dep) ?? 'unknown';
         const target = dep.target ?? 'preview';
+        const inspector =
+            state.vercelTeam && state.vercelProject
+                ? vercelInspectorUrl(state.vercelTeam, state.vercelProject, dep.url)
+                : undefined;
         const item = new vscode.TreeItem(dep.url, vscode.TreeItemCollapsibleState.None);
         item.id = `branchDep:${rootPath}:${idx}`;
         item.iconPath = depThemeIcon(dep);
         item.description = `${target} · ${status}`;
         item.contextValue = 'projectStatus.branchDeployment';
-        item.command = openUrlCommand(dep.inspectorUrl ?? `https://${dep.url}`);
+        item.command = openUrlCommand(
+            deploymentOpenUrl(dep, state.vercelTeam, state.vercelProject),
+        );
         item.tooltip = buildMarkdownTooltip((md) => {
             md.appendMarkdown(`**${target}** · \`${status}\`\n\n`);
             md.appendMarkdown(`- alias: [${dep.url}](https://${dep.url})\n`);
-            if (dep.inspectorUrl) md.appendMarkdown(`- inspect: [logs](${dep.inspectorUrl})\n`);
+            if (inspector) md.appendMarkdown(`- inspect: [logs](${inspector})\n`);
             if (dep.created) {
                 md.appendMarkdown(`- created: ${new Date(dep.created).toLocaleString()}\n`);
             }
@@ -652,16 +658,22 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         const dep = env === 'production' ? state.prod! : state.preview!;
         const status = statusOf(dep) ?? 'unknown';
         const label = env === 'production' ? 'Production' : 'Preview';
+        const inspector =
+            state.vercelTeam && state.vercelProject
+                ? vercelInspectorUrl(state.vercelTeam, state.vercelProject, dep.url)
+                : undefined;
         const item = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
         item.id = `dep:${rootPath}:${env}`;
         item.iconPath = depThemeIcon(dep);
         item.description = `${status} · ${dep.url}`;
         item.contextValue = 'projectStatus.deployment';
-        item.command = openUrlCommand(dep.inspectorUrl ?? `https://${dep.url}`);
+        item.command = openUrlCommand(
+            deploymentOpenUrl(dep, state.vercelTeam, state.vercelProject),
+        );
         item.tooltip = buildMarkdownTooltip((md) => {
             md.appendMarkdown(`**${label}** · \`${status}\`\n\n`);
             md.appendMarkdown(`- alias: [${dep.url}](https://${dep.url})\n`);
-            if (dep.inspectorUrl) md.appendMarkdown(`- inspect: [logs](${dep.inspectorUrl})\n`);
+            if (inspector) md.appendMarkdown(`- inspect: [logs](${inspector})\n`);
             if (dep.created) {
                 md.appendMarkdown(`- created: ${new Date(dep.created).toLocaleString()}\n`);
             }
@@ -787,6 +799,24 @@ function statusOf(d: VcDeployment | undefined): DeploymentStatus | undefined {
     if (raw === 'BUILDING') return 'building';
     if (raw === 'QUEUED' || raw === 'INITIALIZING') return 'queue';
     return undefined;
+}
+
+/**
+ * Where clicking a deployment node should navigate.
+ *
+ * A failed build serves an error page at its deployed alias, so we open the Vercel inspector (build
+ * logs) instead — that's the "deploy page" a user wants when a build broke. Healthy deployments
+ * still open the live alias. Falls back to the alias if the inspector URL can't be derived (e.g. a
+ * non-standard hostname).
+ */
+function deploymentOpenUrl(
+    dep: VcDeployment,
+    team: string | undefined,
+    project: string | undefined,
+): string {
+    const live = `https://${dep.url}`;
+    if (statusOf(dep) !== 'failed' || !team || !project) return live;
+    return vercelInspectorUrl(team, project, dep.url) ?? live;
 }
 
 function depThemeIcon(d: VcDeployment | undefined): vscode.ThemeIcon {

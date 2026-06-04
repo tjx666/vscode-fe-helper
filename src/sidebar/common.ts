@@ -67,6 +67,24 @@ export function vercelDeploymentsUrl(team: string, project: string, branch?: str
     return branch ? `${base}?filterBranch=${encodeURIComponent(branch)}` : base;
 }
 
+/**
+ * Derive a deployment's Vercel inspector (build-logs) page URL from its canonical hostname.
+ *
+ * `vc ls --format json` never returns an inspector URL, but a deployment's host always follows
+ * `<project>-<hash>-<team>.vercel.app`, and its inspector lives at
+ * `https://vercel.com/<team>/<project>/<hash>`. Returns `undefined` when the host doesn't match
+ * that shape (e.g. a custom alias) so callers can fall back to the live URL.
+ */
+export function vercelInspectorUrl(team: string, project: string, url: string): string | undefined {
+    const host = url.replace(/^https?:\/\//, '').replace(/\.vercel\.app$/, '');
+    const prefix = `${project}-`;
+    const suffix = `-${team}`;
+    if (!host.startsWith(prefix) || !host.endsWith(suffix)) return undefined;
+    const hash = host.slice(prefix.length, host.length - suffix.length);
+    if (!hash || hash.includes('.')) return undefined;
+    return `https://vercel.com/${team}/${project}/${hash}`;
+}
+
 /** Build the canonical `vc ls` arg list. Centralized so query shape stays consistent. */
 export function vcLsArgs(
     team: string,
