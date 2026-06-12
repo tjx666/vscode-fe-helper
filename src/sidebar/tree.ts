@@ -804,10 +804,8 @@ function statusOf(d: VcDeployment | undefined): DeploymentStatus | undefined {
 /**
  * Where clicking a deployment node should navigate.
  *
- * A failed build serves an error page at its deployed alias, so we open the Vercel inspector (build
- * logs) instead — that's the "deploy page" a user wants when a build broke. Healthy deployments
- * still open the live alias. Falls back to the alias if the inspector URL can't be derived (e.g. a
- * non-standard hostname).
+ * Non-ready deployments (building, queued, failed) serve an error page or nothing at the deployed
+ * alias, so we open the Vercel inspector instead. Only successful deployments open the live alias.
  */
 function deploymentOpenUrl(
     dep: VcDeployment,
@@ -815,7 +813,7 @@ function deploymentOpenUrl(
     project: string | undefined,
 ): string {
     const live = `https://${dep.url}`;
-    if (statusOf(dep) !== 'failed' || !team || !project) return live;
+    if (statusOf(dep) === 'success' || !team || !project) return live;
     return vercelInspectorUrl(team, project, dep.url) ?? live;
 }
 
