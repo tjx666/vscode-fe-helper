@@ -1,3 +1,15 @@
+## v0.15.2 (2026-06-12)
+
+### 🐞 Bug Fixes
+
+- **sidebar:** Open Vercel inspector for non-ready deployments ([ed4d704](https://github.com/tjx666/vscode-fe-helper/commit/ed4d704))
+
+### ❤️ Contributors
+
+- Yutengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.15.1...v0.15.2 '2026-06-12')
+
 ## v0.15.1 (2026-06-04)
 
 ### 🐞 Bug Fixes
