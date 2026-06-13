@@ -2,7 +2,13 @@ import vscode from 'vscode';
 
 import { activatePrStatusBar } from './prStatusBar';
 import { Scheduler } from './scheduler';
-import { CONFIG_SECTION, ProjectStatusProvider, VIEW_ID } from './tree';
+import {
+    CONFIG_SECTION,
+    OPEN_DEPLOYMENT_COMMAND,
+    openVercelDeployment,
+    ProjectStatusProvider,
+    VIEW_ID,
+} from './tree';
 import { initVercelLink, resetVercelLinkCache } from './vercelLink';
 
 let providerRef: ProjectStatusProvider | undefined;
@@ -46,6 +52,7 @@ export async function activateSidebar(context: vscode.ExtensionContext): Promise
                 vscode.window.showInformationMessage('FE Helper: Vercel team cache cleared.');
             },
         ),
+        vscode.commands.registerCommand(OPEN_DEPLOYMENT_COMMAND, openVercelDeployment),
     );
 }
 

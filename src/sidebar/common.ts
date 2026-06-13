@@ -74,6 +74,10 @@ export function vercelDeploymentsUrl(team: string, project: string, branch?: str
  * `<project>-<hash>-<team>.vercel.app`, and its inspector lives at
  * `https://vercel.com/<team>/<project>/<hash>`. Returns `undefined` when the host doesn't match
  * that shape (e.g. a custom alias) so callers can fall back to the live URL.
+ *
+ * NOTE: Vercel only resolves this short-hash route for READY deployments (the hash is registered as
+ * a published alias). For building/queued/failed/canceled deployments the dashboard 404s — use
+ * {@link vercelInspectorUrlFromId} with the real deployment id (from `vc inspect --format json`).
  */
 export function vercelInspectorUrl(team: string, project: string, url: string): string | undefined {
     const host = url.replace(/^https?:\/\//, '').replace(/\.vercel\.app$/, '');
@@ -83,6 +87,15 @@ export function vercelInspectorUrl(team: string, project: string, url: string): 
     const hash = host.slice(prefix.length, host.length - suffix.length);
     if (!hash || hash.includes('.')) return undefined;
     return `https://vercel.com/${team}/${project}/${hash}`;
+}
+
+/**
+ * Build the inspector URL from a Vercel deployment id (e.g. `dpl_DDd6YGuKrh7BHq72R8MHitrAnb2B`).
+ * The dashboard uses the id without the `dpl_` prefix.
+ */
+export function vercelInspectorUrlFromId(team: string, project: string, id: string): string {
+    const tail = id.startsWith('dpl_') ? id.slice(4) : id;
+    return `https://vercel.com/${team}/${project}/${tail}`;
 }
 
 /** Build the canonical `vc ls` arg list. Centralized so query shape stays consistent. */

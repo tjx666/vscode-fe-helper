@@ -16,6 +16,7 @@ import {
     vcLsArgs,
     vercelDeploymentsUrl,
     vercelInspectorUrl,
+    vercelInspectorUrlFromId,
 } from './common';
 import type { RepoContext } from './gitContext';
 import { getRepoContexts } from './gitContext';
@@ -639,13 +640,13 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         item.iconPath = depThemeIcon(dep);
         item.description = `${target} · ${status}`;
         item.contextValue = 'projectStatus.branchDeployment';
-        item.command = openUrlCommand(
-            deploymentOpenUrl(dep, state.vercelTeam, state.vercelProject),
-        );
+        item.command = openDeploymentCommand(dep, state.vercelTeam, state.vercelProject, status);
         item.tooltip = buildMarkdownTooltip((md) => {
             md.appendMarkdown(`**${target}** · \`${status}\`\n\n`);
             md.appendMarkdown(`- alias: [${dep.url}](https://${dep.url})\n`);
-            if (inspector) md.appendMarkdown(`- inspect: [logs](${inspector})\n`);
+            if (status === 'success' && inspector) {
+                md.appendMarkdown(`- inspect: [logs](${inspector})\n`);
+            }
             if (dep.created) {
                 md.appendMarkdown(`- created: ${new Date(dep.created).toLocaleString()}\n`);
             }
@@ -667,13 +668,13 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         item.iconPath = depThemeIcon(dep);
         item.description = `${status} · ${dep.url}`;
         item.contextValue = 'projectStatus.deployment';
-        item.command = openUrlCommand(
-            deploymentOpenUrl(dep, state.vercelTeam, state.vercelProject),
-        );
+        item.command = openDeploymentCommand(dep, state.vercelTeam, state.vercelProject, status);
         item.tooltip = buildMarkdownTooltip((md) => {
             md.appendMarkdown(`**${label}** · \`${status}\`\n\n`);
             md.appendMarkdown(`- alias: [${dep.url}](https://${dep.url})\n`);
-            if (inspector) md.appendMarkdown(`- inspect: [logs](${inspector})\n`);
+            if (status === 'success' && inspector) {
+                md.appendMarkdown(`- inspect: [logs](${inspector})\n`);
+            }
             if (dep.created) {
                 md.appendMarkdown(`- created: ${new Date(dep.created).toLocaleString()}\n`);
             }
@@ -801,20 +802,66 @@ function statusOf(d: VcDeployment | undefined): DeploymentStatus | undefined {
     return undefined;
 }
 
+export const OPEN_DEPLOYMENT_COMMAND = 'VSCodeFEHelper.projectStatus.openDeployment';
+
+interface OpenDeploymentArgs {
+    team?: string;
+    project?: string;
+    url: string;
+    status: DeploymentStatus | 'unknown';
+}
+
 /**
  * Where clicking a deployment node should navigate.
  *
  * Non-ready deployments (building, queued, failed) serve an error page or nothing at the deployed
  * alias, so we open the Vercel inspector instead. Only successful deployments open the live alias.
+ * For non-ready deployments we resolve the real `dpl_*` id lazily on click via `vc inspect`,
+ * because `vc ls` doesn't return it and the short-hash inspector route only works once the
+ * deployment is published as an alias.
  */
-function deploymentOpenUrl(
+function openDeploymentCommand(
     dep: VcDeployment,
     team: string | undefined,
     project: string | undefined,
-): string {
-    const live = `https://${dep.url}`;
-    if (statusOf(dep) === 'success' || !team || !project) return live;
-    return vercelInspectorUrl(team, project, dep.url) ?? live;
+    status: DeploymentStatus | 'unknown',
+): vscode.Command {
+    const args: OpenDeploymentArgs = { team, project, url: dep.url, status };
+    return {
+        command: OPEN_DEPLOYMENT_COMMAND,
+        title: 'Open',
+        arguments: [args],
+    };
+}
+
+export async function openVercelDeployment(args: OpenDeploymentArgs): Promise<void> {
+    const live = `https://${args.url}`;
+    if (args.status === 'success' || !args.team || !args.project) {
+        await vscode.env.openExternal(vscode.Uri.parse(live));
+        return;
+    }
+
+    const target = await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Window,
+            title: 'FE Helper: resolving Vercel deployment…',
+        },
+        async () => {
+            try {
+                const stdout = await runCli(
+                    'vc',
+                    ['inspect', args.url, '--scope', args.team!, '--format', 'json'],
+                    os.homedir(),
+                );
+                const data = safeJsonParse<{ id?: string }>(stdout, {});
+                if (data.id) return vercelInspectorUrlFromId(args.team!, args.project!, data.id);
+            } catch {
+                // Fall back to the deployments list page below.
+            }
+            return vercelDeploymentsUrl(args.team!, args.project!);
+        },
+    );
+    await vscode.env.openExternal(vscode.Uri.parse(target));
 }
 
 function depThemeIcon(d: VcDeployment | undefined): vscode.ThemeIcon {
