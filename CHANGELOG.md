@@ -1,3 +1,15 @@
+## v0.15.3 (2026-06-13)
+
+### 🐞 Bug Fixes
+
+- **sidebar:** Resolve real deployment id for non-ready Vercel inspector ([5321744](https://github.com/tjx666/vscode-fe-helper/commit/5321744))
+
+### ❤️ Contributors
+
+- Yutengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.15.2...v0.15.3 '2026-06-13')
+
 ## v0.15.2 (2026-06-12)
 
 ### 🐞 Bug Fixes
