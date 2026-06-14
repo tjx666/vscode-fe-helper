@@ -44,7 +44,7 @@ interface PrEntry {
     statusCheckRollup?: CheckEntry[];
 }
 
-interface VcDeployment {
+export interface VcDeployment {
     url: string;
     name?: string;
     state?: string;
@@ -54,7 +54,7 @@ interface VcDeployment {
 }
 
 type CiAggregate = 'success' | 'failure' | 'pending';
-type DeploymentStatus = 'queue' | 'building' | 'success' | 'failed';
+export type DeploymentStatus = 'queue' | 'building' | 'success' | 'failed' | 'canceled';
 
 interface RepoState {
     ctx: RepoContext;
@@ -792,11 +792,12 @@ function rank(c: CheckEntry): number {
     return 3;
 }
 
-function statusOf(d: VcDeployment | undefined): DeploymentStatus | undefined {
+export function statusOf(d: VcDeployment | undefined): DeploymentStatus | undefined {
     if (!d) return undefined;
     const raw = (d.readyState ?? d.state ?? '').toUpperCase();
     if (raw === 'READY') return 'success';
-    if (raw === 'ERROR' || raw === 'CANCELED') return 'failed';
+    if (raw === 'ERROR') return 'failed';
+    if (raw === 'CANCELED') return 'canceled';
     if (raw === 'BUILDING') return 'building';
     if (raw === 'QUEUED' || raw === 'INITIALIZING') return 'queue';
     return undefined;
@@ -870,6 +871,8 @@ function depThemeIcon(d: VcDeployment | undefined): vscode.ThemeIcon {
             return new vscode.ThemeIcon('pass', new vscode.ThemeColor('charts.green'));
         case 'failed':
             return new vscode.ThemeIcon('error', new vscode.ThemeColor('charts.red'));
+        case 'canceled':
+            return new vscode.ThemeIcon('circle-outline');
         case 'building':
             return new vscode.ThemeIcon('loading~spin');
         case 'queue':
