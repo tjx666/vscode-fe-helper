@@ -1,3 +1,15 @@
+## v0.16.1 (2026-06-28)
+
+### 🐞 Bug Fixes
+
+- Keep moduleResolution=node so tsc -b can compile tests ([d980d7e](https://github.com/tjx666/vscode-fe-helper/commit/d980d7e))
+
+### ❤️ Contributors
+
+- Yutengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.16.0...v0.16.1 '2026-06-28')
+
 ## v0.16.0 (2026-06-28)
 
 ### 🚀 Features
