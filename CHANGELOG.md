@@ -1,3 +1,15 @@
+## v0.16.0 (2026-06-28)
+
+### 🚀 Features
+
+- Add clean clipboard log to terminal command ([9bf620c](https://github.com/tjx666/vscode-fe-helper/commit/9bf620c))
+
+### ❤️ Contributors
+
+- Yutengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.15.3...v0.16.0 '2026-06-28')
+
 ## v0.15.3 (2026-06-13)
 
 ### 🐞 Bug Fixes
