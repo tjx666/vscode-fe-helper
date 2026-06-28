@@ -16,7 +16,8 @@
         "noFallthroughCasesInSwitch": true,
 
         /* Module Resolution Options */
-        "moduleResolution": "bundler",
+        "moduleResolution": "node",
+        "ignoreDeprecations": "5.0",
         "esModuleInterop": true,
         "resolveJsonModule": true,
 
