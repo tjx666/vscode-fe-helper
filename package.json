@@ -143,6 +143,10 @@
                 "title": "FE Helper: Open Repo Websites"
             },
             {
+                "command": "VSCodeFEHelper.cleanClipboardLogToTerminal",
+                "title": "FE Helper: Clean Clipboard Log to Terminal"
+            },
+            {
                 "command": "VSCodeFEHelper.projectStatus.resetVercelCache",
                 "title": "FE Helper: Reset Vercel Team Cache"
             },
@@ -242,6 +246,42 @@
                     },
                     "default": [],
                     "description": "Glob patterns excluded from the CI failure rollup (and folded into a `N ignored` row in the tree). Each pattern matches the check's job name, status context, and workflow name — so `\"E2E CI\"` skips every job in that workflow."
+                },
+                "vscode-fe-helper.cleanClipboardLog.rules": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "pattern",
+                            "action"
+                        ],
+                        "properties": {
+                            "pattern": {
+                                "type": "string",
+                                "description": "RegExp source. For `removeLine`, the pattern is tested against each line individually."
+                            },
+                            "flags": {
+                                "type": "string",
+                                "default": "g",
+                                "description": "RegExp flags. Defaults to `g` (only meaningful for `replace`; the `g` flag is auto-stripped for `removeLine`)."
+                            },
+                            "action": {
+                                "type": "string",
+                                "enum": [
+                                    "removeLine",
+                                    "replace"
+                                ],
+                                "description": "`removeLine`: drop every line that matches. `replace`: substitute matches with `replacement`."
+                            },
+                            "replacement": {
+                                "type": "string",
+                                "default": "",
+                                "description": "Replacement string for the `replace` action. Ignored when `action` is `removeLine`."
+                            }
+                        }
+                    },
+                    "markdownDescription": "Rules applied in order to clipboard content before sending it to the active terminal. Example:\n\n```jsonc\n[\n  // strip DevTools `file.ts:123 ` prefixes at the start of each line\n  { \"pattern\": \"^[\\\\w./?=\\\\-]+:\\\\d+\\\\s+\", \"flags\": \"gm\", \"action\": \"replace\" },\n  // drop stack frame lines like `console.<computed> @ foo.js:1`\n  { \"pattern\": \"\\\\s@\\\\s[\\\\w./?=\\\\-]+:\\\\d+$\", \"action\": \"removeLine\" }\n]\n```"
                 }
             }
         }

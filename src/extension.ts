@@ -146,6 +146,10 @@ export async function activate(context: vscode.ExtensionContext) {
         import('./openWebsites').then((mod) => mod.openWebsites()),
     );
 
+    registerCommand('cleanClipboardLogToTerminal', () =>
+        import('./cleanClipboardLog').then((mod) => mod.cleanClipboardLogToTerminal()),
+    );
+
     import('./sidebar')
         .then((mod) => mod.activateSidebar(context))
         .catch((error) => logger.log(`activate sidebar failed: ${String(error)}`));
