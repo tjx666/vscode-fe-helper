@@ -177,7 +177,7 @@
         "viewsWelcome": [
             {
                 "view": "vscodeFeHelperProjectStatus",
-                "contents": "Watch GitHub PRs / CI and Vercel deployments for the current repo (and submodules).\n\n[Enable GitHub](command:workbench.action.openSettings?%22vscode-fe-helper.projectStatus.github.enabled%22)\n[Enable Vercel](command:workbench.action.openSettings?%22vscode-fe-helper.projectStatus.vercel.enabled%22)\n\nRequires `gh` and/or `vc` CLIs."
+                "contents": "Watch GitHub PRs / CI, linked Linear issues, and Vercel deployments for the current repo (and submodules).\n\n[Enable GitHub](command:workbench.action.openSettings?%22vscode-fe-helper.projectStatus.github.enabled%22)\n[Enable Linear](command:workbench.action.openSettings?%22vscode-fe-helper.projectStatus.linear.enabled%22)\n[Enable Vercel](command:workbench.action.openSettings?%22vscode-fe-helper.projectStatus.vercel.enabled%22)\n\nGitHub and Linear PR scanning require `gh`; Linear metadata also requires `linear`; Vercel requires `vc`."
             }
         ],
         "menus": {
@@ -228,6 +228,45 @@
                     "default": false,
                     "description": "Show open PR + CI checks for the current branch in the Project Status sidebar. Requires `gh` CLI."
                 },
+                "vscode-fe-helper.projectStatus.linear.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show Linear issues referenced by the current branch's pull request. Uses `gh` to read the PR description and `linear` to resolve issue metadata."
+                },
+                "vscode-fe-helper.projectStatus.linear.referenceMarkers": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "maxItems": 32,
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                    },
+                    "default": [
+                        "Fix",
+                        "Fixes",
+                        "Fixed",
+                        "Close",
+                        "Closes",
+                        "Closed",
+                        "Resolve",
+                        "Resolves",
+                        "Resolved",
+                        "Related to"
+                    ],
+                    "description": "Case-insensitive literal phrases that introduce Linear issue identifiers in a pull request description. Set to an empty array to scan explicit Linear issue URLs only."
+                },
+                "vscode-fe-helper.projectStatus.linear.teamKeys": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "maxItems": 32,
+                    "items": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z][A-Za-z0-9]*$"
+                    },
+                    "default": [],
+                    "description": "Optional allowlist of Linear team keys for marker-based references. An empty array accepts any team key. Explicit Linear issue URLs are always accepted."
+                },
                 "vscode-fe-helper.projectStatus.vercel.enabled": {
                     "type": "boolean",
                     "default": false,
@@ -237,7 +276,7 @@
                     "type": "number",
                     "default": 10000,
                     "minimum": 5000,
-                    "description": "How often (ms) to poll `gh` and `vc` for fresh status while the VS Code window is focused."
+                    "description": "How often (ms) to poll enabled GitHub, Linear, and Vercel integrations while the VS Code window is focused."
                 },
                 "vscode-fe-helper.projectStatus.ignoredChecks": {
                     "type": "array",

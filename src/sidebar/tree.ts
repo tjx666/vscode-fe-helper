@@ -20,6 +20,9 @@ import {
 } from './common';
 import type { RepoContext } from './gitContext';
 import { getRepoContexts } from './gitContext';
+import type { LinearIssueEntry, LinearReferenceScanOptions } from './linearIssue';
+import { DEFAULT_LINEAR_REFERENCE_MARKERS, fetchLinearIssues } from './linearIssue';
+import { linearIssueIcon } from './linearStatusIcon';
 import type { ReviewThreadEntry } from './reviewThreads';
 import { fetchUnresolvedThreads } from './reviewThreads';
 import { findVercelLink } from './vercelLink';
@@ -41,8 +44,28 @@ interface PrEntry {
     number: number;
     url: string;
     title: string;
+    body?: string;
     statusCheckRollup?: CheckEntry[];
 }
+
+interface PullRequestFetchOptions {
+    githubEnabled: boolean;
+    ignoredChecks: string[];
+    linearEnabled: boolean;
+    linearScan: LinearReferenceScanOptions;
+}
+
+interface PullRequestDependencies {
+    fetchLinearIssues: typeof fetchLinearIssues;
+    fetchUnresolvedThreads: typeof fetchUnresolvedThreads;
+    runCli: (cmd: 'gh', args: string[], cwd: string) => Promise<string>;
+}
+
+const DEFAULT_PULL_REQUEST_DEPENDENCIES: PullRequestDependencies = {
+    fetchLinearIssues,
+    fetchUnresolvedThreads,
+    runCli,
+};
 
 export interface VcDeployment {
     url: string;
@@ -62,6 +85,7 @@ interface RepoState {
     ci?: CiAggregate;
     visibleChecks?: CheckEntry[];
     hiddenCheckCount?: number;
+    linearIssues?: LinearIssueEntry[];
     unresolvedThreads?: ReviewThreadEntry[];
     prod?: VcDeployment;
     preview?: VcDeployment;
@@ -71,6 +95,7 @@ interface RepoState {
     ghChecked?: boolean;
     vcChecked?: boolean;
     ghError?: { kind: CliErrorKind };
+    linearError?: { kind: CliErrorKind };
     vcError?: { kind: CliErrorKind };
 }
 
@@ -88,13 +113,14 @@ export type SidebarNode =
     | { kind: 'pr'; rootPath: string }
     | { kind: 'check'; rootPath: string; idx: number }
     | { kind: 'hiddenChecks'; rootPath: string }
+    | { kind: 'linearIssue'; rootPath: string; idx: number }
     | { kind: 'reviewThreads'; rootPath: string }
     | { kind: 'reviewThread'; rootPath: string; idx: number }
     | { kind: 'branch'; rootPath: string }
     | { kind: 'deployments'; rootPath: string }
     | { kind: 'branchDeployment'; rootPath: string; idx: number }
     | { kind: 'deployment'; rootPath: string; env: 'production' | 'preview' }
-    | { kind: 'error'; rootPath: string; source: 'gh' | 'vc' }
+    | { kind: 'error'; rootPath: string; source: 'gh' | 'linear' | 'vc' }
     | { kind: 'placeholder'; text: string; busy?: boolean };
 
 export interface OpenPrSummary {
@@ -136,6 +162,10 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
     private inFlight: Promise<void> | undefined;
     private pendingRefresh = false;
 
+    constructor(
+        private readonly pullRequestDependencies: PullRequestDependencies = DEFAULT_PULL_REQUEST_DEPENDENCIES,
+    ) {}
+
     setTreeView(view: vscode.TreeView<SidebarNode>): void {
         this.treeView = view;
         this.updateBadge();
@@ -169,10 +199,15 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         const start = Date.now();
         const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
         const ghEnabled = config.get<boolean>('github.enabled', false);
+        const linearEnabled = config.get<boolean>('linear.enabled', false);
         const vcEnabled = config.get<boolean>('vercel.enabled', false);
         const ignoredChecks = config.get<string[]>('ignoredChecks', []);
+        const linearMarkers = config.get<string[]>('linear.referenceMarkers', [
+            ...DEFAULT_LINEAR_REFERENCE_MARKERS,
+        ]);
+        const linearTeamKeys = config.get<string[]>('linear.teamKeys', []);
 
-        if (!ghEnabled && !vcEnabled) {
+        if (!ghEnabled && !linearEnabled && !vcEnabled) {
             this.cache.clear();
             this.order = [];
             this.loaded = true;
@@ -190,7 +225,17 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             repos.map(async (ctx) => {
                 const state: RepoState = { ctx };
                 await Promise.all([
-                    ghEnabled ? this.fetchGitHub(ctx, state, ignoredChecks) : Promise.resolve(),
+                    ghEnabled || linearEnabled
+                        ? this.fetchGitHub(ctx, state, {
+                              githubEnabled: ghEnabled,
+                              ignoredChecks,
+                              linearEnabled,
+                              linearScan: {
+                                  markers: linearMarkers,
+                                  teamKeys: linearTeamKeys,
+                              },
+                          })
+                        : Promise.resolve(),
                     vcEnabled ? this.fetchVercel(ctx, state) : Promise.resolve(),
                 ]);
                 newCache.set(ctx.rootPath, state);
@@ -206,20 +251,23 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         logTiming(
             'sidebar.refresh',
             start,
-            `repos=${repos.length} gh=${ghEnabled} vc=${vcEnabled}`,
+            `repos=${repos.length} gh=${ghEnabled} linear=${linearEnabled} vc=${vcEnabled}`,
         );
     }
 
     private async fetchGitHub(
         ctx: RepoContext,
         state: RepoState,
-        ignored: string[],
+        options: PullRequestFetchOptions,
     ): Promise<void> {
         if (!ctx.owner || !ctx.repo || !ctx.branch) return;
-        state.ghChecked = true;
+        if (options.githubEnabled) state.ghChecked = true;
         const start = Date.now();
         try {
-            const stdout = await runCli(
+            const fields = ['number', 'url', 'title'];
+            if (options.githubEnabled) fields.push('statusCheckRollup');
+            if (options.linearEnabled) fields.push('body');
+            const stdout = await this.pullRequestDependencies.runCli(
                 'gh',
                 [
                     'pr',
@@ -231,7 +279,7 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                     '--author',
                     '@me',
                     '--json',
-                    'number,url,title,statusCheckRollup',
+                    fields.join(','),
                     '--limit',
                     '1',
                 ],
@@ -243,17 +291,41 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                 return;
             }
             const pr = prs[0];
-            const checks = pr.statusCheckRollup ?? [];
-            const visible = checks.filter((c) => !isIgnored(c, ignored));
-            state.pr = pr;
-            state.ci = aggregateCi(visible);
-            state.visibleChecks = visible.slice().sort(checkSort);
-            state.hiddenCheckCount = checks.length - visible.length;
-            state.unresolvedThreads = await fetchUnresolvedThreads(ctx, pr.number);
+            const tasks: Array<Promise<void>> = [];
+
+            if (options.githubEnabled) {
+                const checks = pr.statusCheckRollup ?? [];
+                const visible = checks.filter((check) => !isIgnored(check, options.ignoredChecks));
+                state.pr = pr;
+                state.ci = aggregateCi(visible);
+                state.visibleChecks = visible.slice().sort(checkSort);
+                state.hiddenCheckCount = checks.length - visible.length;
+                tasks.push(
+                    this.pullRequestDependencies
+                        .fetchUnresolvedThreads(ctx, pr.number)
+                        .then((unresolvedThreads) => {
+                            state.unresolvedThreads = unresolvedThreads;
+                        }),
+                );
+            }
+
+            if (options.linearEnabled) {
+                tasks.push(
+                    this.pullRequestDependencies
+                        .fetchLinearIssues(pr.body ?? '', ctx.rootPath, options.linearScan)
+                        .then((linearIssues) => {
+                            state.linearIssues = linearIssues;
+                            const linearError = linearIssues.find((issue) => issue.error)?.error;
+                            if (linearError) state.linearError = { kind: linearError };
+                        }),
+                );
+            }
+
+            await Promise.all(tasks);
             logTiming(
                 `sidebar.gh ${ctx.label}`,
                 start,
-                `pr=#${pr.number} checks=${visible.length}+${state.hiddenCheckCount} ci=${state.ci} unresolved=${state.unresolvedThreads.length}`,
+                `pr=#${pr.number} checks=${state.visibleChecks?.length ?? 0}+${state.hiddenCheckCount ?? 0} ci=${state.ci ?? 'disabled'} issues=${state.linearIssues?.length ?? 0} unresolved=${state.unresolvedThreads?.length ?? 0}`,
             );
         } catch (error) {
             const kind = error instanceof CliError ? error.kind : 'OTHER';
@@ -374,6 +446,8 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                 return this.checkItem(node.rootPath, node.idx);
             case 'hiddenChecks':
                 return this.hiddenChecksItem(node.rootPath);
+            case 'linearIssue':
+                return this.linearIssueItem(node.rootPath, node.idx);
             case 'reviewThreads':
                 return this.reviewThreadsItem(node.rootPath);
             case 'reviewThread':
@@ -403,6 +477,9 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         if (node.kind === 'repo') {
             const children: SidebarNode[] = [];
             children.push({ kind: 'branch', rootPath: node.rootPath });
+            for (let idx = 0; idx < (state.linearIssues?.length ?? 0); idx++) {
+                children.push({ kind: 'linearIssue', rootPath: node.rootPath, idx });
+            }
             if (state.vercelProject) {
                 children.push({ kind: 'deployments', rootPath: node.rootPath });
             }
@@ -420,6 +497,8 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
                 children.push({ kind: 'error', rootPath: node.rootPath, source: 'vc' });
             if (state.ghError)
                 children.push({ kind: 'error', rootPath: node.rootPath, source: 'gh' });
+            if (state.linearError)
+                children.push({ kind: 'error', rootPath: node.rootPath, source: 'linear' });
             return children;
         }
 
@@ -553,6 +632,36 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         return item;
     }
 
+    private linearIssueItem(rootPath: string, idx: number): vscode.TreeItem {
+        const state = this.cache.get(rootPath)!;
+        const issue = state.linearIssues?.[idx];
+        if (!issue) {
+            const item = new vscode.TreeItem('?', vscode.TreeItemCollapsibleState.None);
+            item.id = `linearIssue:${rootPath}:${idx}`;
+            return item;
+        }
+        const label = issue.title ? `${issue.identifier} ${issue.title}` : issue.identifier;
+        const item = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
+        item.id = `linearIssue:${rootPath}:${issue.workspace ?? ''}:${issue.identifier}`;
+        item.iconPath = linearIssueIcon(issue);
+        item.description = issue.state?.name;
+        item.contextValue = 'projectStatus.linearIssue';
+        if (issue.url) item.command = openUrlCommand(issue.url);
+        item.tooltip = buildMarkdownTooltip((md) => {
+            if (issue.url) {
+                md.appendMarkdown(`[**${issue.identifier}**](${issue.url})`);
+            } else {
+                md.appendMarkdown(`**${issue.identifier}**`);
+            }
+            if (issue.title) md.appendText(` — ${issue.title}`);
+            if (issue.state?.name) {
+                md.appendMarkdown('\n\n- status: ');
+                md.appendText(issue.state.name);
+            }
+        });
+        return item;
+    }
+
     private reviewThreadItem(rootPath: string, idx: number): vscode.TreeItem {
         const state = this.cache.get(rootPath)!;
         const t = state.unresolvedThreads?.[idx];
@@ -682,9 +791,14 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         return item;
     }
 
-    private errorItem(rootPath: string, source: 'gh' | 'vc'): vscode.TreeItem {
+    private errorItem(rootPath: string, source: 'gh' | 'linear' | 'vc'): vscode.TreeItem {
         const state = this.cache.get(rootPath)!;
-        const err = source === 'gh' ? state.ghError! : state.vcError!;
+        const err =
+            source === 'gh'
+                ? state.ghError!
+                : source === 'linear'
+                  ? state.linearError!
+                  : state.vcError!;
         const item = new vscode.TreeItem(
             errorLabel(err.kind, source),
             vscode.TreeItemCollapsibleState.None,

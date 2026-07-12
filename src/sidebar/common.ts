@@ -2,14 +2,16 @@ import vscode from 'vscode';
 
 import type { CliErrorKind } from './cli';
 
-export function errorLabel(kind: CliErrorKind, cli: 'gh' | 'vc'): string {
+type SidebarCli = 'gh' | 'linear' | 'vc';
+
+export function errorLabel(kind: CliErrorKind, cli: SidebarCli): string {
     switch (kind) {
         case 'NOT_LOGGED_IN':
-            return cli === 'gh' ? 'gh: not logged in' : 'vc: not logged in';
+            return `${cli}: not logged in`;
         case 'NOT_FOUND':
             return `${cli} not installed`;
         case 'NOT_LINKED':
-            return 'vc: not linked';
+            return cli === 'linear' ? 'linear: not configured' : `${cli}: not linked`;
         case 'TIMEOUT':
             return `${cli} timed out`;
         default:
@@ -17,18 +19,22 @@ export function errorLabel(kind: CliErrorKind, cli: 'gh' | 'vc'): string {
     }
 }
 
-export function errorHint(kind: CliErrorKind, cli: 'gh' | 'vc'): string {
+export function errorHint(kind: CliErrorKind, cli: SidebarCli): string {
     switch (kind) {
         case 'NOT_LOGGED_IN':
-            return cli === 'gh'
-                ? 'Run `gh auth login` in a terminal.'
-                : 'Run `vc login` in a terminal.';
+            if (cli === 'gh') return 'Run `gh auth login` in a terminal.';
+            if (cli === 'linear') return 'Run `linear auth login` in a terminal.';
+            return 'Run `vc login` in a terminal.';
         case 'NOT_FOUND':
-            return cli === 'gh'
-                ? 'Install via https://cli.github.com/'
-                : 'Install via `npm i -g vercel`.';
+            if (cli === 'gh') return 'Install via https://cli.github.com/';
+            if (cli === 'linear') {
+                return 'Install from https://github.com/schpet/linear-cli.';
+            }
+            return 'Install via `npm i -g vercel`.';
         case 'NOT_LINKED':
-            return 'Run `vc link` inside the project to associate it with a Vercel project.';
+            return cli === 'linear'
+                ? 'Run `linear config` inside the project.'
+                : 'Run `vc link` inside the project to associate it with a Vercel project.';
         case 'TIMEOUT':
             return 'The CLI took too long to respond. Check your network / proxy settings.';
         default:

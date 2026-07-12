@@ -20,7 +20,9 @@ export class CliError extends Error {
 const TIMEOUT_MS = 8000;
 const MAX_BUFFER = 4 * 1024 * 1024;
 
-export async function runCli(cmd: 'gh' | 'vc', args: string[], cwd: string): Promise<string> {
+type SupportedCli = 'gh' | 'linear' | 'vc';
+
+export async function runCli(cmd: SupportedCli, args: string[], cwd: string): Promise<string> {
     const start = Date.now();
     const argSummary = summarizeArgs(args);
     const result = await execa(cmd, args, {
@@ -28,7 +30,7 @@ export async function runCli(cmd: 'gh' | 'vc', args: string[], cwd: string): Pro
         timeout: TIMEOUT_MS,
         maxBuffer: MAX_BUFFER,
         reject: false,
-        // CI=1 forces vc to skip its TTY prompt; gh respects it too.
+        // CI=1 forces non-interactive output and makes vc skip its TTY prompt.
         env: { ...process.env, CI: '1' },
     });
     if (!result.failed) {
@@ -57,7 +59,7 @@ function classifyCliError(
     if (err.code === 'ENOENT') return 'NOT_FOUND';
     if (err.timedOut) return 'TIMEOUT';
     if (
-        /auth(?:entication)? required|please run.*auth login|not logged in|login required/i.test(
+        /auth(?:entication)? required|please run.*auth login|not logged in|login required|no api key|linear auth login/i.test(
             stderr,
         )
     ) {
@@ -71,7 +73,7 @@ function classifyCliError(
 
 function buildCliError(
     kind: Exclude<CliErrorKind, 'OTHER'>,
-    cmd: 'gh' | 'vc',
+    cmd: SupportedCli,
     stderr: string,
 ): CliError {
     switch (kind) {
