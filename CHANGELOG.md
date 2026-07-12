@@ -1,3 +1,15 @@
+## v0.16.2 (2026-07-12)
+
+### 🚀 Features
+
+- Render linked Linear issues in project status ([51571f9](https://github.com/tjx666/vscode-fe-helper/commit/51571f9))
+
+### ❤️ Contributors
+
+- Yutengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.16.1...v0.16.2 '2026-07-12')
+
 ## v0.16.1 (2026-06-28)
 
 ### 🐞 Bug Fixes
