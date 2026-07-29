@@ -1,3 +1,15 @@
+## v0.16.3 (2026-07-29)
+
+### 🏎 Performance
+
+- Reduce project status API polling ([05909f3](https://github.com/tjx666/vscode-fe-helper/commit/05909f3))
+
+### ❤️ Contributors
+
+- Yutengjing ([@tjx666](http://github.com/tjx666))
+
+[View changes on GitHub](https://github.com/tjx666/vscode-fe-helper/compare/v0.16.2...v0.16.3 '2026-07-29')
+
 ## v0.16.2 (2026-07-12)
 
 ### 🚀 Features
