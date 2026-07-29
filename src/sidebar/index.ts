@@ -1,6 +1,7 @@
 import vscode from 'vscode';
 
 import { activatePrStatusBar } from './prStatusBar';
+import type { RefreshReason } from './scheduler';
 import { Scheduler } from './scheduler';
 import {
     CONFIG_SECTION,
@@ -12,6 +13,7 @@ import {
 import { initVercelLink, resetVercelLinkCache } from './vercelLink';
 
 let providerRef: ProjectStatusProvider | undefined;
+const GITHUB_RATE_LIMIT_RESET_KEY = 'projectStatus.githubRateLimitResetAt';
 
 /** Live ref to the sidebar's provider, so other commands (e.g. openWebsites) can read its cache. */
 export function getProjectStatusProvider(): ProjectStatusProvider | undefined {
@@ -21,7 +23,12 @@ export function getProjectStatusProvider(): ProjectStatusProvider | undefined {
 export async function activateSidebar(context: vscode.ExtensionContext): Promise<void> {
     initVercelLink(context.globalState);
 
-    const provider = new ProjectStatusProvider();
+    const provider = new ProjectStatusProvider({
+        getGitHubRateLimitResetAt: () =>
+            context.globalState.get<number>(GITHUB_RATE_LIMIT_RESET_KEY),
+        setGitHubRateLimitResetAt: (resetAt) =>
+            context.globalState.update(GITHUB_RATE_LIMIT_RESET_KEY, resetAt),
+    });
     providerRef = provider;
     const treeView = vscode.window.createTreeView(VIEW_ID, {
         treeDataProvider: provider,
@@ -38,17 +45,17 @@ export async function activateSidebar(context: vscode.ExtensionContext): Promise
         session,
         activatePrStatusBar(provider),
         { dispose: () => (providerRef = undefined) },
-        vscode.workspace.onDidChangeConfiguration((e) => {
-            if (e.affectsConfiguration(CONFIG_SECTION)) session.restart();
+        vscode.workspace.onDidChangeConfiguration((event) => {
+            if (event.affectsConfiguration(CONFIG_SECTION)) session.restart();
         }),
         vscode.commands.registerCommand('VSCodeFEHelper.projectStatus.refresh', () =>
-            provider.refresh(),
+            session.triggerNow('manual'),
         ),
         vscode.commands.registerCommand(
             'VSCodeFEHelper.projectStatus.resetVercelCache',
             async () => {
                 await resetVercelLinkCache();
-                await provider.refresh();
+                await session.triggerNow('manual');
                 vscode.window.showInformationMessage('FE Helper: Vercel team cache cleared.');
             },
         ),
@@ -63,15 +70,19 @@ class SidebarSession implements vscode.Disposable {
 
     constructor(private readonly provider: ProjectStatusProvider) {}
 
-    start(): void {
+    start(reason: Extract<RefreshReason, 'config' | 'startup'> = 'startup'): void {
         const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
-        const interval = config.get<number>('refreshInterval', 10_000);
+        const interval = config.get<number>('refreshInterval', 30_000);
 
         this.scheduler = new Scheduler(interval);
-        this.scheduler.onTick(() => this.provider.refresh());
-        this.scheduler.start();
+        this.scheduler.onTick((refreshReason) => this.provider.refresh(refreshReason, interval));
+        this.scheduler.start(reason);
 
         this.installBranchWatcher();
+    }
+
+    triggerNow(reason: Extract<RefreshReason, 'branch' | 'manual'>): Promise<void> {
+        return this.scheduler?.triggerNow(reason) ?? Promise.resolve();
     }
 
     private installBranchWatcher(): void {
@@ -89,7 +100,7 @@ class SidebarSession implements vscode.Disposable {
             if (this.branchDebounce) clearTimeout(this.branchDebounce);
             this.branchDebounce = setTimeout(() => {
                 this.branchDebounce = undefined;
-                this.scheduler?.triggerNow();
+                this.scheduler?.triggerNow('branch');
             }, 500);
         };
         this.branchWatcher.onDidChange(handler);
@@ -98,7 +109,7 @@ class SidebarSession implements vscode.Disposable {
 
     restart(): void {
         this.disposeRuntime();
-        this.start();
+        this.start('config');
     }
 
     private disposeRuntime(): void {

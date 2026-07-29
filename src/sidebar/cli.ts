@@ -4,7 +4,13 @@ import { execa } from 'execa';
 
 import { logger, logTiming } from '../utils/log';
 
-export type CliErrorKind = 'NOT_LOGGED_IN' | 'NOT_LINKED' | 'TIMEOUT' | 'NOT_FOUND' | 'OTHER';
+export type CliErrorKind =
+    | 'NOT_LOGGED_IN'
+    | 'NOT_LINKED'
+    | 'RATE_LIMITED'
+    | 'TIMEOUT'
+    | 'NOT_FOUND'
+    | 'OTHER';
 
 export class CliError extends Error {
     kind: CliErrorKind;
@@ -22,9 +28,21 @@ const MAX_BUFFER = 4 * 1024 * 1024;
 
 type SupportedCli = 'gh' | 'linear' | 'vc';
 
-export async function runCli(cmd: SupportedCli, args: string[], cwd: string): Promise<string> {
+export type RunCli = (
+    cmd: SupportedCli,
+    args: string[],
+    cwd: string,
+    logContext?: string,
+) => Promise<string>;
+
+export async function runCli(
+    cmd: SupportedCli,
+    args: string[],
+    cwd: string,
+    logContext?: string,
+): Promise<string> {
     const start = Date.now();
-    const argSummary = summarizeArgs(args);
+    const argSummary = summarizeArgs(cmd, args, logContext);
     const result = await execa(cmd, args, {
         cwd,
         timeout: TIMEOUT_MS,
@@ -46,18 +64,25 @@ export async function runCli(cmd: SupportedCli, args: string[], cwd: string): Pr
 
     if (kind === 'OTHER') {
         const summary = stderr || `${cmd} exited with code ${result.exitCode}`;
-        logger.log(`${cmd} ${args.join(' ')} failed: ${summary}`);
+        logger.log(`${cmd} ${argSummary} failed: ${summary}`);
         throw new CliError('OTHER', stderr, summary);
     }
     throw buildCliError(kind, cmd, stderr);
 }
 
-function classifyCliError(
+export function classifyCliError(
     err: { code?: string; timedOut?: boolean },
     stderr: string,
 ): CliErrorKind {
     if (err.code === 'ENOENT') return 'NOT_FOUND';
     if (err.timedOut) return 'TIMEOUT';
+    if (
+        /api rate limit (?:already )?exceeded|rate limit exceeded|secondary rate limit|abuse detection/i.test(
+            stderr,
+        )
+    ) {
+        return 'RATE_LIMITED';
+    }
     if (
         /auth(?:entication)? required|please run.*auth login|not logged in|login required|no api key|linear auth login/i.test(
             stderr,
@@ -81,6 +106,8 @@ function buildCliError(
             return new CliError('NOT_FOUND', '', `${cmd} not installed`);
         case 'TIMEOUT':
             return new CliError('TIMEOUT', stderr, `${cmd} timed out`);
+        case 'RATE_LIMITED':
+            return new CliError('RATE_LIMITED', stderr, `${cmd} API rate limited`);
         case 'NOT_LOGGED_IN':
             return new CliError('NOT_LOGGED_IN', stderr);
         case 'NOT_LINKED':
@@ -88,9 +115,10 @@ function buildCliError(
     }
 }
 
-/** First non-flag positional + a hint of meta filters — enough to grep without leaking full args. */
-function summarizeArgs(args: string[]): string {
-    const positional = args.find((a) => !a.startsWith('-')) ?? '';
+/** Command path plus safe request context — enough to grep without logging query bodies or secrets. */
+function summarizeArgs(cmd: SupportedCli, args: string[], logContext?: string): string {
+    const commandPath =
+        cmd === 'gh' ? args.slice(0, 2).join(' ') : (args.find((a) => !a.startsWith('-')) ?? '');
     const meta: string[] = [];
     let env: string | undefined;
     for (let i = 0; i < args.length; i++) {
@@ -99,5 +127,6 @@ function summarizeArgs(args: string[]): string {
     }
     const envSuffix = env ? ` env=${env}` : '';
     const metaSuffix = meta.length > 0 ? ` meta=[${meta.join(',')}]` : '';
-    return `${positional}${envSuffix}${metaSuffix}`;
+    const contextSuffix = logContext ? ` ${logContext}` : '';
+    return `${commandPath}${envSuffix}${metaSuffix}${contextSuffix}`;
 }

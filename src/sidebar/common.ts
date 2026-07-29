@@ -12,6 +12,8 @@ export function errorLabel(kind: CliErrorKind, cli: SidebarCli): string {
             return `${cli} not installed`;
         case 'NOT_LINKED':
             return cli === 'linear' ? 'linear: not configured' : `${cli}: not linked`;
+        case 'RATE_LIMITED':
+            return `${cli}: rate limited`;
         case 'TIMEOUT':
             return `${cli} timed out`;
         default:
@@ -19,7 +21,7 @@ export function errorLabel(kind: CliErrorKind, cli: SidebarCli): string {
     }
 }
 
-export function errorHint(kind: CliErrorKind, cli: SidebarCli): string {
+export function errorHint(kind: CliErrorKind, cli: SidebarCli, retryAt?: number): string {
     switch (kind) {
         case 'NOT_LOGGED_IN':
             if (cli === 'gh') return 'Run `gh auth login` in a terminal.';
@@ -35,6 +37,13 @@ export function errorHint(kind: CliErrorKind, cli: SidebarCli): string {
             return cli === 'linear'
                 ? 'Run `linear config` inside the project.'
                 : 'Run `vc link` inside the project to associate it with a Vercel project.';
+        case 'RATE_LIMITED': {
+            const retryHint =
+                retryAt && retryAt > Date.now()
+                    ? ` until ${new Date(retryAt).toLocaleTimeString()}`
+                    : '';
+            return `${cli} API polling is paused${retryHint}.`;
+        }
         case 'TIMEOUT':
             return 'The CLI took too long to respond. Check your network / proxy settings.';
         default:

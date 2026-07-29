@@ -274,9 +274,9 @@
                 },
                 "vscode-fe-helper.projectStatus.refreshInterval": {
                     "type": "number",
-                    "default": 10000,
+                    "default": 30000,
                     "minimum": 5000,
-                    "description": "How often (ms) to poll enabled GitHub, Linear, and Vercel integrations while the VS Code window is focused."
+                    "description": "Base polling interval (ms) while the VS Code window is focused. Project Status adapts to pending (up to 20s), active (at least 60s), idle (at least 120s), and API rate-limited states."
                 },
                 "vscode-fe-helper.projectStatus.ignoredChecks": {
                     "type": "array",

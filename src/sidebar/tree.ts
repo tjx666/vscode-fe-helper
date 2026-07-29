@@ -3,7 +3,7 @@ import os from 'node:os';
 import vscode from 'vscode';
 
 import { logTiming } from '../utils/log';
-import type { CliErrorKind } from './cli';
+import type { CliErrorKind, RunCli } from './cli';
 import { CliError, runCli } from './cli';
 import {
     buildMarkdownTooltip,
@@ -20,33 +20,19 @@ import {
 } from './common';
 import type { RepoContext } from './gitContext';
 import { getRepoContexts } from './gitContext';
+import type {
+    GitHubCheckEntry as CheckEntry,
+    GitHubPullRequest as PrEntry,
+    GitHubRateLimit,
+    ReviewThreadEntry,
+} from './github';
+import { fetchGitHubProjectStatus, fetchGraphqlRateLimit } from './github';
 import type { LinearIssueEntry, LinearReferenceScanOptions } from './linearIssue';
 import { DEFAULT_LINEAR_REFERENCE_MARKERS, fetchLinearIssues } from './linearIssue';
 import { linearIssueIcon } from './linearStatusIcon';
-import type { ReviewThreadEntry } from './reviewThreads';
-import { fetchUnresolvedThreads } from './reviewThreads';
+import type { RefreshReason } from './scheduler';
+import { adaptiveRefreshInterval } from './scheduler';
 import { findVercelLink } from './vercelLink';
-
-interface CheckEntry {
-    name?: string;
-    context?: string;
-    workflowName?: string;
-    conclusion?: string | null;
-    state?: string | null;
-    status?: string | null;
-    detailsUrl?: string;
-    targetUrl?: string;
-    startedAt?: string | null;
-    completedAt?: string | null;
-}
-
-interface PrEntry {
-    number: number;
-    url: string;
-    title: string;
-    body?: string;
-    statusCheckRollup?: CheckEntry[];
-}
 
 interface PullRequestFetchOptions {
     githubEnabled: boolean;
@@ -57,15 +43,22 @@ interface PullRequestFetchOptions {
 
 interface PullRequestDependencies {
     fetchLinearIssues: typeof fetchLinearIssues;
-    fetchUnresolvedThreads: typeof fetchUnresolvedThreads;
-    runCli: (cmd: 'gh', args: string[], cwd: string) => Promise<string>;
+    getGitHubRateLimitResetAt: () => number | undefined;
+    now: () => number;
+    runCli: RunCli;
+    setGitHubRateLimitResetAt: (resetAt: number) => PromiseLike<void> | void;
 }
 
 const DEFAULT_PULL_REQUEST_DEPENDENCIES: PullRequestDependencies = {
     fetchLinearIssues,
-    fetchUnresolvedThreads,
+    getGitHubRateLimitResetAt: () => 0,
+    now: Date.now,
     runCli,
+    setGitHubRateLimitResetAt: () => {},
 };
+
+const GITHUB_RATE_LIMIT_RESERVE = 100;
+const SECONDARY_RATE_LIMIT_BACKOFF_MS = 60_000;
 
 export interface VcDeployment {
     url: string;
@@ -94,9 +87,10 @@ interface RepoState {
     vercelProject?: string;
     ghChecked?: boolean;
     vcChecked?: boolean;
-    ghError?: { kind: CliErrorKind };
+    ghError?: { kind: CliErrorKind; retryAt?: number };
     linearError?: { kind: CliErrorKind };
     vcError?: { kind: CliErrorKind };
+    hasOpenPr?: boolean;
 }
 
 export interface RepoStateSnapshot {
@@ -159,43 +153,35 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
     private order: string[] = [];
     private loaded = false;
     private treeView: vscode.TreeView<SidebarNode> | undefined;
-    private inFlight: Promise<void> | undefined;
-    private pendingRefresh = false;
+    private inFlight: Promise<number> | undefined;
+    private githubRateLimitResetAt = 0;
+    private readonly pullRequestDependencies: PullRequestDependencies;
 
-    constructor(
-        private readonly pullRequestDependencies: PullRequestDependencies = DEFAULT_PULL_REQUEST_DEPENDENCIES,
-    ) {}
+    constructor(pullRequestDependencies: Partial<PullRequestDependencies> = {}) {
+        this.pullRequestDependencies = {
+            ...DEFAULT_PULL_REQUEST_DEPENDENCIES,
+            ...pullRequestDependencies,
+        };
+    }
 
     setTreeView(view: vscode.TreeView<SidebarNode>): void {
         this.treeView = view;
         this.updateBadge();
     }
 
-    /**
-     * Single-flight + trailing: at most one fetch runs at a time. Calls that arrive while one is in
-     * flight collapse into a single trailing run, so a slow refresh can't clobber a newer one's
-     * result.
-     */
-    async refresh(): Promise<void> {
-        if (this.inFlight) {
-            this.pendingRefresh = true;
-            await this.inFlight;
-            return;
-        }
-        const run = this.runRefresh();
+    /** Safety net for callers outside the scheduler: all overlapping refreshes share one run. */
+    async refresh(reason: RefreshReason = 'manual', fallbackMs = 30_000): Promise<number> {
+        if (this.inFlight) return this.inFlight;
+        const run = this.runRefresh(reason, fallbackMs);
         this.inFlight = run;
         try {
-            await run;
+            return await run;
         } finally {
             this.inFlight = undefined;
         }
-        if (this.pendingRefresh) {
-            this.pendingRefresh = false;
-            await this.refresh();
-        }
     }
 
-    private async runRefresh(): Promise<void> {
+    private async runRefresh(reason: RefreshReason, fallbackMs: number): Promise<number> {
         const start = Date.now();
         const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
         const ghEnabled = config.get<boolean>('github.enabled', false);
@@ -214,8 +200,13 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             this.updateBadge();
             // eslint-disable-next-line unicorn/no-useless-undefined
             this._onDidChangeTreeData.fire(undefined);
-            logTiming('sidebar.refresh', start, 'disabled');
-            return;
+            logTiming('sidebar.refresh', start, `reason=${reason} disabled`);
+            return adaptiveRefreshInterval({
+                fallbackMs,
+                hasActive: false,
+                hasNonGitHubPolling: false,
+                hasPending: false,
+            });
         }
 
         const repos = await getRepoContexts();
@@ -224,17 +215,24 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         await Promise.all(
             repos.map(async (ctx) => {
                 const state: RepoState = { ctx };
+                const previous = this.cache.get(ctx.rootPath);
                 await Promise.all([
                     ghEnabled || linearEnabled
-                        ? this.fetchGitHub(ctx, state, {
-                              githubEnabled: ghEnabled,
-                              ignoredChecks,
-                              linearEnabled,
-                              linearScan: {
-                                  markers: linearMarkers,
-                                  teamKeys: linearTeamKeys,
+                        ? this.fetchGitHub(
+                              ctx,
+                              state,
+                              {
+                                  githubEnabled: ghEnabled,
+                                  ignoredChecks,
+                                  linearEnabled,
+                                  linearScan: {
+                                      markers: linearMarkers,
+                                      teamKeys: linearTeamKeys,
+                                  },
                               },
-                          })
+                              previous,
+                              reason,
+                          )
                         : Promise.resolve(),
                     vcEnabled ? this.fetchVercel(ctx, state) : Promise.resolve(),
                 ]);
@@ -251,62 +249,68 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
         logTiming(
             'sidebar.refresh',
             start,
-            `repos=${repos.length} gh=${ghEnabled} linear=${linearEnabled} vc=${vcEnabled}`,
+            `reason=${reason} repos=${repos.length} gh=${ghEnabled} linear=${linearEnabled} vc=${vcEnabled}`,
         );
+        return this.nextRefreshInterval(fallbackMs, vcEnabled);
     }
 
     private async fetchGitHub(
         ctx: RepoContext,
         state: RepoState,
         options: PullRequestFetchOptions,
+        previous?: RepoState,
+        reason: RefreshReason = 'manual',
     ): Promise<void> {
         if (!ctx.owner || !ctx.repo || !ctx.branch) return;
         if (options.githubEnabled) state.ghChecked = true;
         const start = Date.now();
-        try {
-            const fields = ['number', 'url', 'title'];
-            if (options.githubEnabled) fields.push('statusCheckRollup');
-            if (options.linearEnabled) fields.push('body');
-            const stdout = await this.pullRequestDependencies.runCli(
-                'gh',
-                [
-                    'pr',
-                    'list',
-                    '--head',
-                    ctx.branch,
-                    '--state',
-                    'open',
-                    '--author',
-                    '@me',
-                    '--json',
-                    fields.join(','),
-                    '--limit',
-                    '1',
-                ],
-                ctx.rootPath,
+        const scope = `sidebar.gh ${ctx.owner}/${ctx.repo}`;
+        const pausedUntil = this.getGitHubRateLimitResetAt();
+        if (pausedUntil > this.pullRequestDependencies.now()) {
+            preserveGitHubState(state, previous, options);
+            state.ghError = { kind: 'RATE_LIMITED', retryAt: pausedUntil };
+            logTiming(
+                scope,
+                start,
+                `reason=${reason} pausedUntil=${new Date(pausedUntil).toISOString()}`,
             );
-            const prs = safeJsonParse<PrEntry[]>(stdout, []);
-            if (prs.length === 0) {
-                logTiming(`sidebar.gh ${ctx.label}`, start, 'no pr');
+            return;
+        }
+
+        try {
+            const result = await fetchGitHubProjectStatus(
+                ctx,
+                {
+                    githubEnabled: options.githubEnabled,
+                    linearEnabled: options.linearEnabled,
+                },
+                this.pullRequestDependencies.runCli,
+            );
+            const rateLimit = result.rateLimit;
+            if (rateLimit && rateLimit.remaining <= GITHUB_RATE_LIMIT_RESERVE) {
+                const resetAt = Date.parse(rateLimit.resetAt);
+                if (Number.isFinite(resetAt)) {
+                    await this.setGitHubRateLimitResetAt(resetAt);
+                    state.ghError = { kind: 'RATE_LIMITED', retryAt: resetAt };
+                }
+            }
+
+            const pr = result.pr;
+            state.hasOpenPr = pr !== undefined;
+            if (!pr) {
+                logTiming(scope, start, `reason=${reason} no-pr${formatRateLimitLog(rateLimit)}`);
                 return;
             }
-            const pr = prs[0];
             const tasks: Array<Promise<void>> = [];
 
             if (options.githubEnabled) {
-                const checks = pr.statusCheckRollup ?? [];
+                const checks = pr.statusCheckRollup;
                 const visible = checks.filter((check) => !isIgnored(check, options.ignoredChecks));
                 state.pr = pr;
                 state.ci = aggregateCi(visible);
                 state.visibleChecks = visible.slice().sort(checkSort);
                 state.hiddenCheckCount = checks.length - visible.length;
-                tasks.push(
-                    this.pullRequestDependencies
-                        .fetchUnresolvedThreads(ctx, pr.number)
-                        .then((unresolvedThreads) => {
-                            state.unresolvedThreads = unresolvedThreads;
-                        }),
-                );
+                state.unresolvedThreads = pr.unresolvedThreads;
             }
 
             if (options.linearEnabled) {
@@ -323,15 +327,87 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
 
             await Promise.all(tasks);
             logTiming(
-                `sidebar.gh ${ctx.label}`,
+                scope,
                 start,
-                `pr=#${pr.number} checks=${state.visibleChecks?.length ?? 0}+${state.hiddenCheckCount ?? 0} ci=${state.ci ?? 'disabled'} issues=${state.linearIssues?.length ?? 0} unresolved=${state.unresolvedThreads?.length ?? 0}`,
+                `reason=${reason} pr=#${pr.number} checks=${state.visibleChecks?.length ?? 0}+${state.hiddenCheckCount ?? 0} ci=${state.ci ?? 'disabled'} issues=${state.linearIssues?.length ?? 0} unresolved=${state.unresolvedThreads?.length ?? 0}${formatRateLimitLog(rateLimit)}`,
             );
         } catch (error) {
             const kind = error instanceof CliError ? error.kind : 'OTHER';
-            state.ghError = { kind };
-            logTiming(`sidebar.gh ${ctx.label}`, start, `error=${kind}`);
+            preserveGitHubState(state, previous, options);
+            const retryAt =
+                kind === 'RATE_LIMITED'
+                    ? await this.resolveGitHubRateLimitResetAt(ctx.rootPath)
+                    : undefined;
+            state.ghError = retryAt ? { kind, retryAt } : { kind };
+            logTiming(
+                scope,
+                start,
+                `reason=${reason} error=${kind}${retryAt ? ` retryAt=${new Date(retryAt).toISOString()}` : ''}`,
+            );
         }
+    }
+
+    private getGitHubRateLimitResetAt(): number {
+        return Math.max(
+            this.githubRateLimitResetAt,
+            this.pullRequestDependencies.getGitHubRateLimitResetAt() ?? 0,
+        );
+    }
+
+    private async setGitHubRateLimitResetAt(resetAt: number): Promise<void> {
+        this.githubRateLimitResetAt = Math.max(this.githubRateLimitResetAt, resetAt);
+        await this.pullRequestDependencies.setGitHubRateLimitResetAt(this.githubRateLimitResetAt);
+    }
+
+    private async resolveGitHubRateLimitResetAt(cwd: string): Promise<number> {
+        let resetAt = this.pullRequestDependencies.now() + SECONDARY_RATE_LIMIT_BACKOFF_MS;
+        try {
+            const rateLimit = await fetchGraphqlRateLimit(cwd, this.pullRequestDependencies.runCli);
+            if (
+                rateLimit?.remaining === 0 &&
+                rateLimit.resetAt > this.pullRequestDependencies.now()
+            ) {
+                resetAt = rateLimit.resetAt;
+            }
+        } catch {
+            // Fall back to a short secondary-limit cooldown if the status request also fails.
+        }
+        await this.setGitHubRateLimitResetAt(resetAt);
+        return resetAt;
+    }
+
+    private nextRefreshInterval(fallbackMs: number, vercelEnabled: boolean): number {
+        let hasPending = false;
+        let hasActive = false;
+        const now = this.pullRequestDependencies.now();
+        const githubPausedUntil = this.getGitHubRateLimitResetAt();
+        const githubPaused = githubPausedUntil > now;
+        for (const state of this.cache.values()) {
+            if (
+                (!githubPaused && state.ci === 'pending') ||
+                state.branchDeployments?.some((deployment) => isPendingDeployment(deployment)) ||
+                (state.prod && isPendingDeployment(state.prod)) ||
+                (state.preview && isPendingDeployment(state.preview))
+            ) {
+                hasPending = true;
+            }
+            if (
+                (!githubPaused && state.hasOpenPr) ||
+                state.prod ||
+                state.preview ||
+                (state.branchDeployments?.length ?? 0) > 0
+            ) {
+                hasActive = true;
+            }
+        }
+        return adaptiveRefreshInterval({
+            fallbackMs,
+            githubPausedUntil,
+            hasActive,
+            hasNonGitHubPolling: vercelEnabled,
+            hasPending,
+            now,
+        });
     }
 
     private async fetchVercel(ctx: RepoContext, state: RepoState): Promise<void> {
@@ -803,15 +879,16 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
             errorLabel(err.kind, source),
             vscode.TreeItemCollapsibleState.None,
         );
+        const retryAt = source === 'gh' ? state.ghError?.retryAt : undefined;
         item.id = `error:${rootPath}:${source}`;
         item.iconPath = new vscode.ThemeIcon(
             'warning',
             new vscode.ThemeColor('list.warningForeground'),
         );
-        item.description = errorHint(err.kind, source);
+        item.description = errorHint(err.kind, source, retryAt);
         item.tooltip = buildMarkdownTooltip((md) => {
             md.appendMarkdown(`**${errorLabel(err.kind, source)}**\n\n`);
-            md.appendMarkdown(errorHint(err.kind, source));
+            md.appendMarkdown(errorHint(err.kind, source, retryAt));
         });
         return item;
     }
@@ -819,6 +896,44 @@ export class ProjectStatusProvider implements vscode.TreeDataProvider<SidebarNod
     dispose(): void {
         this._onDidChangeTreeData.dispose();
     }
+}
+
+function preserveGitHubState(
+    state: RepoState,
+    previous: RepoState | undefined,
+    options: PullRequestFetchOptions,
+): void {
+    if (
+        !previous ||
+        previous.ctx.branch !== state.ctx.branch ||
+        previous.ctx.owner !== state.ctx.owner ||
+        previous.ctx.repo !== state.ctx.repo
+    ) {
+        return;
+    }
+    state.hasOpenPr = previous.hasOpenPr;
+    if (options.githubEnabled) {
+        state.ci = previous.ci;
+        state.hiddenCheckCount = previous.hiddenCheckCount;
+        state.pr = previous.pr;
+        state.unresolvedThreads = previous.unresolvedThreads;
+        state.visibleChecks = previous.visibleChecks;
+    }
+    if (options.linearEnabled) {
+        state.linearError = previous.linearError;
+        state.linearIssues = previous.linearIssues;
+    }
+}
+
+function formatRateLimitLog(rateLimit: GitHubRateLimit | undefined): string {
+    return rateLimit
+        ? ` graphql=cost:${rateLimit.cost},remaining:${rateLimit.remaining},reset:${rateLimit.resetAt}`
+        : '';
+}
+
+function isPendingDeployment(deployment: VcDeployment): boolean {
+    const status = statusOf(deployment);
+    return status === 'building' || status === 'queue';
 }
 
 function placeholderItem(node: {

@@ -36,6 +36,7 @@ type FetchGitHubForTest = (
     ctx: TestRepoContext,
     state: Record<string, unknown>,
     options: TestPullRequestOptions,
+    previous?: Record<string, unknown>,
 ) => Promise<void>;
 
 describe('#extractLinearIssueReferences', () => {
@@ -258,6 +259,7 @@ describe('#Linear settings', () => {
             ...DEFAULT_LINEAR_REFERENCE_MARKERS,
         ]);
         deepStrictEqual(config.inspect<string[]>('linear.teamKeys')?.defaultValue, []);
+        strictEqual(config.inspect<number>('refreshInterval')?.defaultValue, 30_000);
     });
 });
 
@@ -265,7 +267,6 @@ describe('#ProjectStatusProvider integration gates', () => {
     it('shares PR discovery while gating GitHub and Linear consumers independently', async () => {
         const ghCalls: string[][] = [];
         let linearCalls = 0;
-        let reviewThreadCalls = 0;
         const provider = new ProjectStatusProvider({
             fetchLinearIssues: async () => {
                 linearCalls++;
@@ -277,21 +278,9 @@ describe('#ProjectStatusProvider integration gates', () => {
                     },
                 ];
             },
-            fetchUnresolvedThreads: async () => {
-                reviewThreadCalls++;
-                return [];
-            },
             runCli: async (_cmd, args) => {
                 ghCalls.push(args);
-                return JSON.stringify([
-                    {
-                        body: 'Tracks ENG-41',
-                        number: 7,
-                        statusCheckRollup: [{ conclusion: 'success', name: 'Build' }],
-                        title: 'Improve retries',
-                        url: 'https://github.com/acme/widgets/pull/7',
-                    },
-                ]);
+                return githubProjectStatusResponse();
             },
         });
         const fetchGitHub = fetchGitHubForTest(provider);
@@ -306,7 +295,8 @@ describe('#ProjectStatusProvider integration gates', () => {
                 linearScan: DEFAULT_SCAN_OPTIONS,
             });
 
-            strictEqual(jsonFields(ghCalls[0]), 'number,url,title,statusCheckRollup');
+            strictEqual(graphqlVariable(ghCalls[0], 'includeGitHub'), 'true');
+            strictEqual(graphqlVariable(ghCalls[0], 'includeLinear'), 'false');
             ok(githubState.pr);
             strictEqual(
                 (githubState.visibleChecks as Array<{ name: string }> | undefined)?.[0]?.name,
@@ -314,7 +304,10 @@ describe('#ProjectStatusProvider integration gates', () => {
             );
             strictEqual(githubState.linearIssues, undefined);
             strictEqual(linearCalls, 0);
-            strictEqual(reviewThreadCalls, 1);
+            strictEqual(
+                (githubState.unresolvedThreads as Array<{ url: string }> | undefined)?.length,
+                1,
+            );
 
             const linearState: Record<string, unknown> = { ctx };
             await fetchGitHub(ctx, linearState, {
@@ -324,13 +317,13 @@ describe('#ProjectStatusProvider integration gates', () => {
                 linearScan: DEFAULT_SCAN_OPTIONS,
             });
 
-            strictEqual(jsonFields(ghCalls[1]), 'number,url,title,body');
+            strictEqual(graphqlVariable(ghCalls[1], 'includeGitHub'), 'false');
+            strictEqual(graphqlVariable(ghCalls[1], 'includeLinear'), 'true');
             strictEqual(linearState.pr, undefined);
             strictEqual(linearState.ghChecked, undefined);
             strictEqual(linearState.unresolvedThreads, undefined);
             ok(linearState.linearIssues);
             strictEqual(linearCalls, 1);
-            strictEqual(reviewThreadCalls, 1);
 
             const combinedState: Record<string, unknown> = { ctx };
             await fetchGitHub(ctx, combinedState, {
@@ -340,10 +333,14 @@ describe('#ProjectStatusProvider integration gates', () => {
                 linearScan: DEFAULT_SCAN_OPTIONS,
             });
 
-            strictEqual(jsonFields(ghCalls[2]), 'number,url,title,statusCheckRollup,body');
+            strictEqual(graphqlVariable(ghCalls[2], 'includeGitHub'), 'true');
+            strictEqual(graphqlVariable(ghCalls[2], 'includeLinear'), 'true');
             strictEqual(ghCalls.length, 3);
             strictEqual(linearCalls, 2);
-            strictEqual(reviewThreadCalls, 2);
+            strictEqual(
+                (combinedState.unresolvedThreads as Array<{ url: string }> | undefined)?.length,
+                1,
+            );
         } finally {
             provider.dispose();
         }
@@ -356,7 +353,6 @@ describe('#ProjectStatusProvider integration gates', () => {
                 linearCalls++;
                 return [];
             },
-            fetchUnresolvedThreads: async () => [],
             runCli: async () => {
                 throw new CliError('NOT_FOUND', '', 'gh not installed');
             },
@@ -376,6 +372,80 @@ describe('#ProjectStatusProvider integration gates', () => {
             deepStrictEqual(state.ghError, { kind: 'NOT_FOUND' });
             strictEqual(state.linearError, undefined);
             strictEqual(linearCalls, 0);
+        } finally {
+            provider.dispose();
+        }
+    });
+
+    it('backs off to the GraphQL reset and preserves the last successful PR state', async () => {
+        const cliCalls: string[][] = [];
+        let persistedResetAt: number | undefined;
+        const provider = new ProjectStatusProvider({
+            now: () => 1000,
+            runCli: async (_cmd, args) => {
+                cliCalls.push(args);
+                if (args[1] === 'graphql') {
+                    throw new CliError('RATE_LIMITED', 'GraphQL: API rate limit already exceeded');
+                }
+                return JSON.stringify({ remaining: 0, reset: 2 });
+            },
+            setGitHubRateLimitResetAt: (resetAt) => {
+                persistedResetAt = resetAt;
+            },
+        });
+        const fetchGitHub = fetchGitHubForTest(provider);
+        const previous = {
+            ci: 'success',
+            ctx: TEST_REPO_CONTEXT,
+            hasOpenPr: true,
+            pr: {
+                number: 7,
+                statusCheckRollup: [],
+                title: 'Improve retries',
+                unresolvedThreads: [],
+                url: 'https://github.com/acme/widgets/pull/7',
+            },
+        };
+        const state: Record<string, unknown> = { ctx: TEST_REPO_CONTEXT };
+
+        try {
+            await fetchGitHub(
+                TEST_REPO_CONTEXT,
+                state,
+                {
+                    githubEnabled: true,
+                    ignoredChecks: [],
+                    linearEnabled: false,
+                    linearScan: DEFAULT_SCAN_OPTIONS,
+                },
+                previous,
+            );
+
+            strictEqual(cliCalls.length, 2);
+            strictEqual(cliCalls[1][1], 'rate_limit');
+            strictEqual(persistedResetAt, 2000);
+            deepStrictEqual(state.ghError, { kind: 'RATE_LIMITED', retryAt: 2000 });
+            strictEqual(state.pr, previous.pr);
+
+            const pausedState: Record<string, unknown> = { ctx: TEST_REPO_CONTEXT };
+            await fetchGitHub(
+                TEST_REPO_CONTEXT,
+                pausedState,
+                {
+                    githubEnabled: true,
+                    ignoredChecks: [],
+                    linearEnabled: false,
+                    linearScan: DEFAULT_SCAN_OPTIONS,
+                },
+                previous,
+            );
+
+            strictEqual(cliCalls.length, 2);
+            deepStrictEqual(pausedState.ghError, {
+                kind: 'RATE_LIMITED',
+                retryAt: 2000,
+            });
+            strictEqual(pausedState.pr, previous.pr);
         } finally {
             provider.dispose();
         }
@@ -428,9 +498,69 @@ describe('#linearIssueIcon', () => {
     });
 });
 
-function jsonFields(args: string[]): string | undefined {
-    const index = args.indexOf('--json');
-    return index < 0 ? undefined : args[index + 1];
+function graphqlVariable(args: string[], name: string): string | undefined {
+    const prefix = `${name}=`;
+    return args.find((arg) => arg.startsWith(prefix))?.slice(prefix.length);
+}
+
+function githubProjectStatusResponse(): string {
+    return JSON.stringify({
+        data: {
+            rateLimit: {
+                cost: 1,
+                remaining: 4000,
+                resetAt: '2026-07-28T16:20:22Z',
+            },
+            search: {
+                nodes: [
+                    {
+                        body: 'Tracks ENG-41',
+                        commits: {
+                            nodes: [
+                                {
+                                    commit: {
+                                        statusCheckRollup: {
+                                            contexts: {
+                                                nodes: [
+                                                    {
+                                                        __typename: 'CheckRun',
+                                                        conclusion: 'SUCCESS',
+                                                        name: 'Build',
+                                                        status: 'COMPLETED',
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                        number: 7,
+                        reviewThreads: {
+                            nodes: [
+                                {
+                                    comments: {
+                                        nodes: [
+                                            {
+                                                author: { login: 'reviewer' },
+                                                body: 'Please add a test.',
+                                                url: 'https://github.com/acme/widgets/pull/7#discussion_r1',
+                                            },
+                                        ],
+                                    },
+                                    isOutdated: false,
+                                    isResolved: false,
+                                    path: 'src/index.ts',
+                                },
+                            ],
+                        },
+                        title: 'Improve retries',
+                        url: 'https://github.com/acme/widgets/pull/7',
+                    },
+                ],
+            },
+        },
+    });
 }
 
 function fetchGitHubForTest(provider: ProjectStatusProvider): FetchGitHubForTest {
